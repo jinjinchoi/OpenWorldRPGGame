@@ -80,7 +80,7 @@ void AAdventurePlayerCharacter::Input_CameraScroll(const FInputActionValue& Inpu
 	float NewTargetArmLength =  CameraBoom->TargetArmLength + ScrollValue;
 	NewTargetArmLength = FMath::Clamp(NewTargetArmLength, 150.f, 1000.f);
 	
-	CameraBoom->TargetArmLength = FMath::FInterpConstantTo(CameraBoom->TargetArmLength, NewTargetArmLength, GetWorld()->GetDeltaSeconds(), 10.0f);
+	CameraBoom->TargetArmLength = FMath::FInterpTo(CameraBoom->TargetArmLength, NewTargetArmLength, GetWorld()->GetDeltaSeconds(), 10.0f);
 }
 
 void AAdventurePlayerCharacter::Input_Move(const FInputActionValue& InputActionValue)
