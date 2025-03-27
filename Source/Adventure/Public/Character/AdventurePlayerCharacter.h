@@ -47,16 +47,23 @@ protected:
 
 #pragma region Input
 
+	/* 카메라 스크롤 속도 */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Input, meta=(ClampMin="0.0"))
+	float CameraZoomSpeed = 300;
+	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Input)
 	TObjectPtr<UDataAsset_InputConfig> InputConfigDataAsset;
 
 	virtual void Jump() override;
 	void Input_Look(const FInputActionValue& InputActionValue);
+	void Input_CameraScroll(const FInputActionValue& InputActionValue);
 	
 	void Input_Move(const FInputActionValue& InputActionValue);
 	void Input_Sprint();
-
+	void Input_Walk();
+	
 	bool bIsSprint = false;
+	bool bIsWalking = false;
 	
 #pragma endregion
 	

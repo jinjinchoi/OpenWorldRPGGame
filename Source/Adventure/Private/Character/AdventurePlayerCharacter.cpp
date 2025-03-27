@@ -51,6 +51,8 @@ void AAdventurePlayerCharacter::SetupPlayerInputComponent(UInputComponent* Playe
 		AdventureInputComponent->BindLocomotionInputAction(InputConfigDataAsset, this, AdventureGameplayTags::InputTag_Jump, ETriggerEvent::Triggered, &AAdventurePlayerCharacter::Jump);
 		AdventureInputComponent->BindLocomotionInputAction(InputConfigDataAsset, this, AdventureGameplayTags::InputTag_Move, ETriggerEvent::Triggered, &AAdventurePlayerCharacter::Input_Move);
 		AdventureInputComponent->BindLocomotionInputAction(InputConfigDataAsset, this, AdventureGameplayTags::InputTag_Sprint, ETriggerEvent::Started, &AAdventurePlayerCharacter::Input_Sprint);
+		AdventureInputComponent->BindLocomotionInputAction(InputConfigDataAsset, this, AdventureGameplayTags::InputTag_Walk, ETriggerEvent::Started, &AAdventurePlayerCharacter::Input_Walk);
+		AdventureInputComponent->BindLocomotionInputAction(InputConfigDataAsset, this, AdventureGameplayTags::InputTag_Wheel_Scroll, ETriggerEvent::Started, &AAdventurePlayerCharacter::Input_CameraScroll);
 	}
 	
 }
@@ -69,6 +71,16 @@ void AAdventurePlayerCharacter::Input_Look(const FInputActionValue& InputActionV
 	{
 		AddControllerPitchInput(LookAxisVector.Y);
 	}
+}
+
+void AAdventurePlayerCharacter::Input_CameraScroll(const FInputActionValue& InputActionValue)
+{
+	const float ScrollValue = InputActionValue.Get<float>() * -CameraZoomSpeed;
+	
+	float NewTargetArmLength =  CameraBoom->TargetArmLength + ScrollValue;
+	NewTargetArmLength = FMath::Clamp(NewTargetArmLength, 150.f, 1000.f);
+	
+	CameraBoom->TargetArmLength = FMath::FInterpConstantTo(CameraBoom->TargetArmLength, NewTargetArmLength, GetWorld()->GetDeltaSeconds(), 10.0f);
 }
 
 void AAdventurePlayerCharacter::Input_Move(const FInputActionValue& InputActionValue)
@@ -100,10 +112,26 @@ void AAdventurePlayerCharacter::Input_Sprint()
 	{
 		GetCharacterMovement()->MaxWalkSpeed = SprintSpeed;
 		bIsSprint = true;
+		bIsWalking = false;
 	}
 
 	//TODO : Sprint Status 태그 추가해야함
 
+}
+
+void AAdventurePlayerCharacter::Input_Walk()
+{
+	if (bIsWalking)
+	{
+		GetCharacterMovement()->MaxWalkSpeed = RunSpeed;
+		bIsWalking = false;
+	}
+	else
+	{
+		GetCharacterMovement()->MaxWalkSpeed = WalkingSpeed;
+		bIsWalking = true;
+		bIsSprint = false;
+	}
 }
 
 void AAdventurePlayerCharacter::Jump()
