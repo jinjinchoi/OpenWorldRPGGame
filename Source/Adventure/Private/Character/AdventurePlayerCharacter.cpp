@@ -56,6 +56,8 @@ void AAdventurePlayerCharacter::SetupPlayerInputComponent(UInputComponent* Playe
 		AdventureInputComponent->BindLocomotionInputAction(InputConfigDataAsset, this, AdventureGameplayTags::InputTag_Sprint, ETriggerEvent::Started, &AAdventurePlayerCharacter::Input_Sprint);
 		AdventureInputComponent->BindLocomotionInputAction(InputConfigDataAsset, this, AdventureGameplayTags::InputTag_Walk, ETriggerEvent::Started, &AAdventurePlayerCharacter::Input_Walk);
 		AdventureInputComponent->BindLocomotionInputAction(InputConfigDataAsset, this, AdventureGameplayTags::InputTag_Wheel_Scroll, ETriggerEvent::Started, &AAdventurePlayerCharacter::Input_CameraScroll);
+
+		AdventureInputComponent->BindAbilityInputAction(InputConfigDataAsset, this, &AAdventurePlayerCharacter::Input_AbilityInputPressed, &AAdventurePlayerCharacter::Input_AbilityInputReleased);
 	}
 	
 }
@@ -164,4 +166,22 @@ void AAdventurePlayerCharacter::Jump()
 {
 	Super::Jump();
 }
+
+void AAdventurePlayerCharacter::Input_AbilityInputPressed(FGameplayTag InInputTag)
+{
+	if (UAdventureAbilitySystemComponent* AdventureASC = Cast<UAdventureAbilitySystemComponent>(AbilitySystemComponent))
+	{
+		AdventureASC->OnAbilityInputPressed(InInputTag);
+	}
+}
+
+void AAdventurePlayerCharacter::Input_AbilityInputReleased(FGameplayTag InInputTag)
+{
+	if (UAdventureAbilitySystemComponent* AdventureASC = Cast<UAdventureAbilitySystemComponent>(AbilitySystemComponent))
+	{
+		AdventureASC->OnAbilityInputReleased(InInputTag);
+	}
+}
+
+
 

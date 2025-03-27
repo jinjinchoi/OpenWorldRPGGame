@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GameplayTagContainer.h"
 #include "Character/AdventureBaseCharacter.h"
 #include "AdventurePlayerCharacter.generated.h"
 
@@ -58,13 +59,16 @@ protected:
 	virtual void Jump() override;
 	void Input_Look(const FInputActionValue& InputActionValue);
 	void Input_CameraScroll(const FInputActionValue& InputActionValue);
-	
 	void Input_Move(const FInputActionValue& InputActionValue);
 	void Input_Sprint();
 	void Input_Walk();
 	
 	bool bIsSprint = false;
 	bool bIsWalking = false;
+
+	void Input_AbilityInputPressed(FGameplayTag InInputTag);
+	void Input_AbilityInputReleased(FGameplayTag InInputTag);
+	
 	
 #pragma endregion
 	

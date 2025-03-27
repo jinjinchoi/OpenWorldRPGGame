@@ -5,12 +5,33 @@
 #include "AbilitySystem/AdventureAbilitySystemComponent.h"
 #include "AbilitySystem/Abilities/AdventureGameplayAbility.h"
 
+
 void UDataAsset_StartUpDataBase::GiveToAbilitySystemComponent(UAdventureAbilitySystemComponent* InASC, int32 ApplyLevel)
 {
 	check(InASC);
 
 	GrantAbilities(ActivateOnGivenAbilities, InASC, ApplyLevel);
 	GrantAbilities(ReactiveAbilities, InASC, ApplyLevel);
+
+	if (StartUpAbilityInfo.IsEmpty()) return;
+	
+	for (const FAdventureAbilityInfo& AbilityInfo : StartUpAbilityInfo)
+	{
+		if (!AbilityInfo.AbilityToGrant) continue;
+
+		FGameplayAbilitySpec AbilitySpec(AbilityInfo.AbilityToGrant);
+		AbilitySpec.Level = ApplyLevel;
+		AbilitySpec.SourceObject = InASC->GetAvatarActor();
+
+		if (AbilityInfo.InputTag.IsValid())
+		{
+			AbilitySpec.DynamicAbilityTags.AddTag(AbilityInfo.InputTag);
+		}
+
+		InASC->GiveAbility(AbilitySpec);
+		
+	}
+	
 	
 }
 

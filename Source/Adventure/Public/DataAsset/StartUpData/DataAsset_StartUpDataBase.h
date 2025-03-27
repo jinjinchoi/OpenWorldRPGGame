@@ -3,11 +3,26 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GameplayTagContainer.h"
 #include "Engine/DataAsset.h"
 #include "DataAsset_StartUpDataBase.generated.h"
 
 class UAdventureAbilitySystemComponent;
 class UAdventureGameplayAbility;
+
+USTRUCT(BlueprintType)
+struct FAdventureAbilityInfo
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (Categories = "InputTag"))
+	FGameplayTag InputTag = FGameplayTag();
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TSubclassOf<UAdventureGameplayAbility> AbilityToGrant;
+	
+};
+
 /**
  * 
  */
@@ -28,6 +43,9 @@ protected:
 	/* 특정 조건에 따라 반응하여 실행할 어빌리티 ex) Death, HitReact */
 	UPROPERTY(EditDefaultsOnly, Category="StartUpData")
 	TArray<TSubclassOf<UAdventureGameplayAbility>> ReactiveAbilities;
+
+	UPROPERTY(EditDefaultsOnly, Category="StartUpData", meta = (TitleProperty = "InputTag"))
+	TArray<FAdventureAbilityInfo> StartUpAbilityInfo;
 
 private:
 	void GrantAbilities(const TArray<TSubclassOf<UAdventureGameplayAbility>>& InAbilityToGive, UAdventureAbilitySystemComponent* InASC, int32 ApplyLevel = 1);

@@ -46,5 +46,9 @@ public:
 	TArray<FAdventureInputAction> LocomotionInputActions;
 
 	const UInputAction* FindLocomotionInputActionByTag(const FGameplayTag& InputTag) const;
+
+	/* 캐릭터의 Ability 담당하는 Action과 Tag를 저장하는 배열 */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(TitleProperty="InputTag"))
+	TArray<FAdventureInputAction> AbilityInputActions;
 	
 };

@@ -15,6 +15,7 @@ class ADVENTURE_API UAdventureDamageGameplayAbility : public UAdventureGameplayA
 	GENERATED_BODY()
 
 protected:
+	
 	/* Damage */
 	
 	UPROPERTY(EditDefaultsOnly)
