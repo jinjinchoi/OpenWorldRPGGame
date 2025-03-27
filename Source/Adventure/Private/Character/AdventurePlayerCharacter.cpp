@@ -4,10 +4,13 @@
 #include "Character/AdventurePlayerCharacter.h"
 
 #include "AdventureGameplayTag.h"
+#include "DebugHelper.h"
 #include "Camera/CameraComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "AbilitySystem/AdventureAbilitySystemComponent.h"
 #include "Component/Input/AdventureInputComponent.h"
 #include "DataAsset/Input/DataAsset_InputConfig.h"
+#include "DataAsset/StartUpData/DataAsset_StartUpDataBase.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 
@@ -53,6 +56,29 @@ void AAdventurePlayerCharacter::SetupPlayerInputComponent(UInputComponent* Playe
 		AdventureInputComponent->BindLocomotionInputAction(InputConfigDataAsset, this, AdventureGameplayTags::InputTag_Sprint, ETriggerEvent::Started, &AAdventurePlayerCharacter::Input_Sprint);
 		AdventureInputComponent->BindLocomotionInputAction(InputConfigDataAsset, this, AdventureGameplayTags::InputTag_Walk, ETriggerEvent::Started, &AAdventurePlayerCharacter::Input_Walk);
 		AdventureInputComponent->BindLocomotionInputAction(InputConfigDataAsset, this, AdventureGameplayTags::InputTag_Wheel_Scroll, ETriggerEvent::Started, &AAdventurePlayerCharacter::Input_CameraScroll);
+	}
+	
+}
+
+void AAdventurePlayerCharacter::PossessedBy(AController* NewController)
+{
+	Super::PossessedBy(NewController);
+	
+	if (!CharacterStartUpData.IsNull())
+	{
+		UAdventureAbilitySystemComponent* AdventureAbilitySystemComponent = Cast<UAdventureAbilitySystemComponent>(AbilitySystemComponent);
+		check(AdventureAbilitySystemComponent);
+		
+		if (UDataAsset_StartUpDataBase* LoadedDataAsset = CharacterStartUpData.LoadSynchronous())
+		{
+			check(AdventureAbilitySystemComponent);
+			
+			LoadedDataAsset->GiveToAbilitySystemComponent(AdventureAbilitySystemComponent);
+		}
+	}
+	else
+	{
+		DebugHelper::Print(FString::Printf(TEXT("You need to assign startup data to %s"), *GetName()), FColor::Yellow);
 	}
 	
 }

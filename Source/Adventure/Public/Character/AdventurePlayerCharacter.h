@@ -23,6 +23,7 @@ public:
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
 
 protected:
+	virtual void PossessedBy(AController* NewController) override;
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category=Movement)
 	float WalkingSpeed = 200.f;
