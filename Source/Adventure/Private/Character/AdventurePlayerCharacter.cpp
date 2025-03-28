@@ -53,13 +53,26 @@ void AAdventurePlayerCharacter::SetupPlayerInputComponent(UInputComponent* Playe
 		AdventureInputComponent->BindLocomotionInputAction(InputConfigDataAsset, this, AdventureGameplayTags::InputTag_Look, ETriggerEvent::Triggered, &AAdventurePlayerCharacter::Input_Look);
 		AdventureInputComponent->BindLocomotionInputAction(InputConfigDataAsset, this, AdventureGameplayTags::InputTag_Jump, ETriggerEvent::Triggered, &AAdventurePlayerCharacter::Jump);
 		AdventureInputComponent->BindLocomotionInputAction(InputConfigDataAsset, this, AdventureGameplayTags::InputTag_Move, ETriggerEvent::Triggered, &AAdventurePlayerCharacter::Input_Move);
-		AdventureInputComponent->BindLocomotionInputAction(InputConfigDataAsset, this, AdventureGameplayTags::InputTag_Sprint, ETriggerEvent::Started, &AAdventurePlayerCharacter::Input_Sprint);
+		AdventureInputComponent->BindLocomotionInputAction(InputConfigDataAsset, this, AdventureGameplayTags::InputTag_Move, ETriggerEvent::Completed, &AAdventurePlayerCharacter::StopMove);
+		AdventureInputComponent->BindLocomotionInputAction(InputConfigDataAsset, this, AdventureGameplayTags::InputTag_Sprint, ETriggerEvent::Started, &AAdventurePlayerCharacter::Input_Sprint_Started);
+		AdventureInputComponent->BindLocomotionInputAction(InputConfigDataAsset, this, AdventureGameplayTags::InputTag_Sprint, ETriggerEvent::Completed, &AAdventurePlayerCharacter::Input_Sprint_Completed);
 		AdventureInputComponent->BindLocomotionInputAction(InputConfigDataAsset, this, AdventureGameplayTags::InputTag_Walk, ETriggerEvent::Started, &AAdventurePlayerCharacter::Input_Walk);
 		AdventureInputComponent->BindLocomotionInputAction(InputConfigDataAsset, this, AdventureGameplayTags::InputTag_Wheel_Scroll, ETriggerEvent::Started, &AAdventurePlayerCharacter::Input_CameraScroll);
 
 		AdventureInputComponent->BindAbilityInputAction(InputConfigDataAsset, this, &AAdventurePlayerCharacter::Input_AbilityInputPressed, &AAdventurePlayerCharacter::Input_AbilityInputReleased);
 	}
 	
+}
+
+
+void AAdventurePlayerCharacter::ShowWeaponMesh_Implementation()
+{
+	SetWeaponMeshVisibility(true);
+}
+
+void AAdventurePlayerCharacter::HideWeaponMesh_Implementation()
+{
+	SetWeaponMeshVisibility(false);
 }
 
 void AAdventurePlayerCharacter::PossessedBy(AController* NewController)
@@ -129,22 +142,45 @@ void AAdventurePlayerCharacter::Input_Move(const FInputActionValue& InputActionV
 	}
 }
 
-void AAdventurePlayerCharacter::Input_Sprint()
+void AAdventurePlayerCharacter::StopMove()
 {
 	if (bIsSprint)
 	{
-		GetCharacterMovement()->MaxWalkSpeed = RunSpeed;
-		bIsSprint = false;
+		StopSprint();
 	}
-	else
+}
+
+void AAdventurePlayerCharacter::Input_Sprint_Started()
+{
+
+	GetWorld()->GetTimerManager().SetTimer(SprintTimerHandle, this, &AAdventurePlayerCharacter::StartSprint, 1.f, false);
+	
+}
+
+void AAdventurePlayerCharacter::Input_Sprint_Completed()
+{
+	if (!bIsSprint)
 	{
-		GetCharacterMovement()->MaxWalkSpeed = SprintSpeed;
-		bIsSprint = true;
-		bIsWalking = false;
+		GetWorld()->GetTimerManager().ClearTimer(SprintTimerHandle);
 	}
+}
 
-	//TODO : Sprint Status 태그 추가해야함
+void AAdventurePlayerCharacter::StartSprint()
+{
+	GetCharacterMovement()->MaxWalkSpeed = SprintSpeed;
+	bIsSprint = true;
+	bIsWalking = false;
 
+	// TODO: Add Sprint Tag
+}
+
+void AAdventurePlayerCharacter::StopSprint()
+{
+	GetCharacterMovement()->MaxWalkSpeed = RunSpeed;
+	bIsSprint = false;
+	GetWorld()->GetTimerManager().ClearTimer(SprintTimerHandle);
+
+	// TODO: Remove Sprint Tag
 }
 
 void AAdventurePlayerCharacter::Input_Walk()

@@ -25,6 +25,13 @@ UAbilitySystemComponent* AAdventureBaseCharacter::GetAbilitySystemComponent() co
 	return AbilitySystemComponent;
 }
 
+void AAdventureBaseCharacter::RegisterSpawnedWeapon(AAdventureWeaponBase* InWeaponToRegister)
+{
+	check(InWeaponToRegister);
+	OwningWeapon = InWeaponToRegister;
+
+}
+
 void AAdventureBaseCharacter::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
