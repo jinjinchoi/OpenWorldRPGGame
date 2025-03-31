@@ -29,6 +29,17 @@ void UDataAsset_StartUpDataBase::GiveToAbilitySystemComponent(UAdventureAbilityS
 		}
 
 		InASC->GiveAbility(AbilitySpec);
+	}
+
+	if (StartUpGameplayEffects.IsEmpty()) return;
+
+	for (const TSubclassOf<UGameplayEffect>& EffectClass : StartUpGameplayEffects)
+	{
+		if (!EffectClass) continue;
+
+		FGameplayEffectContextHandle EffectContextHandle = InASC->MakeEffectContext();
+		FGameplayEffectSpecHandle EffectSpecHandle = InASC->MakeOutgoingSpec(EffectClass, ApplyLevel, EffectContextHandle);
+		InASC->ApplyGameplayEffectSpecToSelf(*EffectSpecHandle.Data.Get());
 		
 	}
 	

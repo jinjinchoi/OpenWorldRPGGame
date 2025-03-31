@@ -73,12 +73,11 @@ protected:
 	void Input_Sprint_Completed();
 	void StartSprint();
 	void StopSprint();
-	
-	void Input_Walk();
-	
 	bool bIsSprint = false;
 	bool bIsWalking = false;
 	FTimerHandle SprintTimerHandle;
+	
+	void Input_Walk();
 
 	void Input_AbilityInputPressed(FGameplayTag InInputTag);
 	void Input_AbilityInputReleased(FGameplayTag InInputTag);

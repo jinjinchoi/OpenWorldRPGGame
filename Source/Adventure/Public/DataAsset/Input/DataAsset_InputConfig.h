@@ -49,10 +49,10 @@ public:
 
 	/* Pressed 시 발동하는 Ability */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(TitleProperty="InputTag"))
-	TArray<FAdventureInputAction> AbilityInputActions;
+	TArray<FAdventureInputAction> StartedAbilityInputActions;
 
 	/* Hold 시 발동하는 Ability */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(TitleProperty="InputTag"))
-	TArray<FAdventureInputAction> AbilityHoldActions;
+	TArray<FAdventureInputAction> TriggeredAbilityActions;
 	
 };

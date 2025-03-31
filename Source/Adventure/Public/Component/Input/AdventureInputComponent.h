@@ -42,7 +42,7 @@ void UAdventureInputComponent::BindAbilityInputAction(const UDataAsset_InputConf
 {
 	check(InInputConfig);
 
-	for (const FAdventureInputAction& AbilityInputActionConfig : InInputConfig->AbilityInputActions)
+	for (const FAdventureInputAction& AbilityInputActionConfig : InInputConfig->StartedAbilityInputActions)
 	{
 		if (!AbilityInputActionConfig.IsValid()) continue;
 
@@ -50,7 +50,7 @@ void UAdventureInputComponent::BindAbilityInputAction(const UDataAsset_InputConf
 		BindAction(AbilityInputActionConfig.InputAction, ETriggerEvent::Completed, ContextObject, InputReleasedFunc, AbilityInputActionConfig.InputTag);
 	}
 
-	for (const FAdventureInputAction& AbilityInputActionConfig : InInputConfig->AbilityHoldActions)
+	for (const FAdventureInputAction& AbilityInputActionConfig : InInputConfig->TriggeredAbilityActions)
 	{
 		if (!AbilityInputActionConfig.IsValid()) continue;
 		BindAction(AbilityInputActionConfig.InputAction, ETriggerEvent::Triggered, ContextObject, InputPressedFunc, AbilityInputActionConfig.InputTag);

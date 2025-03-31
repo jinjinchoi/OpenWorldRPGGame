@@ -9,6 +9,7 @@
 
 class UAdventureAbilitySystemComponent;
 class UAdventureGameplayAbility;
+class UGameplayEffect;
 
 USTRUCT(BlueprintType)
 struct FAdventureAbilityInfo
@@ -46,6 +47,9 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, Category="StartUpData", meta = (TitleProperty = "InputTag"))
 	TArray<FAdventureAbilityInfo> StartUpAbilityInfo;
+
+	UPROPERTY(EditDefaultsOnly, Category="StartUpData")
+	TArray<TSubclassOf<UGameplayEffect>> StartUpGameplayEffects;
 
 private:
 	void GrantAbilities(const TArray<TSubclassOf<UAdventureGameplayAbility>>& InAbilityToGive, UAdventureAbilitySystemComponent* InASC, int32 ApplyLevel = 1);

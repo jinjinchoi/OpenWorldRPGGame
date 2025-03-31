@@ -23,6 +23,7 @@ public:
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 	/* End IAbilitySystemInterface */
 
+	
 	UFUNCTION(BlueprintCallable)
 	void RegisterSpawnedWeapon(AAdventureWeaponBase* InWeaponToRegister);
 	

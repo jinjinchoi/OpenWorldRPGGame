@@ -19,10 +19,10 @@ AAdventurePlayerCharacter::AAdventurePlayerCharacter()
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationYaw = false;
 	bUseControllerRotationRoll = false;
-
+	
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
 	CameraBoom->SetupAttachment(GetRootComponent());
-	CameraBoom->TargetArmLength = 600.f;
+	CameraBoom->TargetArmLength = 500.f;
 	CameraBoom->SocketOffset = FVector(0.f, 0.f, 60.f);
 	CameraBoom->bUsePawnControlRotation = true;
 
@@ -57,7 +57,7 @@ void AAdventurePlayerCharacter::SetupPlayerInputComponent(UInputComponent* Playe
 		AdventureInputComponent->BindLocomotionInputAction(InputConfigDataAsset, this, AdventureGameplayTags::InputTag_Sprint, ETriggerEvent::Started, &AAdventurePlayerCharacter::Input_Sprint_Started);
 		AdventureInputComponent->BindLocomotionInputAction(InputConfigDataAsset, this, AdventureGameplayTags::InputTag_Sprint, ETriggerEvent::Completed, &AAdventurePlayerCharacter::Input_Sprint_Completed);
 		AdventureInputComponent->BindLocomotionInputAction(InputConfigDataAsset, this, AdventureGameplayTags::InputTag_Walk, ETriggerEvent::Started, &AAdventurePlayerCharacter::Input_Walk);
-		AdventureInputComponent->BindLocomotionInputAction(InputConfigDataAsset, this, AdventureGameplayTags::InputTag_Wheel_Scroll, ETriggerEvent::Started, &AAdventurePlayerCharacter::Input_CameraScroll);
+		AdventureInputComponent->BindLocomotionInputAction(InputConfigDataAsset, this, AdventureGameplayTags::InputTag_Wheel_Scroll, ETriggerEvent::Triggered, &AAdventurePlayerCharacter::Input_CameraScroll);
 
 		AdventureInputComponent->BindAbilityInputAction(InputConfigDataAsset, this, &AAdventurePlayerCharacter::Input_AbilityInputPressed, &AAdventurePlayerCharacter::Input_AbilityInputReleased);
 	}
@@ -119,7 +119,7 @@ void AAdventurePlayerCharacter::Input_CameraScroll(const FInputActionValue& Inpu
 	const float ScrollValue = InputActionValue.Get<float>() * -CameraZoomSpeed;
 	
 	float NewTargetArmLength =  CameraBoom->TargetArmLength + ScrollValue;
-	NewTargetArmLength = FMath::Clamp(NewTargetArmLength, 150.f, 1000.f);
+	NewTargetArmLength = FMath::Clamp(NewTargetArmLength, 150.f, 800.f);
 	
 	CameraBoom->TargetArmLength = FMath::FInterpTo(CameraBoom->TargetArmLength, NewTargetArmLength, GetWorld()->GetDeltaSeconds(), 10.0f);
 }
@@ -153,7 +153,7 @@ void AAdventurePlayerCharacter::StopMove()
 void AAdventurePlayerCharacter::Input_Sprint_Started()
 {
 
-	GetWorld()->GetTimerManager().SetTimer(SprintTimerHandle, this, &AAdventurePlayerCharacter::StartSprint, 1.f, false);
+	GetWorld()->GetTimerManager().SetTimer(SprintTimerHandle, this, &AAdventurePlayerCharacter::StartSprint, 0.5f, false);
 	
 }
 
@@ -197,6 +197,7 @@ void AAdventurePlayerCharacter::Input_Walk()
 		bIsSprint = false;
 	}
 }
+
 
 void AAdventurePlayerCharacter::Jump()
 {
