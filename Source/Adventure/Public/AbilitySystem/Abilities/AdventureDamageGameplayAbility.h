@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "AbilitySystem/Abilities/AdventureGameplayAbility.h"
+#include "AdventureType/AdventureStructTypes.h"
 #include "AdventureDamageGameplayAbility.generated.h"
 
 /**
@@ -13,6 +14,11 @@ UCLASS()
 class ADVENTURE_API UAdventureDamageGameplayAbility : public UAdventureGameplayAbility
 {
 	GENERATED_BODY()
+
+public:
+
+	UFUNCTION(BlueprintPure)
+	FDamageEffectParams MakeDamageEffectParams(AActor* TargetActor, FVector KnockBackDirectionOverride = FVector::ZeroVector) const;
 
 protected:
 	
@@ -25,29 +31,11 @@ protected:
 	FGameplayTag DamageType;
 
 	UPROPERTY(EditDefaultsOnly, Category="Damage", meta=(ClampMin="0.0"))
-	FScalableFloat DamageMultiplier ;
+	FScalableFloat DamageMultiplier;
 	
 	UPROPERTY(EditDefaultsOnly, Category="Damage")
-	float KnockBackChance = 0.f;
-
-	UPROPERTY(EditDefaultsOnly, Category="Damage")
-	FVector KnockBackDirection = FVector::ZeroVector;
-
-	UPROPERTY(EditDefaultsOnly, Category="Damage")
-	float KnockBackForceMagnitude = 1000.f;
+	float KnockBackForceMagnitude = 0.f;
 
 	
-	/* CoolDown */
-	
-	virtual FGameplayTagContainer* GetCooldownTags() const override;
-	virtual void ApplyCooldown(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo) const override;
-	
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category=Cooldown, meta=(Categories = "Cooldown"))
-	FGameplayTagContainer CooldownTags;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category=Cooldown)
-	FScalableFloat CooldownDuration;
-
-	UPROPERTY(Transient)
-	FGameplayTagContainer TempCooldownTags;
 };

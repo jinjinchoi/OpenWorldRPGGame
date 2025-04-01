@@ -5,6 +5,7 @@
 
 #include "AbilitySystem/AdventureAbilitySystemComponent.h"
 #include "AbilitySystem/AdventureAttributeSet.h"
+#include "Item/Weapon/AdventureWeaponBase.h"
 
 
 AAdventureBaseCharacter::AAdventureBaseCharacter()
@@ -23,6 +24,18 @@ AAdventureBaseCharacter::AAdventureBaseCharacter()
 UAbilitySystemComponent* AAdventureBaseCharacter::GetAbilitySystemComponent() const
 {
 	return AbilitySystemComponent;
+}
+
+void AAdventureBaseCharacter::ToggleWeaponCollision_Implementation(const bool bIsEnable, const EAdventureWeaponType AdventureWeaponType)
+{
+	if (AdventureWeaponType == EAdventureWeaponType::Weapon && OwningWeapon)
+	{
+		OwningWeapon->ToggleCollisionEnable(bIsEnable);
+	}
+	else
+	{
+		
+	}
 }
 
 void AAdventureBaseCharacter::RegisterSpawnedWeapon(AAdventureWeaponBase* InWeaponToRegister)

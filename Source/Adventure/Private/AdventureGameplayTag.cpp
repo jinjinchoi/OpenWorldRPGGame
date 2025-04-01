@@ -39,6 +39,10 @@ namespace AdventureGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(Damage_Ice, "Damage.Ice")
 	UE_DEFINE_GAMEPLAY_TAG(Damage_Darkness, "Damage.Darkness")
 	UE_DEFINE_GAMEPLAY_TAG(Damage_Light, "Damage.Light")
+
+	/** Event Tag **/
+	UE_DEFINE_GAMEPLAY_TAG(Event_Hit_Melee, "Event.Hit.Melee")
+
 	
 
 }

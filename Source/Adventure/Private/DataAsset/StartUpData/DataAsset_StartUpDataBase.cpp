@@ -13,35 +13,40 @@ void UDataAsset_StartUpDataBase::GiveToAbilitySystemComponent(UAdventureAbilityS
 	GrantAbilities(ActivateOnGivenAbilities, InASC, ApplyLevel);
 	GrantAbilities(ReactiveAbilities, InASC, ApplyLevel);
 
-	if (StartUpAbilityInfo.IsEmpty()) return;
-	
-	for (const FAdventureAbilityInfo& AbilityInfo : StartUpAbilityInfo)
+	if (!StartUpAbilityInfo.IsEmpty())
 	{
-		if (!AbilityInfo.AbilityToGrant) continue;
-
-		FGameplayAbilitySpec AbilitySpec(AbilityInfo.AbilityToGrant);
-		AbilitySpec.Level = ApplyLevel;
-		AbilitySpec.SourceObject = InASC->GetAvatarActor();
-
-		if (AbilityInfo.InputTag.IsValid())
+		for (const FAdventureAbilityInfo& AbilityInfo : StartUpAbilityInfo)
 		{
-			AbilitySpec.DynamicAbilityTags.AddTag(AbilityInfo.InputTag);
+			if (!AbilityInfo.AbilityToGrant) continue;
+
+			FGameplayAbilitySpec AbilitySpec(AbilityInfo.AbilityToGrant);
+			AbilitySpec.Level = ApplyLevel;
+			AbilitySpec.SourceObject = InASC->GetAvatarActor();
+
+			if (AbilityInfo.InputTag.IsValid())
+			{
+				AbilitySpec.DynamicAbilityTags.AddTag(AbilityInfo.InputTag);
+			}
+
+			InASC->GiveAbility(AbilitySpec);
 		}
-
-		InASC->GiveAbility(AbilitySpec);
-	}
-
-	if (StartUpGameplayEffects.IsEmpty()) return;
-
-	for (const TSubclassOf<UGameplayEffect>& EffectClass : StartUpGameplayEffects)
-	{
-		if (!EffectClass) continue;
-
-		FGameplayEffectContextHandle EffectContextHandle = InASC->MakeEffectContext();
-		FGameplayEffectSpecHandle EffectSpecHandle = InASC->MakeOutgoingSpec(EffectClass, ApplyLevel, EffectContextHandle);
-		InASC->ApplyGameplayEffectSpecToSelf(*EffectSpecHandle.Data.Get());
 		
 	}
+	
+
+	if (!StartUpGameplayEffects.IsEmpty())
+	{
+		for (const TSubclassOf<UGameplayEffect>& EffectClass : StartUpGameplayEffects)
+		{
+			if (!EffectClass) continue;
+
+			FGameplayEffectContextHandle EffectContextHandle = InASC->MakeEffectContext();
+			FGameplayEffectSpecHandle EffectSpecHandle = InASC->MakeOutgoingSpec(EffectClass, ApplyLevel, EffectContextHandle);
+			InASC->ApplyGameplayEffectSpecToSelf(*EffectSpecHandle.Data.Get());
+			
+		}
+	}
+
 	
 	
 }

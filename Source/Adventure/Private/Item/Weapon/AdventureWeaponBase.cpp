@@ -3,7 +3,12 @@
 
 #include "Item/Weapon/AdventureWeaponBase.h"
 
+#include "AbilitySystemBlueprintLibrary.h"
+#include "AdventureGameplayTag.h"
+#include "DebugHelper.h"
+#include "Abilities/GameplayAbilityTypes.h"
 #include "Components/BoxComponent.h"
+#include "Interface/CombatInterface.h"
 
 AAdventureWeaponBase::AAdventureWeaponBase()
 {
@@ -16,6 +21,8 @@ AAdventureWeaponBase::AAdventureWeaponBase()
 	WeaponCollisionBox = CreateDefaultSubobject<UBoxComponent>("WeaponCollisionBox");
 	WeaponCollisionBox->SetupAttachment(GetRootComponent());
 	WeaponCollisionBox->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	WeaponCollisionBox->OnComponentBeginOverlap.AddUniqueDynamic(this, &AAdventureWeaponBase::CollisionBoxBeginOverlap);
+	WeaponCollisionBox->OnComponentEndOverlap.AddUniqueDynamic(this, &AAdventureWeaponBase::CollisionBoxEndOverlap);
 	
 
 }
@@ -27,6 +34,53 @@ void AAdventureWeaponBase::BeginPlay()
 	if (bIsPlayerWeapon)
 	{
 		WeaponMesh->SetVisibility(false);
+	}
+	
+}
+
+void AAdventureWeaponBase::ToggleCollisionEnable(const bool bIsEnable)
+{
+	if (bIsEnable)
+	{
+		WeaponCollisionBox->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	}
+	else
+	{
+		WeaponCollisionBox->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		OverlappedActors.Empty();
+	}
+}
+
+
+void AAdventureWeaponBase::CollisionBoxBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	if (OverlappedActors.Contains(OtherActor) || !OtherActor->Implements<UCombatInterface>()) return;
+
+	APawn* WeaponOwningPawn = GetInstigator();
+
+	checkf(WeaponOwningPawn, TEXT("You need to set Instigator to %s"), *GetName());
+	
+	if (OtherActor != WeaponOwningPawn)
+	{
+		FGameplayEventData Data;
+		Data.Instigator = WeaponOwningPawn;
+		Data.Target = OtherActor;
+
+		UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(WeaponOwningPawn, AdventureGameplayTags::Event_Hit_Melee, Data);
+		
+	}
+}
+
+void AAdventureWeaponBase::CollisionBoxEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+{
+	const APawn* WeaponOwningPawn = GetInstigator();
+
+	checkf(WeaponOwningPawn, TEXT("You need to set Instigator to %s"), *GetName());
+
+	if (OtherActor != WeaponOwningPawn)
+	{
+		
+
 	}
 	
 }

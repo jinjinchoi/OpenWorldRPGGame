@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "AbilitySystemInterface.h"
+#include "Interface/CombatInterface.h"
 #include "AdventureBaseCharacter.generated.h"
 
 class AAdventureWeaponBase;
@@ -12,7 +13,7 @@ class UDataAsset_StartUpDataBase;
 class UAttributeSet;
 
 UCLASS()
-class ADVENTURE_API AAdventureBaseCharacter : public ACharacter, public IAbilitySystemInterface
+class ADVENTURE_API AAdventureBaseCharacter : public ACharacter, public IAbilitySystemInterface, public ICombatInterface
 {
 	GENERATED_BODY()
 
@@ -23,6 +24,9 @@ public:
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 	/* End IAbilitySystemInterface */
 
+	/* Begin ICombat Interface */
+	virtual void ToggleWeaponCollision_Implementation(const bool bIsEnable, const EAdventureWeaponType AdventureWeaponType = EAdventureWeaponType::Weapon) override;
+	/* End ICombat Interface */
 	
 	UFUNCTION(BlueprintCallable)
 	void RegisterSpawnedWeapon(AAdventureWeaponBase* InWeaponToRegister);

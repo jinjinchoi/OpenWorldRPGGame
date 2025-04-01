@@ -3,6 +3,10 @@
 
 #include "Character/AdventureEnemyCharacter.h"
 
+#include "DebugHelper.h"
+#include "AbilitySystem/AdventureAbilitySystemComponent.h"
+#include "DataAsset/StartUpData/DataAsset_StartUpDataBase.h"
+#include "Engine/AssetManager.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
 AAdventureEnemyCharacter::AAdventureEnemyCharacter()
@@ -18,5 +22,34 @@ AAdventureEnemyCharacter::AAdventureEnemyCharacter()
 	GetCharacterMovement()->RotationRate = FRotator(0.0f, 180.f, 0.f);
 	GetCharacterMovement()->MaxWalkSpeed = MaxWalkSpeed;
 	GetCharacterMovement()->BrakingDecelerationWalking = 1000.f;
+	
+}
+
+void AAdventureEnemyCharacter::PossessedBy(AController* NewController)
+{
+	Super::PossessedBy(NewController);
+
+	InitEnemyStartUpData();
+	
+}
+
+void AAdventureEnemyCharacter::InitEnemyStartUpData() const
+{
+	if (CharacterStartUpData.IsNull())
+	{
+		DebugHelper::Print(FString::Printf(TEXT("You need to assign startup data to %s"), *GetName()), FColor::Yellow);
+		return;
+	}
+
+	UAssetManager::GetStreamableManager().RequestAsyncLoad(
+		CharacterStartUpData.ToSoftObjectPath(),
+		FStreamableDelegate::CreateLambda([this]
+		{
+			if (UDataAsset_StartUpDataBase* LoadedData = CharacterStartUpData.Get())
+			{
+				LoadedData->GiveToAbilitySystemComponent(Cast<UAdventureAbilitySystemComponent>(AbilitySystemComponent));
+			}
+		})
+	);
 	
 }
