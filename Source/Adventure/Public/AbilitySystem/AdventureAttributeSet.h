@@ -64,42 +64,48 @@ public:
 	virtual void PostGameplayEffectExecute(const struct FGameplayEffectModCallbackData& Data) override;
 	/* End UAttributeSet */
 
-	/* 공격력 */
+	
+	/** 주속성 **/
 	UPROPERTY(BlueprintReadOnly, Category="Combat Attribute")
-	FGameplayAttributeData AttackPower;
+	FGameplayAttributeData AttackPower; /* 공격력 */
 	ATTRIBUTE_ACCESSORS(UAdventureAttributeSet, AttackPower);
-
-	/* 방어력 */
+	
 	UPROPERTY(BlueprintReadOnly, Category="Combat Attribute")
-	FGameplayAttributeData DefensePower;
+	FGameplayAttributeData DefensePower; /* 방어력 */
 	ATTRIBUTE_ACCESSORS(UAdventureAttributeSet, DefensePower);
-
-	/* 치명타 확률 */
+	
 	UPROPERTY(BlueprintReadOnly, Category="Combat Attribute")
-	FGameplayAttributeData CriticalChance;
+	FGameplayAttributeData CriticalChance; /* 치명타 확률 */
 	ATTRIBUTE_ACCESSORS(UAdventureAttributeSet, CriticalChance);
 	
-	/* 치명타 배율 */
 	UPROPERTY(BlueprintReadOnly, Category="Combat Attribute")
-	FGameplayAttributeData CriticalMagnitude;
+	FGameplayAttributeData CriticalMagnitude; /* 치명타 배율 */
 	ATTRIBUTE_ACCESSORS(UAdventureAttributeSet, CriticalMagnitude);
 	
 	UPROPERTY(BlueprintReadOnly, Category="Vital Attribute")
-	FGameplayAttributeData CurrentHealth;
+	FGameplayAttributeData CurrentHealth; /* 현재 체력 */
 	ATTRIBUTE_ACCESSORS(UAdventureAttributeSet, CurrentHealth);
 	
 	UPROPERTY(BlueprintReadOnly, Category="Vital Attribute")
-	FGameplayAttributeData MaxHealth;
+	FGameplayAttributeData MaxHealth; /* 최대 체력 */
 	ATTRIBUTE_ACCESSORS(UAdventureAttributeSet, MaxHealth);
 	
 	UPROPERTY(BlueprintReadOnly, Category="Vital Attribute")
-	FGameplayAttributeData CurrentStamina;
+	FGameplayAttributeData CurrentStamina; /* 현재 기력 */
 	ATTRIBUTE_ACCESSORS(UAdventureAttributeSet, CurrentStamina);
 
 	UPROPERTY(BlueprintReadOnly, Category="Vital Attribute")
-	FGameplayAttributeData MaxStamina;
+	FGameplayAttributeData MaxStamina; /* 최대 기력 */
 	ATTRIBUTE_ACCESSORS(UAdventureAttributeSet, MaxStamina);
 
+	
+	/** 데미지 관련 속성  **/
+	UPROPERTY(BlueprintReadOnly, Category="Damage Attribute")
+	FGameplayAttributeData IncomingDamage;
+	ATTRIBUTE_ACCESSORS(UAdventureAttributeSet, IncomingDamage);
+
+	
+	
 private:
 	void SetEffectProperties(const FGameplayEffectModCallbackData& Data, FEffectProperties& Props);
 	
