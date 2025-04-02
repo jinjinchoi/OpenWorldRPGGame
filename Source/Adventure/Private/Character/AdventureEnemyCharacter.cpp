@@ -5,9 +5,11 @@
 
 #include "DebugHelper.h"
 #include "AbilitySystem/AdventureAbilitySystemComponent.h"
+#include "Components/CapsuleComponent.h"
 #include "DataAsset/StartUpData/DataAsset_StartUpDataBase.h"
 #include "Engine/AssetManager.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Item/Weapon/AdventureWeaponBase.h"
 
 AAdventureEnemyCharacter::AAdventureEnemyCharacter()
 {
@@ -23,6 +25,17 @@ AAdventureEnemyCharacter::AAdventureEnemyCharacter()
 	GetCharacterMovement()->MaxWalkSpeed = MaxWalkSpeed;
 	GetCharacterMovement()->BrakingDecelerationWalking = 1000.f;
 	
+}
+
+void AAdventureEnemyCharacter::OnEnemyDied_Implementation()
+{
+	AutoPossessAI = EAutoPossessAI::Disabled;
+	if (AController* AIController = GetController())
+	{
+		AIController->UnPossess();
+	}
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	GetMesh()->bPauseAnims = true;
 }
 
 void AAdventureEnemyCharacter::PossessedBy(AController* NewController)

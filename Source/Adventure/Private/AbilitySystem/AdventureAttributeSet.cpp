@@ -4,7 +4,11 @@
 #include "AbilitySystem/AdventureAttributeSet.h"
 #include "GameplayEffectExtension.h"
 #include "AbilitySystemBlueprintLibrary.h"
+#include "AdventureFunctionLibrary.h"
+#include "AdventureGameplayTag.h"
+#include "Controller/AdventurePlayerController.h"
 #include "GameFramework/Character.h"
+#include "Kismet/GameplayStatics.h"
 
 void UAdventureAttributeSet::SetEffectProperties(const FGameplayEffectModCallbackData& Data, FEffectProperties& Props)
 {
@@ -85,15 +89,53 @@ void UAdventureAttributeSet::HandleIncomingDamage(const FEffectProperties& Props
 {
 	const float LocalIncomingDamage = GetIncomingDamage();
 	SetIncomingDamage(0.f);
+	
 
 	if (LocalIncomingDamage <= 0) return;
 
 	const float NewHealth = GetCurrentHealth() - LocalIncomingDamage;
 	SetCurrentHealth(FMath::Clamp(NewHealth, 0.f, GetMaxHealth()));
-
 	if (NewHealth <= 0)
 	{
-		// TODO : Handle Death
+		UAdventureFunctionLibrary::AddGameplayTagToActorIfNone(Props.TargetCharacter, AdventureGameplayTags::Status_Dead);
+		// TODO : 소울(보상) 시스템 추가해야함.
 	}
+	else
+	{
+
+		FGameplayEventData Data;
+		// TODO : 방향성 Hit 구현해야함 Data.EventTag = ;
+		
+		UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(
+			Props.TargetCharacter,
+			AdventureGameplayTags::Event_HitReact,
+			Data
+		);
+	}
+
+
+	// 타격시 아주 짧은 시간동안 시간 지연
+	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(
+		Props.SourceCharacter,
+		AdventureGameplayTags::Event_HitPause,
+		FGameplayEventData()
+	);
+
 	
+	// Call Show Damage Text
+	ShowDamageText(Props, LocalIncomingDamage);
+	
+}
+
+void UAdventureAttributeSet::ShowDamageText(const FEffectProperties& Props, const float Damage)
+{
+	if (Props.SourceCharacter != Props.TargetCharacter)
+	{
+		if (AAdventurePlayerController* PC = Cast<AAdventurePlayerController>(UGameplayStatics::GetPlayerController(Props.SourceCharacter, 0)))
+		{
+			const bool bIsCriticalHit = UAdventureFunctionLibrary::IsCriticalHit(Props.EffectContextHandle);
+			const FGameplayTag& DamageType = UAdventureFunctionLibrary::GetDamageType(Props.EffectContextHandle);
+			PC->ShowDamageNumber(Damage, Props.TargetCharacter, bIsCriticalHit, DamageType);
+		}
+	}
 }

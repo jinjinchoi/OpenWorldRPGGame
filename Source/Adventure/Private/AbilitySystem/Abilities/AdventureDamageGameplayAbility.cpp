@@ -8,6 +8,8 @@
 
 FDamageEffectParams UAdventureDamageGameplayAbility::MakeDamageEffectParams(AActor* TargetActor, FVector KnockBackDirectionOverride) const
 {
+	check(DamageEffectClass);
+	
 	FDamageEffectParams Params;
 
 	Params.WorldContextObject = GetAvatarActorFromActorInfo();
