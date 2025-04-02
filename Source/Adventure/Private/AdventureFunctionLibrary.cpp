@@ -125,7 +125,7 @@ FActiveGameplayEffectHandle UAdventureFunctionLibrary::ApplyDamageEffect(const F
 		ContextHandle
 	);
 
-	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, AdventureGameplayTags::Damage, DamageEffectParams.DamageCoefficient);
+	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, DamageEffectParams.DamageType, DamageEffectParams.DamageCoefficient);
 
 	return DamageEffectParams.TargetAbilitySystemComponent->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data);
 	

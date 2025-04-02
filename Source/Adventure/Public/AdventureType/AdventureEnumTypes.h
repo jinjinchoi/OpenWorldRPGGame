@@ -9,12 +9,3 @@ enum class EAdventureWeaponType : uint8
 	LeftHand,
 	RightHand
 };
-
-UENUM()
-enum class EHitDirectionType : uint8
-{
-	Forward,
-	Backward,
-	Left,
-	Right
-};

@@ -45,7 +45,7 @@ UAdventureAttributeSet::UAdventureAttributeSet()
 void UAdventureAttributeSet::PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue)
 {
 	Super::PreAttributeChange(Attribute, NewValue);
-
+	
 	if (Attribute == GetCurrentHealthAttribute())
 	{
 		NewValue = FMath::Clamp<float>(NewValue, 0.0f, GetMaxHealth());
@@ -54,6 +54,7 @@ void UAdventureAttributeSet::PreAttributeChange(const FGameplayAttribute& Attrib
 	{
 		NewValue = FMath::Clamp<float>(NewValue, 0.0f, GetMaxStamina());
 	}
+
 	
 }
 
@@ -61,6 +62,38 @@ void UAdventureAttributeSet::PostGameplayEffectExecute(const struct FGameplayEff
 {
 	Super::PostGameplayEffectExecute(Data);
 	
+	FEffectProperties Props;
+	SetEffectProperties(Data, Props);
+	
+	if (Data.EvaluatedData.Attribute == GetCurrentHealthAttribute())
+	{
+		SetCurrentHealth(FMath::Clamp(GetCurrentHealth(), 0.f, GetMaxHealth()));
+	}
+	if (Data.EvaluatedData.Attribute == GetCurrentStaminaAttribute())
+	{
+		SetCurrentStamina(FMath::Clamp(GetCurrentStamina(), 0.f, GetMaxStamina()));
+	}
+	if (Data.EvaluatedData.Attribute == GetIncomingDamageAttribute())
+	{
+		HandleIncomingDamage(Props);
+	}
+	
 }
 
 
+void UAdventureAttributeSet::HandleIncomingDamage(const FEffectProperties& Props)
+{
+	const float LocalIncomingDamage = GetIncomingDamage();
+	SetIncomingDamage(0.f);
+
+	if (LocalIncomingDamage <= 0) return;
+
+	const float NewHealth = GetCurrentHealth() - LocalIncomingDamage;
+	SetCurrentHealth(FMath::Clamp(NewHealth, 0.f, GetMaxHealth()));
+
+	if (NewHealth <= 0)
+	{
+		// TODO : Handle Death
+	}
+	
+}

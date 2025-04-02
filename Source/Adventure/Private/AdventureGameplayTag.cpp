@@ -23,13 +23,18 @@ namespace AdventureGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(Status_CanHeavyAttack, "Status.CanHeavyAttack")
 	UE_DEFINE_GAMEPLAY_TAG(Status_HeavyAttackActive, "Status.HeavyAttackActive")
 	UE_DEFINE_GAMEPLAY_TAG(Status_Dodging, "Status.Dodging")
+	
+	UE_DEFINE_GAMEPLAY_TAG(Status_HitReact, "Status.HitReact")
+	UE_DEFINE_GAMEPLAY_TAG(Status_HitReact_Front, "Status.HitReact.Front")
+	UE_DEFINE_GAMEPLAY_TAG(Status_HitReact_Back, "Status.HitReact.Back")
+	UE_DEFINE_GAMEPLAY_TAG(Status_HitReact_Left, "Status.HitReact.Left")
+	UE_DEFINE_GAMEPLAY_TAG(Status_HitReact_Right, "Status.HitReact.Right")
 
 	
 	/** Ability Tag **/
 	UE_DEFINE_GAMEPLAY_TAG(Ability_Player_Attack_Normal, "Ability.Player.Attack.Normal")
 	UE_DEFINE_GAMEPLAY_TAG(Ability_Player_Attack_Heavy, "Ability.Player.Attack.Heavy")
 	UE_DEFINE_GAMEPLAY_TAG(Ability_Player_Dodge, "Ability.Player.Dodge")
-
 	
 	
 	/** Damage Type Tag **/
