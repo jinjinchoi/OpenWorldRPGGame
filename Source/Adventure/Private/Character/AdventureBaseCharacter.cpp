@@ -5,10 +5,12 @@
 
 #include "AbilitySystem/AdventureAbilitySystemComponent.h"
 #include "AbilitySystem/AdventureAttributeSet.h"
+#include "Component/Movement/AdventureMovementComponent.h"
 #include "Item/Weapon/AdventureWeaponBase.h"
 
 
-AAdventureBaseCharacter::AAdventureBaseCharacter()
+AAdventureBaseCharacter::AAdventureBaseCharacter(const FObjectInitializer& ObjectInitializer)
+	: Super(ObjectInitializer.SetDefaultSubobjectClass<UAdventureMovementComponent>(ACharacter::CharacterMovementComponentName))
 {
 
 	PrimaryActorTick.bCanEverTick = false;

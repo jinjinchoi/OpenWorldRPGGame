@@ -9,12 +9,14 @@
 #include "EnhancedInputSubsystems.h"
 #include "AbilitySystem/AdventureAbilitySystemComponent.h"
 #include "Component/Input/AdventureInputComponent.h"
+#include "Component/Movement/AdventureMovementComponent.h"
 #include "DataAsset/Input/DataAsset_InputConfig.h"
 #include "DataAsset/StartUpData/DataAsset_StartUpDataBase.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 
-AAdventurePlayerCharacter::AAdventurePlayerCharacter()
+AAdventurePlayerCharacter::AAdventurePlayerCharacter(const FObjectInitializer& ObjectInitializer)
+	: Super(ObjectInitializer)
 {
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationYaw = false;
@@ -29,6 +31,8 @@ AAdventurePlayerCharacter::AAdventurePlayerCharacter()
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
 	FollowCamera->bUsePawnControlRotation = false;
+
+	AdventureMovementComponent = Cast<UAdventureMovementComponent>(GetCharacterMovement());
 
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 	GetCharacterMovement()->RotationRate = FRotator(0.0f, 500.f, 0.f);
@@ -126,6 +130,14 @@ void AAdventurePlayerCharacter::Input_CameraScroll(const FInputActionValue& Inpu
 
 void AAdventurePlayerCharacter::Input_Move(const FInputActionValue& InputActionValue)
 {
+	ClimbActionStarted();
+
+	if (AdventureMovementComponent && AdventureMovementComponent->IsClimbing())
+	{
+		ClimbMovement(InputActionValue);
+		return;
+	}
+	
 	const FVector2D MovementVector = InputActionValue.Get<FVector2D>();
 	const FRotator MovementRotation(0.f, Controller->GetControlRotation().Yaw, 0.f);
 
@@ -149,6 +161,26 @@ void AAdventurePlayerCharacter::StopMove()
 		StopSprint();
 	}
 }
+
+void AAdventurePlayerCharacter::ClimbMovement(const FInputActionValue& InputActionValue)
+{
+	const FVector2D MovementVector = InputActionValue.Get<FVector2D>();
+
+	const FVector ForwardDirection = FVector::CrossProduct(
+		-AdventureMovementComponent->GetClimbableSurfaceNormal(),
+		GetActorRightVector()
+	);
+
+	const FVector RightDirection = FVector::CrossProduct(
+		-AdventureMovementComponent->GetClimbableSurfaceNormal(),
+		-GetActorUpVector()
+	);
+
+	AddMovementInput(ForwardDirection, MovementVector.Y);
+	AddMovementInput(RightDirection, MovementVector.X);
+	
+}
+
 
 void AAdventurePlayerCharacter::Input_Sprint_Started()
 {
@@ -199,6 +231,8 @@ void AAdventurePlayerCharacter::Input_Walk()
 }
 
 
+
+
 void AAdventurePlayerCharacter::Jump()
 {
 	Super::Jump();
@@ -217,6 +251,27 @@ void AAdventurePlayerCharacter::Input_AbilityInputReleased(FGameplayTag InInputT
 	if (UAdventureAbilitySystemComponent* AdventureASC = Cast<UAdventureAbilitySystemComponent>(AbilitySystemComponent))
 	{
 		AdventureASC->OnAbilityInputReleased(InInputTag);
+	}
+}
+
+void AAdventurePlayerCharacter::ClimbActionStarted()
+{
+	if (!AdventureMovementComponent) return;
+
+	if (!AdventureMovementComponent->IsClimbing())
+	{
+		AdventureMovementComponent->ToggleClimbing(true);
+	}
+	
+}
+
+void AAdventurePlayerCharacter::ClimbActionCompleted()
+{
+	if (!AdventureMovementComponent) return;
+
+	if (AdventureMovementComponent->IsClimbing())
+	{
+		AdventureMovementComponent->ToggleClimbing(false);
 	}
 }
 

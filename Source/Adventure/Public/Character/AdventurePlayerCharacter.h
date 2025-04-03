@@ -8,6 +8,7 @@
 #include "Interface/PlayerInterface.h"
 #include "AdventurePlayerCharacter.generated.h"
 
+class UAdventureMovementComponent;
 struct FInputActionValue;
 class UDataAsset_InputConfig;
 class USpringArmComponent;
@@ -21,7 +22,7 @@ class ADVENTURE_API AAdventurePlayerCharacter : public AAdventureBaseCharacter, 
 	GENERATED_BODY()
 
 public:
-	AAdventurePlayerCharacter();
+	AAdventurePlayerCharacter(const FObjectInitializer& ObjectInitializer);
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
 
 	/* Begin Player Interface */
@@ -45,11 +46,14 @@ protected:
 
 #pragma region Components
 	
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera")
 	TObjectPtr<UCameraComponent> FollowCamera;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera")
 	TObjectPtr<USpringArmComponent> CameraBoom;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Movement")
+	TObjectPtr<UAdventureMovementComponent> AdventureMovementComponent;
 	
 #pragma endregion
 
@@ -68,6 +72,7 @@ protected:
 	
 	void Input_Move(const FInputActionValue& InputActionValue);
 	void StopMove();
+	void ClimbMovement(const FInputActionValue& InputActionValue);
 	
 	void Input_Sprint_Started();
 	void Input_Sprint_Completed();
@@ -79,8 +84,13 @@ protected:
 	
 	void Input_Walk();
 
+
 	void Input_AbilityInputPressed(FGameplayTag InInputTag);
 	void Input_AbilityInputReleased(FGameplayTag InInputTag);
+
+	/* Climb */
+	void ClimbActionStarted();
+	void ClimbActionCompleted();
 	
 	
 #pragma endregion
@@ -89,6 +99,8 @@ protected:
 	void SetWeaponMeshVisibility(bool bIsVisible);
 	
 private:
-	
+
+public:
+	FORCEINLINE UAdventureMovementComponent* GetAdventureMovementComponent() const { return AdventureMovementComponent; }
 	
 };

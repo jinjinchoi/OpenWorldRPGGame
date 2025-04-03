@@ -9,3 +9,12 @@ enum class EAdventureWeaponType : uint8
 	LeftHand,
 	RightHand
 };
+
+UENUM(BlueprintType)
+namespace ECustomMovementMode
+{
+	enum Type
+	{
+		MOVE_Climb UMETA(DisplayName = "Climb Mode"),
+	};
+}

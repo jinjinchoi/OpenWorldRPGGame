@@ -16,7 +16,7 @@ class ADVENTURE_API AAdventureEnemyCharacter : public AAdventureBaseCharacter, p
 	GENERATED_BODY()
 
 public:
-	AAdventureEnemyCharacter();
+	AAdventureEnemyCharacter(const FObjectInitializer& ObjectInitializer);
 	virtual void OnEnemyDied_Implementation() override;
 
 protected:

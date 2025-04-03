@@ -14,11 +14,13 @@ namespace AdventureGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(InputTag_NormalAttack, "InputTag.NormalAttack");
 	UE_DEFINE_GAMEPLAY_TAG(InputTag_HeavyAttack, "InputTag.HeavyAttack");
 	UE_DEFINE_GAMEPLAY_TAG(InputTag_Dodge, "InputTag.Dodge");
+	UE_DEFINE_GAMEPLAY_TAG(InputTag_StopClimb, "InputTag.StopClimb");
 
 	
 	/** Status Tag **/
 	UE_DEFINE_GAMEPLAY_TAG(Status_Locomotion_Sprint, "Status.Locomotion.Sprint")
 	UE_DEFINE_GAMEPLAY_TAG(Status_Locomotion_Falling, "Status.Locomotion.Falling")
+	UE_DEFINE_GAMEPLAY_TAG(Status_Locomotion_Climbing, "Status.Locomotion.Climbing")
 	
 	UE_DEFINE_GAMEPLAY_TAG(Status_CanHeavyAttack, "Status.CanHeavyAttack")
 	UE_DEFINE_GAMEPLAY_TAG(Status_HeavyAttackActive, "Status.HeavyAttackActive")

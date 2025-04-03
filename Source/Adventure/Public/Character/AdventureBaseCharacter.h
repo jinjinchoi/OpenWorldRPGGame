@@ -18,7 +18,7 @@ class ADVENTURE_API AAdventureBaseCharacter : public ACharacter, public IAbility
 	GENERATED_BODY()
 
 public:
-	AAdventureBaseCharacter();
+	AAdventureBaseCharacter(const FObjectInitializer& ObjectInitializer);
 
 	/* Begin IAbilitySystemInterface */
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;

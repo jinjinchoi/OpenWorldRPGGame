@@ -9,9 +9,9 @@
 #include "DataAsset/StartUpData/DataAsset_StartUpDataBase.h"
 #include "Engine/AssetManager.h"
 #include "GameFramework/CharacterMovementComponent.h"
-#include "Item/Weapon/AdventureWeaponBase.h"
 
-AAdventureEnemyCharacter::AAdventureEnemyCharacter()
+AAdventureEnemyCharacter::AAdventureEnemyCharacter(const FObjectInitializer& ObjectInitializer)
+	: Super(ObjectInitializer)
 {
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 
