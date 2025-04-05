@@ -9,9 +9,9 @@ void UAdventurePlayerAnimInstance::NativeInitializeAnimation()
 {
 	Super::NativeInitializeAnimation();
 
-	if (const AAdventurePlayerCharacter* PlayerCharacter = Cast<AAdventurePlayerCharacter>(OwningCharacter))
+	if (OwningMovementComponent)
 	{
-		AdventureMovementComponent = PlayerCharacter->GetAdventureMovementComponent();
+		AdventureMovementComponent = Cast<UAdventureMovementComponent>(OwningMovementComponent);
 	}
 	
 }
@@ -20,8 +20,11 @@ void UAdventurePlayerAnimInstance::NativeThreadSafeUpdateAnimation(float DeltaSe
 {
 	Super::NativeThreadSafeUpdateAnimation(DeltaSeconds);
 
+	if (!OwningCharacter || !AdventureMovementComponent) return;
+	
 	AirSpeed = OwningCharacter->GetVelocity().Z;
 	bIsClimbing = AdventureMovementComponent->IsClimbing();
+	ClimbVelocity = AdventureMovementComponent->GetUnrotatedClimbVelocity();
 	
 	
 }

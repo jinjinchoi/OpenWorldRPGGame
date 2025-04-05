@@ -7,7 +7,22 @@
 #include "AdventureType/AdventureEnumTypes.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/Character.h"
+#include "Kismet/KismetMathLibrary.h"
 #include "Kismet/KismetSystemLibrary.h"
+
+void UAdventureMovementComponent::BeginPlay()
+{
+	Super::BeginPlay();
+
+	OwningPlayerAnimInstance = CharacterOwner->GetMesh()->GetAnimInstance();
+	if (OwningPlayerAnimInstance)
+	{
+		OwningPlayerAnimInstance->OnMontageEnded.AddDynamic(this, &UAdventureMovementComponent::OnClimbMontageEnded);
+		OwningPlayerAnimInstance->OnMontageBlendingOut.AddDynamic(this, &UAdventureMovementComponent::OnClimbMontageEnded);
+		
+	}
+}
+
 
 void UAdventureMovementComponent::OnMovementModeChanged(EMovementMode PreviousMovementMode, uint8 PreviousCustomMode)
 {
@@ -68,6 +83,18 @@ float UAdventureMovementComponent::GetMaxAcceleration() const
 	else
 	{
 		return Super::GetMaxAcceleration();
+	}
+}
+
+FVector UAdventureMovementComponent::ConstrainAnimRootMotionVelocity(const FVector& RootMotionVelocity, const FVector& CurrentVelocity) const
+{
+	if (IsFalling() && OwningPlayerAnimInstance && OwningPlayerAnimInstance->IsAnyMontagePlaying())
+	{
+		return RootMotionVelocity;
+	}
+	else
+	{
+		return Super::ConstrainAnimRootMotionVelocity(RootMotionVelocity, CurrentVelocity);
 	}
 }
 
@@ -141,7 +168,7 @@ void UAdventureMovementComponent::ToggleClimbing(bool bEnableClimb)
 	{
 		if (CanStartClimbing())
 		{
-			StartClimbing();
+			PlayClimbMontage(IdleToClimbMontage);
 		}
 	}
 	else
@@ -154,6 +181,7 @@ bool UAdventureMovementComponent::IsClimbing() const
 {
 	return MovementMode == MOVE_Custom && CustomMovementMode == ECustomMovementMode::MOVE_Climb;
 }
+
 
 bool UAdventureMovementComponent::CanStartClimbing()
 {
@@ -186,8 +214,8 @@ void UAdventureMovementComponent::PhysClimb(float deltaTime, int32 Iterations)
 	TraceClimbableSurfaces();
 	ProcessClimbableSurfaceInfo();
 	
-	/* Check if we should stop climbing  || CheckHasReachedFloor()*/
-	if (CheckShouldStopClimbing())
+	/* Check if we should stop climbing */
+	if (CheckShouldStopClimbing() || CheckHasReachedFloor())
 	{
 		StopClimbing();
 	} 
@@ -222,13 +250,12 @@ void UAdventureMovementComponent::PhysClimb(float deltaTime, int32 Iterations)
 
 	/* Snap movement to climbable surface */
 	SnapMovementToClimbableSurfaces(deltaTime);
-
-	/*
+	
 	if (CheckHasReachedLedge())
 	{
 		PlayClimbMontage(ClimbToTopMontage);
 	}
-	*/
+
 }
 
 void UAdventureMovementComponent::ProcessClimbableSurfaceInfo()
@@ -265,6 +292,26 @@ bool UAdventureMovementComponent::CheckShouldStopClimbing()
 	
 }
 
+bool UAdventureMovementComponent::CheckHasReachedFloor()
+{
+	const FVector DownVector = -UpdatedComponent->GetUpVector();
+	const FVector StartOffset = DownVector * 50.f;
+	const FVector Start = UpdatedComponent->GetComponentLocation() + StartOffset;
+	const FVector End = Start + DownVector;
+
+	TArray<FHitResult> PossibleFloorHits = DoCapsuleTraceMultiByObject(Start, End);
+
+	if (PossibleFloorHits.IsEmpty()) return false;
+
+	for (const FHitResult& PossibleFloorHit : PossibleFloorHits)
+	{
+		return FVector::Parallel(-PossibleFloorHit.ImpactNormal, FVector::UpVector) && GetUnrotatedClimbVelocity().Z < -10.f;
+	}
+
+	return false;
+}
+
+
 FQuat UAdventureMovementComponent::GetClimbRotation(float DeltaTime) const
 {
 	const FQuat CurrentQuat = UpdatedComponent->GetComponentQuat();
@@ -295,4 +342,49 @@ void UAdventureMovementComponent::SnapMovementToClimbableSurfaces(float DeltaTim
 		true
 	);
 	
+}
+
+bool UAdventureMovementComponent::CheckHasReachedLedge()
+{
+	FHitResult LedgeHitResult = TraceFromEyeHeight(100.f, 50.f);
+	if (!LedgeHitResult.bBlockingHit)
+	{
+		const FVector WalkableSurfaceTraceStart = LedgeHitResult.TraceEnd;
+		const FVector DownVector = -UpdatedComponent->GetUpVector();
+		const FVector WalkableSurfaceTraceEnd = WalkableSurfaceTraceStart + DownVector * 100.f;
+
+		FHitResult WalkableSurfaceHitResult = DoLineTraceSingleByObject(WalkableSurfaceTraceStart, WalkableSurfaceTraceEnd);
+		if (WalkableSurfaceHitResult.bBlockingHit && GetUnrotatedClimbVelocity().Z > 10.f)
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
+void UAdventureMovementComponent::PlayClimbMontage(UAnimMontage* MontageToPlay)
+{
+	if (!MontageToPlay) return;
+	if (!OwningPlayerAnimInstance) return;
+	if (OwningPlayerAnimInstance->IsAnyMontagePlaying()) return;
+
+	OwningPlayerAnimInstance->Montage_Play(MontageToPlay);
+}
+
+void UAdventureMovementComponent::OnClimbMontageEnded(UAnimMontage* Montage, bool bInterrupted)
+{
+	if (Montage == IdleToClimbMontage)
+	{
+		StartClimbing();
+	}
+	else
+	{
+		SetMovementMode(MOVE_Walking);
+	}
+}
+
+FVector UAdventureMovementComponent::GetUnrotatedClimbVelocity() const
+{
+	return UKismetMathLibrary::Quat_UnrotateVector(UpdatedComponent->GetComponentQuat(), Velocity);
 }

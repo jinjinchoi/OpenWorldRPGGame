@@ -130,8 +130,6 @@ void AAdventurePlayerCharacter::Input_CameraScroll(const FInputActionValue& Inpu
 
 void AAdventurePlayerCharacter::Input_Move(const FInputActionValue& InputActionValue)
 {
-	ClimbActionStarted();
-
 	if (AdventureMovementComponent && AdventureMovementComponent->IsClimbing())
 	{
 		ClimbMovement(InputActionValue);
@@ -140,6 +138,11 @@ void AAdventurePlayerCharacter::Input_Move(const FInputActionValue& InputActionV
 	
 	const FVector2D MovementVector = InputActionValue.Get<FVector2D>();
 	const FRotator MovementRotation(0.f, Controller->GetControlRotation().Yaw, 0.f);
+
+	if (MovementVector.Y >= 0)
+	{
+		ClimbActionStarted();
+	}
 
 	if (MovementVector.Y != 0.f)
 	{

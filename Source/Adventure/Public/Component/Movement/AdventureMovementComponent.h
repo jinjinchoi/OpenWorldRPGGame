@@ -21,11 +21,14 @@ protected:
 	bool bShowDebugShape = false;
 
 #pragma region OverridenFunctions
-	
+
+	virtual void BeginPlay() override;
 	virtual void OnMovementModeChanged(EMovementMode PreviousMovementMode, uint8 PreviousCustomMode) override;
 	virtual void PhysCustom(float deltaTime, int32 Iterations) override;
 	virtual float GetMaxSpeed() const override;
 	virtual float GetMaxAcceleration() const override;
+	virtual FVector ConstrainAnimRootMotionVelocity(const FVector& RootMotionVelocity, const FVector& CurrentVelocity) const override;
+	
 	
 #pragma endregion 
 	
@@ -48,8 +51,14 @@ private:
 	void PhysClimb(float deltaTime, int32 Iterations);
 	void ProcessClimbableSurfaceInfo();
 	bool CheckShouldStopClimbing();
+	bool CheckHasReachedFloor();
 	FQuat GetClimbRotation(float DeltaTime) const;
 	void SnapMovementToClimbableSurfaces(float DeltaTime);
+	bool CheckHasReachedLedge();
+	void PlayClimbMontage(UAnimMontage* MontageToPlay);
+
+	UFUNCTION()
+	void OnClimbMontageEnded(UAnimMontage* Montage, bool bInterrupted);
 
 	
 #pragma endregion
@@ -59,6 +68,9 @@ private:
 	TArray<FHitResult> ClimbableSurfacesTracedResults;
 	FVector CurrentClimbableSurfaceLocation;
 	FVector CurrentClimbableSurfaceNormal;
+
+	UPROPERTY()
+	TObjectPtr<UAnimInstance> OwningPlayerAnimInstance;
 	
 #pragma endregion 
 	
@@ -68,7 +80,7 @@ private:
 	TArray<TEnumAsByte<EObjectTypeQuery>> ClimbableSurfaceTraceTypes;
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Character Movement : Climbing", meta=(AllowPrivateAccess=true))
-	float ClimbCapsuleTraceRadius = 50.f;
+	float ClimbCapsuleTraceRadius = 40.f;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Character Movement : Climbing", meta=(AllowPrivateAccess=true))
 	float ClimbCapsuleTraceHalfHeight = 72.f;
@@ -77,10 +89,16 @@ private:
 	float MaxBreakClimbDeceleration = 600.f;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Character Movement : Climbing", meta=(AllowPrivateAccess=true))
-	float MaxClimbSpeed = 150.f;
+	float MaxClimbSpeed = 100.f;
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Character Movement : Climbing", meta=(AllowPrivateAccess=true))
 	float MaxClimbAcceleration = 400.f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Character Movement : Climbing", meta=(AllowPrivateAccess=true))
+	TObjectPtr<UAnimMontage> IdleToClimbMontage;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Character Movement : Climbing", meta=(AllowPrivateAccess=true))
+	TObjectPtr<UAnimMontage> ClimbToTopMontage;
 
 #pragma endregion
 
@@ -96,5 +114,6 @@ public:
 	
 	FORCEINLINE void SetCapsuleComponentHalfHeight(const float InCapsuleHalfHeight) { CachedOwnerCapsuleHalfHeight = InCapsuleHalfHeight; }
 	FORCEINLINE FVector GetClimbableSurfaceNormal() const { return CurrentClimbableSurfaceNormal; }
+	FVector GetUnrotatedClimbVelocity() const;
 	
 };
