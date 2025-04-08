@@ -54,18 +54,43 @@ void AAdventurePlayerCharacter::SetupPlayerInputComponent(UInputComponent* Playe
 
 	if (UAdventureInputComponent* AdventureInputComponent = Cast<UAdventureInputComponent>(PlayerInputComponent))
 	{
-		AdventureInputComponent->BindLocomotionInputAction(InputConfigDataAsset, this, AdventureGameplayTags::InputTag_Look, ETriggerEvent::Triggered, &AAdventurePlayerCharacter::Input_Look);
-		AdventureInputComponent->BindLocomotionInputAction(InputConfigDataAsset, this, AdventureGameplayTags::InputTag_Jump, ETriggerEvent::Triggered, &AAdventurePlayerCharacter::Jump);
-		AdventureInputComponent->BindLocomotionInputAction(InputConfigDataAsset, this, AdventureGameplayTags::InputTag_Move, ETriggerEvent::Triggered, &AAdventurePlayerCharacter::Input_Move);
-		AdventureInputComponent->BindLocomotionInputAction(InputConfigDataAsset, this, AdventureGameplayTags::InputTag_Move, ETriggerEvent::Completed, &AAdventurePlayerCharacter::StopMove);
-		AdventureInputComponent->BindLocomotionInputAction(InputConfigDataAsset, this, AdventureGameplayTags::InputTag_Sprint, ETriggerEvent::Started, &AAdventurePlayerCharacter::Input_Sprint_Started);
-		AdventureInputComponent->BindLocomotionInputAction(InputConfigDataAsset, this, AdventureGameplayTags::InputTag_Sprint, ETriggerEvent::Completed, &AAdventurePlayerCharacter::Input_Sprint_Completed);
-		AdventureInputComponent->BindLocomotionInputAction(InputConfigDataAsset, this, AdventureGameplayTags::InputTag_Walk, ETriggerEvent::Started, &AAdventurePlayerCharacter::Input_Walk);
-		AdventureInputComponent->BindLocomotionInputAction(InputConfigDataAsset, this, AdventureGameplayTags::InputTag_Wheel_Scroll, ETriggerEvent::Triggered, &AAdventurePlayerCharacter::Input_CameraScroll);
+		AdventureInputComponent->BindLocomotionInputAction
+		(InputConfigDataAsset, this, AdventureGameplayTags::InputTag_Look, ETriggerEvent::Triggered, &AAdventurePlayerCharacter::Input_Look);
+		AdventureInputComponent->BindLocomotionInputAction
+		(InputConfigDataAsset, this, AdventureGameplayTags::InputTag_Jump, ETriggerEvent::Triggered, &AAdventurePlayerCharacter::Jump);
+		AdventureInputComponent->BindLocomotionInputAction
+		(InputConfigDataAsset, this, AdventureGameplayTags::InputTag_Move, ETriggerEvent::Triggered, &AAdventurePlayerCharacter::Input_Move);
+		AdventureInputComponent->BindLocomotionInputAction
+		(InputConfigDataAsset, this, AdventureGameplayTags::InputTag_Move, ETriggerEvent::Completed, &AAdventurePlayerCharacter::StopMove);
+		AdventureInputComponent->BindLocomotionInputAction
+		(InputConfigDataAsset, this, AdventureGameplayTags::InputTag_Sprint, ETriggerEvent::Started, &AAdventurePlayerCharacter::Input_Sprint_Started);
+		AdventureInputComponent->BindLocomotionInputAction
+		(InputConfigDataAsset, this, AdventureGameplayTags::InputTag_Sprint, ETriggerEvent::Completed, &AAdventurePlayerCharacter::Input_Sprint_Completed);
+		AdventureInputComponent->BindLocomotionInputAction
+		(InputConfigDataAsset, this, AdventureGameplayTags::InputTag_Walk, ETriggerEvent::Started, &AAdventurePlayerCharacter::Input_Walk);
+		AdventureInputComponent->BindLocomotionInputAction
+		(InputConfigDataAsset, this, AdventureGameplayTags::InputTag_Wheel_Scroll, ETriggerEvent::Triggered, &AAdventurePlayerCharacter::Input_CameraScroll);
+		AdventureInputComponent->BindLocomotionInputAction
+		(InputConfigDataAsset, this, AdventureGameplayTags::InputTag_Climb_Stop, ETriggerEvent::Started, &AAdventurePlayerCharacter::ClimbActionCompleted);
+		AdventureInputComponent->BindLocomotionInputAction
+		(InputConfigDataAsset, this, AdventureGameplayTags::InputTag_Climb_Move, ETriggerEvent::Triggered, &AAdventurePlayerCharacter::ClimbMovement);
+		AdventureInputComponent->BindLocomotionInputAction
+		(InputConfigDataAsset, this, AdventureGameplayTags::InputTag_Climb_Hop, ETriggerEvent::Started, &AAdventurePlayerCharacter::OnClimbHopActionStarted);
 
 		AdventureInputComponent->BindAbilityInputAction(InputConfigDataAsset, this, &AAdventurePlayerCharacter::Input_AbilityInputPressed, &AAdventurePlayerCharacter::Input_AbilityInputReleased);
 	}
 	
+}
+
+void AAdventurePlayerCharacter::BeginPlay()
+{
+	Super::BeginPlay();
+
+	if (AdventureMovementComponent)
+	{
+		AdventureMovementComponent->OnEnterClimbStateDelegate.BindUObject(this, &AAdventurePlayerCharacter::OnPlayerEnterClimbState);
+		AdventureMovementComponent->OnExitClimbStateDelegate.BindUObject(this, &AAdventurePlayerCharacter::OnPlayerExitClimbState);
+	}
 }
 
 
@@ -130,18 +155,12 @@ void AAdventurePlayerCharacter::Input_CameraScroll(const FInputActionValue& Inpu
 
 void AAdventurePlayerCharacter::Input_Move(const FInputActionValue& InputActionValue)
 {
-	if (AdventureMovementComponent && AdventureMovementComponent->IsClimbing())
-	{
-		ClimbMovement(InputActionValue);
-		return;
-	}
-	
 	const FVector2D MovementVector = InputActionValue.Get<FVector2D>();
 	const FRotator MovementRotation(0.f, Controller->GetControlRotation().Yaw, 0.f);
 
 	if (MovementVector.Y >= 0)
 	{
-		ClimbActionStarted();
+		TryClimbAction();
 	}
 
 	if (MovementVector.Y != 0.f)
@@ -187,9 +206,7 @@ void AAdventurePlayerCharacter::ClimbMovement(const FInputActionValue& InputActi
 
 void AAdventurePlayerCharacter::Input_Sprint_Started()
 {
-
 	GetWorld()->GetTimerManager().SetTimer(SprintTimerHandle, this, &AAdventurePlayerCharacter::StartSprint, 0.5f, false);
-	
 }
 
 void AAdventurePlayerCharacter::Input_Sprint_Completed()
@@ -243,6 +260,8 @@ void AAdventurePlayerCharacter::Jump()
 
 void AAdventurePlayerCharacter::Input_AbilityInputPressed(FGameplayTag InInputTag)
 {
+	if (AdventureMovementComponent && AdventureMovementComponent->IsClimbing()) return;
+	
 	if (UAdventureAbilitySystemComponent* AdventureASC = Cast<UAdventureAbilitySystemComponent>(AbilitySystemComponent))
 	{
 		AdventureASC->OnAbilityInputPressed(InInputTag);
@@ -251,13 +270,15 @@ void AAdventurePlayerCharacter::Input_AbilityInputPressed(FGameplayTag InInputTa
 
 void AAdventurePlayerCharacter::Input_AbilityInputReleased(FGameplayTag InInputTag)
 {
+	if (AdventureMovementComponent && AdventureMovementComponent->IsClimbing()) return;
+	
 	if (UAdventureAbilitySystemComponent* AdventureASC = Cast<UAdventureAbilitySystemComponent>(AbilitySystemComponent))
 	{
 		AdventureASC->OnAbilityInputReleased(InInputTag);
 	}
 }
 
-void AAdventurePlayerCharacter::ClimbActionStarted()
+void AAdventurePlayerCharacter::TryClimbAction()
 {
 	if (!AdventureMovementComponent) return;
 
@@ -278,5 +299,46 @@ void AAdventurePlayerCharacter::ClimbActionCompleted()
 	}
 }
 
+void AAdventurePlayerCharacter::OnClimbHopActionStarted(const FInputActionValue& InputActionValue)
+{
+	if (AdventureMovementComponent)
+	{
+		AdventureMovementComponent->RequestHopping();
+	}
+}
 
+void AAdventurePlayerCharacter::OnPlayerEnterClimbState()
+{
+	AddInputMappingContext(InputConfigDataAsset->ClimbMappingContext, 1);
+}
 
+void AAdventurePlayerCharacter::OnPlayerExitClimbState()
+{
+	RemoveInputMappingContext(InputConfigDataAsset->ClimbMappingContext);
+}
+
+void AAdventurePlayerCharacter::AddInputMappingContext(const UInputMappingContext* MappingContext, const int32 InPriority)
+{
+	if (!MappingContext)
+	{
+		DebugHelper::Print(TEXT("Can NOT access MappingContext. Please check it"), FColor::Red);
+		return;
+	}
+	ULocalPlayer* LocalPlayer = GetController<APlayerController>()->GetLocalPlayer();
+	UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(LocalPlayer);
+	check(Subsystem);
+	Subsystem->AddMappingContext(MappingContext, InPriority);
+}
+
+void AAdventurePlayerCharacter::RemoveInputMappingContext(const UInputMappingContext* MappingContext)
+{
+	if (!MappingContext)
+	{
+		DebugHelper::Print(TEXT("Can NOT access MappingContext. Please check it"), FColor::Red);
+		return;
+	}
+	ULocalPlayer* LocalPlayer = GetController<APlayerController>()->GetLocalPlayer();
+	UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(LocalPlayer);
+	check(Subsystem);
+	Subsystem->RemoveMappingContext(MappingContext);
+}

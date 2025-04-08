@@ -31,6 +31,9 @@ protected:
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category="AnimData|LocomotionData")
 	FVector ClimbVelocity = FVector::ZeroVector;
+
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category="AnimData|LocomotionData")
+	bool bDoNotUsingGroundCR = false;
 	
 	
 };

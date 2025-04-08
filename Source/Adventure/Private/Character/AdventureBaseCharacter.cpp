@@ -7,6 +7,7 @@
 #include "AbilitySystem/AdventureAttributeSet.h"
 #include "Component/Movement/AdventureMovementComponent.h"
 #include "Item/Weapon/AdventureWeaponBase.h"
+#include "MotionWarpingComponent.h"
 
 
 AAdventureBaseCharacter::AAdventureBaseCharacter(const FObjectInitializer& ObjectInitializer)
@@ -20,6 +21,8 @@ AAdventureBaseCharacter::AAdventureBaseCharacter(const FObjectInitializer& Objec
 
 	AbilitySystemComponent = CreateDefaultSubobject<UAdventureAbilitySystemComponent>("AbilitySystemComponent");
 	AttributeSet = CreateDefaultSubobject<UAdventureAttributeSet>("AttributeSet");
+
+	MotionWarpingComponent = CreateDefaultSubobject<UMotionWarpingComponent>("MotionWarpingComponent");
 
 }
 

@@ -11,6 +11,7 @@
 class AAdventureWeaponBase;
 class UDataAsset_StartUpDataBase;
 class UAttributeSet;
+class UMotionWarpingComponent;
 
 UCLASS()
 class ADVENTURE_API AAdventureBaseCharacter : public ACharacter, public IAbilitySystemInterface, public ICombatInterface
@@ -42,6 +43,9 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="AbilitySystem")
 	TObjectPtr<UAttributeSet> AttributeSet;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="MotionWarping")
+	TObjectPtr<UMotionWarpingComponent> MotionWarpingComponent;
+	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CharacterData")
 	TSoftObjectPtr<UDataAsset_StartUpDataBase> CharacterStartUpData;
 
@@ -51,6 +55,7 @@ protected:
 
 public:
 	FORCEINLINE UAttributeSet* GetAttributeSet() const { return AttributeSet; }
+	FORCEINLINE UMotionWarpingComponent* GetMotionWarpingComponent() const { return MotionWarpingComponent; }
 	
 
 };

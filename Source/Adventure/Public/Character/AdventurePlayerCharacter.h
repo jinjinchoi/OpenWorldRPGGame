@@ -13,6 +13,7 @@ struct FInputActionValue;
 class UDataAsset_InputConfig;
 class USpringArmComponent;
 class UCameraComponent;
+class UInputMappingContext;
 /**
  * 
  */
@@ -24,6 +25,7 @@ class ADVENTURE_API AAdventurePlayerCharacter : public AAdventureBaseCharacter, 
 public:
 	AAdventurePlayerCharacter(const FObjectInitializer& ObjectInitializer);
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
+	virtual void BeginPlay() override;
 
 	/* Begin Player Interface */
 	virtual void ShowWeaponMesh_Implementation() override;
@@ -72,7 +74,6 @@ protected:
 	
 	void Input_Move(const FInputActionValue& InputActionValue);
 	void StopMove();
-	void ClimbMovement(const FInputActionValue& InputActionValue);
 	
 	void Input_Sprint_Started();
 	void Input_Sprint_Completed();
@@ -83,14 +84,24 @@ protected:
 	FTimerHandle SprintTimerHandle;
 	
 	void Input_Walk();
-
-
+	
 	void Input_AbilityInputPressed(FGameplayTag InInputTag);
 	void Input_AbilityInputReleased(FGameplayTag InInputTag);
 
 	/* Climb */
-	void ClimbActionStarted();
+	
+	
+	void ClimbMovement(const FInputActionValue& InputActionValue);
+	void TryClimbAction();
 	void ClimbActionCompleted();
+	
+	void OnClimbHopActionStarted(const FInputActionValue& InputActionValue);
+	
+	void OnPlayerEnterClimbState();
+	void OnPlayerExitClimbState();
+
+	void AddInputMappingContext(const UInputMappingContext* MappingContext, const int32 InPriority);
+	void RemoveInputMappingContext(const UInputMappingContext* MappingContext);
 	
 	
 #pragma endregion

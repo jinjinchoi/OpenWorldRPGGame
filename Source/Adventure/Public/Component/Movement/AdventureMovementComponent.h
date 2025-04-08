@@ -6,8 +6,11 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "AdventureMovementComponent.generated.h"
 
+DECLARE_DELEGATE(FOnEnterClimbState);
+DECLARE_DELEGATE(FOnExitClimbState);
 
 
+class AAdventureBaseCharacter;
 /**
  * 
  */
@@ -16,6 +19,10 @@ class ADVENTURE_API UAdventureMovementComponent : public UCharacterMovementCompo
 {
 	GENERATED_BODY()
 
+public:
+	FOnEnterClimbState OnEnterClimbStateDelegate;
+	FOnExitClimbState OnExitClimbStateDelegate;
+	
 protected:
 	UPROPERTY(EditDefaultsOnly, Category="Debug")
 	bool bShowDebugShape = false;
@@ -55,22 +62,40 @@ private:
 	FQuat GetClimbRotation(float DeltaTime) const;
 	void SnapMovementToClimbableSurfaces(float DeltaTime);
 	bool CheckHasReachedLedge();
+	void TryStartMounting();
+	bool CanStartMounting();
+	void TtyStartValuting();
+	bool CanStartValuting(FVector& OutValutStartPosition, FVector& OutValutLandPosition);
 	void PlayClimbMontage(UAnimMontage* MontageToPlay);
 
 	UFUNCTION()
 	void OnClimbMontageEnded(UAnimMontage* Montage, bool bInterrupted);
+
+	void SetMotionWarpTarget(const FName& InWarpTargetName, const FVector& InTargetPosition);
+
+	void HandleHopUp();
+	bool CheckCanHopUp(FVector& OutHopUpTargetPosition);
+	void HandleHopRight();
+	bool CheckCanHopRight(FVector& OutHopRightTargetPosition);
+	void HandleHopLeft();
+	bool CheckCanHopLeft(FVector& OutHopRightTargetPosition);
+	bool CanHopLeftOrRight(FVector& OutHopRightTargetPosition, const bool IsLeft);
 
 	
 #pragma endregion
 
 #pragma region ClimbCoreVariables
 
+	float CachedOwnerCapsuleHalfHeight = 0.f;
 	TArray<FHitResult> ClimbableSurfacesTracedResults;
 	FVector CurrentClimbableSurfaceLocation;
 	FVector CurrentClimbableSurfaceNormal;
 
 	UPROPERTY()
 	TObjectPtr<UAnimInstance> OwningPlayerAnimInstance;
+
+	UPROPERTY()
+	TObjectPtr<AAdventureBaseCharacter> OwningPlayerCharacter;
 	
 #pragma endregion 
 	
@@ -94,26 +119,53 @@ private:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Character Movement : Climbing", meta=(AllowPrivateAccess=true))
 	float MaxClimbAcceleration = 400.f;
 
+	/* Climb과 Mount을 구분할 기준 높이 */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Character Movement : Climbing", meta=(AllowPrivateAccess=true))
+	float MountTraceOffset = 150.f;
+
+	/* Hop으로 갈 거리 */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Character Movement : Climbing", meta=(AllowPrivateAccess=true))
+	float HopRange = 100;
+
+	/* Hop 안전 확인 범위 */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Character Movement : Climbing", meta=(AllowPrivateAccess=true))
+	float SafetyHopRange = 150;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Character Movement : Climbing", meta=(AllowPrivateAccess=true))
 	TObjectPtr<UAnimMontage> IdleToClimbMontage;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Character Movement : Climbing", meta=(AllowPrivateAccess=true))
 	TObjectPtr<UAnimMontage> ClimbToTopMontage;
 
-#pragma endregion
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Character Movement : Climbing", meta=(AllowPrivateAccess=true))
+	TObjectPtr<UAnimMontage> MountMontage;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Character Movement : Climbing", meta=(AllowPrivateAccess=true))
+	TObjectPtr<UAnimMontage> ValutMontage;
 
-#pragma region OnwerVariables
-	float CachedOwnerCapsuleHalfHeight = 0.f;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Character Movement : Climbing", meta=(AllowPrivateAccess=true))
+	TObjectPtr<UAnimMontage> HopUpMontage;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Character Movement : Climbing", meta=(AllowPrivateAccess=true))
+	TObjectPtr<UAnimMontage> HopLeftMontage;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Character Movement : Climbing", meta=(AllowPrivateAccess=true))
+	TObjectPtr<UAnimMontage> HopRightMontage;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Character Movement : Climbing", meta=(AllowPrivateAccess=true))
+	TObjectPtr<UAnimMontage> WallDownMontage;
 	
 #pragma endregion
+
 	
 public:
 	
 	void ToggleClimbing(bool bEnableClimb);
 	bool IsClimbing() const;
+	void RequestHopping();
 	
 	FORCEINLINE void SetCapsuleComponentHalfHeight(const float InCapsuleHalfHeight) { CachedOwnerCapsuleHalfHeight = InCapsuleHalfHeight; }
 	FORCEINLINE FVector GetClimbableSurfaceNormal() const { return CurrentClimbableSurfaceNormal; }
-	FVector GetUnrotatedClimbVelocity() const;
+	FVector GetUnRotatedClimbVelocity() const;
 	
 };
