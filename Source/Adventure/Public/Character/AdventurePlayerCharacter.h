@@ -68,34 +68,32 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Input)
 	TObjectPtr<UDataAsset_InputConfig> InputConfigDataAsset;
 
-	virtual void Jump() override;
-	void Input_Look(const FInputActionValue& InputActionValue);
-	void Input_CameraScroll(const FInputActionValue& InputActionValue);
+	virtual void Input_Jump() override;
+	virtual void Input_Look(const FInputActionValue& InputActionValue) override;
+	virtual void Input_CameraScroll(const FInputActionValue& InputActionValue) override;
 	
-	void Input_Move(const FInputActionValue& InputActionValue);
-	void StopMove();
+	virtual void Input_Move(const FInputActionValue& InputActionValue) override;
+	virtual void Input_StopMove() override;
 	
-	void Input_Sprint_Started();
-	void Input_Sprint_Completed();
+	virtual void Input_Sprint_Started() override;
+	virtual void Input_Sprint_Completed() override;
 	void StartSprint();
 	void StopSprint();
 	bool bIsSprint = false;
 	bool bIsWalking = false;
 	FTimerHandle SprintTimerHandle;
 	
-	void Input_Walk();
+	virtual void Input_Walk() override;
 	
 	void Input_AbilityInputPressed(FGameplayTag InInputTag);
 	void Input_AbilityInputReleased(FGameplayTag InInputTag);
 
 	/* Climb */
-	
-	
-	void ClimbMovement(const FInputActionValue& InputActionValue);
+	virtual void Input_ClimbMovement(const FInputActionValue& InputActionValue) override;
 	void TryClimbAction();
-	void ClimbActionCompleted();
+	virtual void Input_ClimbActionCompleted() override;
 	
-	void OnClimbHopActionStarted(const FInputActionValue& InputActionValue);
+	virtual void Input_ClimbHopActionStarted(const FInputActionValue& InputActionValue) override;
 	
 	void OnPlayerEnterClimbState();
 	void OnPlayerExitClimbState();

@@ -61,7 +61,7 @@ void AAdventurePlayerCharacter::SetupPlayerInputComponent(UInputComponent* Playe
 		AdventureInputComponent->BindLocomotionInputAction
 		(InputConfigDataAsset, this, AdventureGameplayTags::InputTag_Move, ETriggerEvent::Triggered, &AAdventurePlayerCharacter::Input_Move);
 		AdventureInputComponent->BindLocomotionInputAction
-		(InputConfigDataAsset, this, AdventureGameplayTags::InputTag_Move, ETriggerEvent::Completed, &AAdventurePlayerCharacter::StopMove);
+		(InputConfigDataAsset, this, AdventureGameplayTags::InputTag_Move, ETriggerEvent::Completed, &AAdventurePlayerCharacter::Input_StopMove);
 		AdventureInputComponent->BindLocomotionInputAction
 		(InputConfigDataAsset, this, AdventureGameplayTags::InputTag_Sprint, ETriggerEvent::Started, &AAdventurePlayerCharacter::Input_Sprint_Started);
 		AdventureInputComponent->BindLocomotionInputAction
@@ -71,11 +71,11 @@ void AAdventurePlayerCharacter::SetupPlayerInputComponent(UInputComponent* Playe
 		AdventureInputComponent->BindLocomotionInputAction
 		(InputConfigDataAsset, this, AdventureGameplayTags::InputTag_Wheel_Scroll, ETriggerEvent::Triggered, &AAdventurePlayerCharacter::Input_CameraScroll);
 		AdventureInputComponent->BindLocomotionInputAction
-		(InputConfigDataAsset, this, AdventureGameplayTags::InputTag_Climb_Stop, ETriggerEvent::Started, &AAdventurePlayerCharacter::ClimbActionCompleted);
+		(InputConfigDataAsset, this, AdventureGameplayTags::InputTag_Climb_Stop, ETriggerEvent::Started, &AAdventurePlayerCharacter::Input_ClimbActionCompleted);
 		AdventureInputComponent->BindLocomotionInputAction
-		(InputConfigDataAsset, this, AdventureGameplayTags::InputTag_Climb_Move, ETriggerEvent::Triggered, &AAdventurePlayerCharacter::ClimbMovement);
+		(InputConfigDataAsset, this, AdventureGameplayTags::InputTag_Climb_Move, ETriggerEvent::Triggered, &AAdventurePlayerCharacter::Input_ClimbMovement);
 		AdventureInputComponent->BindLocomotionInputAction
-		(InputConfigDataAsset, this, AdventureGameplayTags::InputTag_Climb_Hop, ETriggerEvent::Started, &AAdventurePlayerCharacter::OnClimbHopActionStarted);
+		(InputConfigDataAsset, this, AdventureGameplayTags::InputTag_Climb_Hop, ETriggerEvent::Started, &AAdventurePlayerCharacter::Input_ClimbHopActionStarted);
 
 		AdventureInputComponent->BindAbilityInputAction(InputConfigDataAsset, this, &AAdventurePlayerCharacter::Input_AbilityInputPressed, &AAdventurePlayerCharacter::Input_AbilityInputReleased);
 	}
@@ -176,7 +176,7 @@ void AAdventurePlayerCharacter::Input_Move(const FInputActionValue& InputActionV
 	}
 }
 
-void AAdventurePlayerCharacter::StopMove()
+void AAdventurePlayerCharacter::Input_StopMove()
 {
 	if (bIsSprint)
 	{
@@ -184,7 +184,7 @@ void AAdventurePlayerCharacter::StopMove()
 	}
 }
 
-void AAdventurePlayerCharacter::ClimbMovement(const FInputActionValue& InputActionValue)
+void AAdventurePlayerCharacter::Input_ClimbMovement(const FInputActionValue& InputActionValue)
 {
 	const FVector2D MovementVector = InputActionValue.Get<FVector2D>();
 
@@ -253,7 +253,7 @@ void AAdventurePlayerCharacter::Input_Walk()
 
 
 
-void AAdventurePlayerCharacter::Jump()
+void AAdventurePlayerCharacter::Input_Jump()
 {
 	Super::Jump();
 }
@@ -289,7 +289,7 @@ void AAdventurePlayerCharacter::TryClimbAction()
 	
 }
 
-void AAdventurePlayerCharacter::ClimbActionCompleted()
+void AAdventurePlayerCharacter::Input_ClimbActionCompleted()
 {
 	if (!AdventureMovementComponent) return;
 
@@ -299,7 +299,7 @@ void AAdventurePlayerCharacter::ClimbActionCompleted()
 	}
 }
 
-void AAdventurePlayerCharacter::OnClimbHopActionStarted(const FInputActionValue& InputActionValue)
+void AAdventurePlayerCharacter::Input_ClimbHopActionStarted(const FInputActionValue& InputActionValue)
 {
 	if (AdventureMovementComponent)
 	{
