@@ -2,18 +2,16 @@
 
 
 #include "Character/AdventurePlayerCharacter.h"
-
-#include "AdventureGameplayTag.h"
 #include "DebugHelper.h"
 #include "Camera/CameraComponent.h"
-#include "EnhancedInputSubsystems.h"
 #include "AbilitySystem/AdventureAbilitySystemComponent.h"
 #include "Component/Input/AdventureInputComponent.h"
 #include "Component/Movement/AdventureMovementComponent.h"
-#include "DataAsset/Input/DataAsset_InputConfig.h"
+#include "Controller/AdventurePlayerController.h"
 #include "DataAsset/StartUpData/DataAsset_StartUpDataBase.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "UI/HUD/AdventureInGameHUD.h"
 
 AAdventurePlayerCharacter::AAdventurePlayerCharacter(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -41,46 +39,6 @@ AAdventurePlayerCharacter::AAdventurePlayerCharacter(const FObjectInitializer& O
 	
 }
 
-void AAdventurePlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
-{
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
-
-	check(InputConfigDataAsset);
-	
-	ULocalPlayer* LocalPlayer = GetController<APlayerController>()->GetLocalPlayer();
-	UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(LocalPlayer);
-	check(Subsystem);
-	Subsystem->AddMappingContext(InputConfigDataAsset->DefaultMappingContext, 0);
-
-	if (UAdventureInputComponent* AdventureInputComponent = Cast<UAdventureInputComponent>(PlayerInputComponent))
-	{
-		AdventureInputComponent->BindLocomotionInputAction
-		(InputConfigDataAsset, this, AdventureGameplayTags::InputTag_Look, ETriggerEvent::Triggered, &AAdventurePlayerCharacter::Input_Look);
-		AdventureInputComponent->BindLocomotionInputAction
-		(InputConfigDataAsset, this, AdventureGameplayTags::InputTag_Jump, ETriggerEvent::Triggered, &AAdventurePlayerCharacter::Jump);
-		AdventureInputComponent->BindLocomotionInputAction
-		(InputConfigDataAsset, this, AdventureGameplayTags::InputTag_Move, ETriggerEvent::Triggered, &AAdventurePlayerCharacter::Input_Move);
-		AdventureInputComponent->BindLocomotionInputAction
-		(InputConfigDataAsset, this, AdventureGameplayTags::InputTag_Move, ETriggerEvent::Completed, &AAdventurePlayerCharacter::Input_StopMove);
-		AdventureInputComponent->BindLocomotionInputAction
-		(InputConfigDataAsset, this, AdventureGameplayTags::InputTag_Sprint, ETriggerEvent::Started, &AAdventurePlayerCharacter::Input_Sprint_Started);
-		AdventureInputComponent->BindLocomotionInputAction
-		(InputConfigDataAsset, this, AdventureGameplayTags::InputTag_Sprint, ETriggerEvent::Completed, &AAdventurePlayerCharacter::Input_Sprint_Completed);
-		AdventureInputComponent->BindLocomotionInputAction
-		(InputConfigDataAsset, this, AdventureGameplayTags::InputTag_Walk, ETriggerEvent::Started, &AAdventurePlayerCharacter::Input_Walk);
-		AdventureInputComponent->BindLocomotionInputAction
-		(InputConfigDataAsset, this, AdventureGameplayTags::InputTag_Wheel_Scroll, ETriggerEvent::Triggered, &AAdventurePlayerCharacter::Input_CameraScroll);
-		AdventureInputComponent->BindLocomotionInputAction
-		(InputConfigDataAsset, this, AdventureGameplayTags::InputTag_Climb_Stop, ETriggerEvent::Started, &AAdventurePlayerCharacter::Input_ClimbActionCompleted);
-		AdventureInputComponent->BindLocomotionInputAction
-		(InputConfigDataAsset, this, AdventureGameplayTags::InputTag_Climb_Move, ETriggerEvent::Triggered, &AAdventurePlayerCharacter::Input_ClimbMovement);
-		AdventureInputComponent->BindLocomotionInputAction
-		(InputConfigDataAsset, this, AdventureGameplayTags::InputTag_Climb_Hop, ETriggerEvent::Started, &AAdventurePlayerCharacter::Input_ClimbHopActionStarted);
-
-		AdventureInputComponent->BindAbilityInputAction(InputConfigDataAsset, this, &AAdventurePlayerCharacter::Input_AbilityInputPressed, &AAdventurePlayerCharacter::Input_AbilityInputReleased);
-	}
-	
-}
 
 void AAdventurePlayerCharacter::BeginPlay()
 {
@@ -90,6 +48,16 @@ void AAdventurePlayerCharacter::BeginPlay()
 	{
 		AdventureMovementComponent->OnEnterClimbStateDelegate.BindUObject(this, &AAdventurePlayerCharacter::OnPlayerEnterClimbState);
 		AdventureMovementComponent->OnExitClimbStateDelegate.BindUObject(this, &AAdventurePlayerCharacter::OnPlayerExitClimbState);
+	}
+
+	if (bIsFirstLoading)
+	{
+		if (AAdventurePlayerController* PlayerController = Cast<AAdventurePlayerController>(GetController()))
+		{
+			PlayerController->AddDefaultCharacterToManager(this);
+		}
+
+		bIsFirstLoading = false;
 	}
 }
 
@@ -104,27 +72,42 @@ void AAdventurePlayerCharacter::HideWeaponMesh_Implementation()
 	SetWeaponMeshVisibility(false);
 }
 
+
+
 void AAdventurePlayerCharacter::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
 	
-	if (!CharacterStartUpData.IsNull())
-	{
-		UAdventureAbilitySystemComponent* AdventureAbilitySystemComponent = Cast<UAdventureAbilitySystemComponent>(AbilitySystemComponent);
-		check(AdventureAbilitySystemComponent);
-		
-		if (UDataAsset_StartUpDataBase* LoadedDataAsset = CharacterStartUpData.LoadSynchronous())
-		{
-			check(AdventureAbilitySystemComponent);
-			
-			LoadedDataAsset->GiveToAbilitySystemComponent(AdventureAbilitySystemComponent);
-		}
-	}
-	else
+	InitPlayerStartUpData();
+	
+}
+
+void AAdventurePlayerCharacter::InitPlayerStartUpData() const
+{
+	if (CharacterStartUpData.IsNull())
 	{
 		DebugHelper::Print(FString::Printf(TEXT("You need to assign startup data to %s"), *GetName()), FColor::Yellow);
+		return;
 	}
 	
+	UAdventureAbilitySystemComponent* AdventureAbilitySystemComponent = Cast<UAdventureAbilitySystemComponent>(AbilitySystemComponent);
+	check(AdventureAbilitySystemComponent);
+	
+	if (UDataAsset_StartUpDataBase* LoadedDataAsset = CharacterStartUpData.LoadSynchronous())
+	{
+		check(AdventureAbilitySystemComponent);
+		
+		LoadedDataAsset->GiveToAbilitySystemComponent(AdventureAbilitySystemComponent);
+	}
+
+	if (AAdventurePlayerController* PlayerController = Cast<AAdventurePlayerController>(GetController()))
+	{
+		 if (AAdventureInGameHUD* AdventureInGameHUD = Cast<AAdventureInGameHUD>(PlayerController->GetHUD()))
+		 {
+		 	AdventureInGameHUD->InitOverlay(PlayerController, GetPlayerState(), AdventureAbilitySystemComponent, AttributeSet);
+		 }
+	}
+
 }
 
 
@@ -251,14 +234,12 @@ void AAdventurePlayerCharacter::Input_Walk()
 }
 
 
-
-
 void AAdventurePlayerCharacter::Input_Jump()
 {
 	Super::Jump();
 }
 
-void AAdventurePlayerCharacter::Input_AbilityInputPressed(FGameplayTag InInputTag)
+void AAdventurePlayerCharacter::Input_AbilityInputPressed(const FGameplayTag& InInputTag)
 {
 	if (AdventureMovementComponent && AdventureMovementComponent->IsClimbing()) return;
 	
@@ -268,7 +249,7 @@ void AAdventurePlayerCharacter::Input_AbilityInputPressed(FGameplayTag InInputTa
 	}
 }
 
-void AAdventurePlayerCharacter::Input_AbilityInputReleased(FGameplayTag InInputTag)
+void AAdventurePlayerCharacter::Input_AbilityInputReleased(const FGameplayTag& InInputTag)
 {
 	if (AdventureMovementComponent && AdventureMovementComponent->IsClimbing()) return;
 	
@@ -309,36 +290,16 @@ void AAdventurePlayerCharacter::Input_ClimbHopActionStarted(const FInputActionVa
 
 void AAdventurePlayerCharacter::OnPlayerEnterClimbState()
 {
-	AddInputMappingContext(InputConfigDataAsset->ClimbMappingContext, 1);
+	if (AAdventurePlayerController* PlayerController = Cast<AAdventurePlayerController>(GetController()))
+	{
+		PlayerController->AddClimbMappingContext();
+	}
 }
 
 void AAdventurePlayerCharacter::OnPlayerExitClimbState()
 {
-	RemoveInputMappingContext(InputConfigDataAsset->ClimbMappingContext);
-}
-
-void AAdventurePlayerCharacter::AddInputMappingContext(const UInputMappingContext* MappingContext, const int32 InPriority)
-{
-	if (!MappingContext)
+	if (AAdventurePlayerController* PlayerController = Cast<AAdventurePlayerController>(GetController()))
 	{
-		DebugHelper::Print(TEXT("Can NOT access MappingContext. Please check it"), FColor::Red);
-		return;
+		PlayerController->RemoveClimbMappingContext();
 	}
-	ULocalPlayer* LocalPlayer = GetController<APlayerController>()->GetLocalPlayer();
-	UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(LocalPlayer);
-	check(Subsystem);
-	Subsystem->AddMappingContext(MappingContext, InPriority);
-}
-
-void AAdventurePlayerCharacter::RemoveInputMappingContext(const UInputMappingContext* MappingContext)
-{
-	if (!MappingContext)
-	{
-		DebugHelper::Print(TEXT("Can NOT access MappingContext. Please check it"), FColor::Red);
-		return;
-	}
-	ULocalPlayer* LocalPlayer = GetController<APlayerController>()->GetLocalPlayer();
-	UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(LocalPlayer);
-	check(Subsystem);
-	Subsystem->RemoveMappingContext(MappingContext);
 }

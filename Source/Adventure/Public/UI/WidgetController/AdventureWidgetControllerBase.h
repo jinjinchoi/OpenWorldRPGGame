@@ -3,45 +3,65 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "UObject/NoExportTypes.h"
 #include "AdventureWidgetControllerBase.generated.h"
 
-class UAdventureAttributeSet;
-class UAdventureAbilitySystemComponent;
-class AAdventurePlayerState;
-class AAdventurePlayerController;
+
+class UAttributeSet;
+class UAbilitySystemComponent;
+
+USTRUCT(BlueprintType)
+struct FWidgetControllerParams
+{
+	GENERATED_BODY()
+
+	FWidgetControllerParams() {}
+	FWidgetControllerParams(APlayerController* InPlayerController, APlayerState* InPlayerState, UAbilitySystemComponent* InAbilitySystemComponent, UAttributeSet* InAttributeSet)
+		: PlayerController(InPlayerController), PlayerState(InPlayerState), AbilitySystemComponent(InAbilitySystemComponent), AttributeSet(InAttributeSet)
+	{}
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TObjectPtr<APlayerController> PlayerController = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TObjectPtr<APlayerState> PlayerState = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TObjectPtr<UAttributeSet> AttributeSet = nullptr;
+	
+};
+
 /**
  * 
  */
-UCLASS()
+UCLASS(BlueprintType, Blueprintable)
 class ADVENTURE_API UAdventureWidgetControllerBase : public UObject
 {
 	GENERATED_BODY()
 
 public:
 	UFUNCTION(BlueprintCallable)
-	AAdventurePlayerController* GetAdventurePlayerController();
+	void SetWidgetControllerParams(const FWidgetControllerParams& WCParams);
 
 	UFUNCTION(BlueprintCallable)
-	AAdventurePlayerState* GetAdventurePlayerState();
-
-	// UFUNCTION(BlueprintCallable)
-	// UAdventureAbilitySystemComponent* GetAdventureAbilitySystemComponent();
-	//
-	// UFUNCTION(BlueprintCallable)
-	// UAdventureAttributeSet* GetAdventureAttributeSet();
+	virtual void BroadCastInitialValue();
 	
-private:
-	UPROPERTY()
-	TObjectPtr<AAdventurePlayerController> AdventurePlayerController;
+	virtual void BindCallbacksToDependencies();
 
-	UPROPERTY()
-	TObjectPtr<AAdventurePlayerState> AdventurePlayerState;
+protected:
+	UPROPERTY(BlueprintReadOnly, Category="WidgetController")
+	TObjectPtr<APlayerController> PlayerController;
 
-	UPROPERTY()
-	TObjectPtr<UAdventureAbilitySystemComponent> AdventureAbilitySystemComponent;
+	UPROPERTY(BlueprintReadOnly, Category="WidgetController")
+	TObjectPtr<APlayerState> PlayerState;
 
-	UPROPERTY()
-	TObjectPtr<UAdventureAttributeSet> AdventureAttributeSet;
+	UPROPERTY(BlueprintReadOnly, Category="WidgetController")
+	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
+
+	UPROPERTY(BlueprintReadOnly, Category="WidgetController")
+	TObjectPtr<UAttributeSet> AttributeSet;
+
 	
 };

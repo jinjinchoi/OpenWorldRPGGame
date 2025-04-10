@@ -6,6 +6,9 @@
 #include "GameFramework/PlayerController.h"
 #include "AdventurePlayerController.generated.h"
 
+class UControllableCharacterManager;
+class UAdventureAbilitySystemComponent;
+class UInputMappingContext;
 struct FInputActionValue;
 class UDataAsset_InputConfig;
 class UDamageTextComponent;
@@ -20,6 +23,13 @@ class ADVENTURE_API AAdventurePlayerController : public APlayerController
 
 public:
 	void ShowDamageNumber(const float DamageAmount, ACharacter* TargetCharacter, const bool bIsCriticalHit, const FGameplayTag& DamageType);
+	void AddClimbMappingContext() const;
+	void RemoveClimbMappingContext() const;
+	
+	UPROPERTY()
+	TObjectPtr<UControllableCharacterManager> ControllableCharacterManager;
+
+	void AddDefaultCharacterToManager(ACharacter* CharacterToAdd) const;
 
 protected:
 	virtual void BeginPlay() override;
@@ -27,9 +37,7 @@ protected:
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Input)
 	TObjectPtr<UDataAsset_InputConfig> InputConfigDataAsset;
-	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Input, meta=(ClampMin="0.0"))
-	float CameraZoomSpeed = 300;
+
 
 private:
 	UPROPERTY(EditDefaultsOnly)
@@ -53,8 +61,10 @@ private:
 	void Input_ClimbMovement(const FInputActionValue& InputActionValue);
 	void Input_ClimbActionCompleted();
 	void Input_ClimbHopActionStarted(const FInputActionValue& InputActionValue);
+
+	void AddInputMappingContext(const UInputMappingContext* MappingContext, const int32 InPriority) const;
+	void RemoveInputMappingContext(const UInputMappingContext* MappingContext) const;
 	
 #pragma endregion
-	
 	
 };

@@ -6,6 +6,10 @@
 #include "GameFramework/HUD.h"
 #include "AdventureInGameHUD.generated.h"
 
+class UAbilitySystemComponent;
+class UAttributeSet;
+struct FWidgetControllerParams;
+class UOverlayWidgetController;
 class UAdventureUserWidget;
 /**
  * 
@@ -15,11 +19,23 @@ class ADVENTURE_API AAdventureInGameHUD : public AHUD
 {
 	GENERATED_BODY()
 
+public:
+	void InitOverlay(APlayerController* PC, APlayerState* PS, UAbilitySystemComponent* ASC, UAttributeSet* AS);
+	
+	UOverlayWidgetController* GetOverlayWidgetController(const FWidgetControllerParams& Params);
+
+
 private:
 	UPROPERTY()
 	TObjectPtr<UAdventureUserWidget> OverlayWidget;
 
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<UAdventureUserWidget> OverlayWidgetClass;
+
+	UPROPERTY()
+	TObjectPtr<UOverlayWidgetController> OverlayWidgetController;
+
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<UOverlayWidgetController> OverlayWidgetControllerClass;
 	
 };

@@ -6,6 +6,7 @@
 #include "UObject/Interface.h"
 #include "PlayerInterface.generated.h"
 
+struct FGameplayTag;
 struct FInputActionValue;
 
 // This class does not need to be modified.
@@ -44,5 +45,9 @@ public:
 	virtual void Input_ClimbMovement(const FInputActionValue& InputActionValue) = 0;
 	virtual void Input_ClimbActionCompleted() = 0;
 	virtual void Input_ClimbHopActionStarted(const FInputActionValue& InputActionValue) = 0;
+
+	virtual void Input_AbilityInputPressed(const FGameplayTag& InInputTag) = 0;
+	virtual void Input_AbilityInputReleased(const FGameplayTag& InInputTag) = 0;
+
 	
 };

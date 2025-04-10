@@ -6,44 +6,19 @@
 #include "Controller/AdventurePlayerController.h"
 #include "Player/AdventurePlayerState.h"
 
-AAdventurePlayerController* UAdventureWidgetControllerBase::GetAdventurePlayerController()
+void UAdventureWidgetControllerBase::SetWidgetControllerParams(const FWidgetControllerParams& WCParams)
 {
-	if (!AdventurePlayerController)
-	{
-		APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
-		check(PlayerController);
-
-		AdventurePlayerController = CastChecked<AAdventurePlayerController>(PlayerController);
-	}
-
-	return AdventurePlayerController;
+	PlayerController = WCParams.PlayerController;
+	PlayerState = WCParams.PlayerState;
+	AbilitySystemComponent = WCParams.AbilitySystemComponent;
+	AttributeSet = WCParams.AttributeSet;
 }
 
-AAdventurePlayerState* UAdventureWidgetControllerBase::GetAdventurePlayerState()
+void UAdventureWidgetControllerBase::BroadCastInitialValue()
 {
 	
-	if (!AdventurePlayerState)
-	{
-		const APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
-		AdventurePlayerState = PlayerController->GetPlayerState<AAdventurePlayerState>();
-	}
-
-	return AdventurePlayerState;
 }
 
-// UAdventureAbilitySystemComponent* UAdventureWidgetControllerBase::GetAdventureAbilitySystemComponent()
-// {
-// 	if (!AdventureAbilitySystemComponent)
-// 	{
-// 		const APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
-// 		if (APlayerState* PlayerState = PlayerController->GetPlayerState<APlayerState>())
-// 		{
-// 			PlayerState->GetAbility
-// 		}
-// 		
-// 	}
-// }
-//
-// UAdventureAttributeSet* UAdventureWidgetControllerBase::GetAdventureAttributeSet()
-// {
-// }
+void UAdventureWidgetControllerBase::BindCallbacksToDependencies()
+{
+}

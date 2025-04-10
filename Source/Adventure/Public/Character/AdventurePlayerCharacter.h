@@ -24,9 +24,9 @@ class ADVENTURE_API AAdventurePlayerCharacter : public AAdventureBaseCharacter, 
 
 public:
 	AAdventurePlayerCharacter(const FObjectInitializer& ObjectInitializer);
-	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
 	virtual void BeginPlay() override;
 
+	
 	/* Begin Player Interface */
 	virtual void ShowWeaponMesh_Implementation() override;
 	virtual void HideWeaponMesh_Implementation() override;
@@ -34,6 +34,7 @@ public:
 
 protected:
 	virtual void PossessedBy(AController* NewController) override;
+	void InitPlayerStartUpData() const;
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category=Movement)
 	float WalkingSpeed = 200.f;
@@ -45,6 +46,7 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category=Movement)
 	float SprintSpeed = 700.f;
 	
+	bool bIsFirstLoading = true;
 
 #pragma region Components
 	
@@ -64,9 +66,6 @@ protected:
 	/* 카메라 스크롤 속도 */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Input, meta=(ClampMin="0.0"))
 	float CameraZoomSpeed = 300;
-	
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Input)
-	TObjectPtr<UDataAsset_InputConfig> InputConfigDataAsset;
 
 	virtual void Input_Jump() override;
 	virtual void Input_Look(const FInputActionValue& InputActionValue) override;
@@ -74,7 +73,6 @@ protected:
 	
 	virtual void Input_Move(const FInputActionValue& InputActionValue) override;
 	virtual void Input_StopMove() override;
-	
 	virtual void Input_Sprint_Started() override;
 	virtual void Input_Sprint_Completed() override;
 	void StartSprint();
@@ -85,8 +83,8 @@ protected:
 	
 	virtual void Input_Walk() override;
 	
-	void Input_AbilityInputPressed(FGameplayTag InInputTag);
-	void Input_AbilityInputReleased(FGameplayTag InInputTag);
+	virtual void Input_AbilityInputPressed(const FGameplayTag& InInputTag) override;
+	virtual void Input_AbilityInputReleased(const FGameplayTag& InInputTag) override;
 
 	/* Climb */
 	virtual void Input_ClimbMovement(const FInputActionValue& InputActionValue) override;
@@ -97,10 +95,6 @@ protected:
 	
 	void OnPlayerEnterClimbState();
 	void OnPlayerExitClimbState();
-
-	void AddInputMappingContext(const UInputMappingContext* MappingContext, const int32 InPriority);
-	void RemoveInputMappingContext(const UInputMappingContext* MappingContext);
-	
 	
 #pragma endregion
 

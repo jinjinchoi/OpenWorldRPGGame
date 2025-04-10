@@ -90,7 +90,6 @@ void UAdventureAttributeSet::HandleIncomingDamage(const FEffectProperties& Props
 	const float LocalIncomingDamage = GetIncomingDamage();
 	SetIncomingDamage(0.f);
 	
-
 	if (LocalIncomingDamage <= 0) return;
 
 	const float NewHealth = GetCurrentHealth() - LocalIncomingDamage;

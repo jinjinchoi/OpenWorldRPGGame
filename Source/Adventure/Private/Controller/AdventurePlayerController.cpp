@@ -2,15 +2,17 @@
 
 
 #include "Controller/AdventurePlayerController.h"
-
 #include "AdventureGameplayTag.h"
+#include "DebugHelper.h"
 #include "EnhancedInputSubsystems.h"
 #include "Character/AdventurePlayerCharacter.h"
 #include "Component/Input/AdventureInputComponent.h"
 #include "GameFramework/Character.h"
 #include "DataAsset/Input/DataAsset_InputConfig.h"
+#include "GameManager/ControllableCharacterManager.h"
 #include "UI/Widget/DamageTextComponent.h"
 #include "Interface/PlayerInterface.h"
+
 
 void AAdventurePlayerController::ShowDamageNumber(const float DamageAmount, ACharacter* TargetCharacter, const bool bIsCriticalHit, const FGameplayTag& DamageType)
 {
@@ -25,6 +27,11 @@ void AAdventurePlayerController::ShowDamageNumber(const float DamageAmount, ACha
 		DamageTextComponent->SetDamageText(DamageAmount, bIsCriticalHit, DamageType);
 	}
 	
+}
+
+void AAdventurePlayerController::AddDefaultCharacterToManager(ACharacter* CharacterToAdd) const
+{
+	ControllableCharacterManager->RegisterPartyMember(CharacterToAdd, 1);
 }
 
 void AAdventurePlayerController::BeginPlay()
@@ -74,8 +81,6 @@ void AAdventurePlayerController::SetupInputComponent()
 	
 }
 
-
-
 void AAdventurePlayerController::Input_Look(const FInputActionValue& InputActionValue)
 {
 	if (IPlayerInterface* PlayerCharacterInterface = Cast<IPlayerInterface>(GetPawn()))
@@ -86,49 +91,136 @@ void AAdventurePlayerController::Input_Look(const FInputActionValue& InputAction
 
 void AAdventurePlayerController::Input_CameraScroll(const FInputActionValue& InputActionValue)
 {
+	if (IPlayerInterface* PlayerCharacterInterface = Cast<IPlayerInterface>(GetPawn()))
+	{
+		PlayerCharacterInterface->Input_CameraScroll(InputActionValue);
+	}
 }
 
 void AAdventurePlayerController::Input_Jump()
 {
+	if (IPlayerInterface* PlayerCharacterInterface = Cast<IPlayerInterface>(GetPawn()))
+	{
+		PlayerCharacterInterface->Input_Jump();
+	}
+
 }
 
 void AAdventurePlayerController::Input_Run(const FInputActionValue& InputActionValue)
 {
+	if (IPlayerInterface* PlayerCharacterInterface = Cast<IPlayerInterface>(GetPawn()))
+	{
+		PlayerCharacterInterface->Input_Move(InputActionValue);
+	}
 }
 
 void AAdventurePlayerController::Input_StopMove()
 {
+	if (IPlayerInterface* PlayerCharacterInterface = Cast<IPlayerInterface>(GetPawn()))
+	{
+		PlayerCharacterInterface->Input_StopMove();
+	}
 }
 
 void AAdventurePlayerController::Input_Walk()
 {
+	if (IPlayerInterface* PlayerCharacterInterface = Cast<IPlayerInterface>(GetPawn()))
+	{
+		PlayerCharacterInterface->Input_Walk();
+	}
 }
 
 void AAdventurePlayerController::Input_Sprint_Started()
 {
+	if (IPlayerInterface* PlayerCharacterInterface = Cast<IPlayerInterface>(GetPawn()))
+	{
+		PlayerCharacterInterface->Input_Sprint_Started();
+	}
 }
 
 void AAdventurePlayerController::Input_Sprint_Completed()
 {
+	if (IPlayerInterface* PlayerCharacterInterface = Cast<IPlayerInterface>(GetPawn()))
+	{
+		PlayerCharacterInterface->Input_Sprint_Completed();
+	}
 }
 
 void AAdventurePlayerController::Input_AbilityInputPressed(FGameplayTag InInputTag)
 {
+	if (IPlayerInterface* PlayerCharacterInterface = Cast<IPlayerInterface>(GetPawn()))
+	{
+		PlayerCharacterInterface->Input_AbilityInputPressed(InInputTag);
+	}
 }
 
 void AAdventurePlayerController::Input_AbilityInputReleased(FGameplayTag InInputTag)
 {
+	if (IPlayerInterface* PlayerCharacterInterface = Cast<IPlayerInterface>(GetPawn()))
+	{
+		PlayerCharacterInterface->Input_AbilityInputReleased(InInputTag);
+	}
 }
+
+
 
 void AAdventurePlayerController::Input_ClimbMovement(const FInputActionValue& InputActionValue)
 {
+	if (IPlayerInterface* PlayerCharacterInterface = Cast<IPlayerInterface>(GetPawn()))
+	{
+		PlayerCharacterInterface->Input_ClimbMovement(InputActionValue);
+	}
 }
 
 
 void AAdventurePlayerController::Input_ClimbActionCompleted()
 {
+	if (IPlayerInterface* PlayerCharacterInterface = Cast<IPlayerInterface>(GetPawn()))
+	{
+		PlayerCharacterInterface->Input_ClimbActionCompleted();
+	}
 }
 
 void AAdventurePlayerController::Input_ClimbHopActionStarted(const FInputActionValue& InputActionValue)
 {
+	if (IPlayerInterface* PlayerCharacterInterface = Cast<IPlayerInterface>(GetPawn()))
+	{
+		PlayerCharacterInterface->Input_ClimbHopActionStarted(InputActionValue);
+	}
+}
+
+void AAdventurePlayerController::AddClimbMappingContext() const
+{
+	AddInputMappingContext(InputConfigDataAsset->ClimbMappingContext, 1);
+}
+
+void AAdventurePlayerController::RemoveClimbMappingContext() const
+{
+	RemoveInputMappingContext(InputConfigDataAsset->ClimbMappingContext);
+}
+
+void AAdventurePlayerController::AddInputMappingContext(const UInputMappingContext* MappingContext, const int32 InPriority) const
+{
+	if (!MappingContext)
+	{
+		DebugHelper::Print(TEXT("Can NOT access MappingContext. Please check it"), FColor::Red);
+		return;
+	}
+	if (UEnhancedInputLocalPlayerSubsystem* SubSystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer()))
+	{
+		SubSystem->AddMappingContext(MappingContext, InPriority);
+	}
+}
+
+void AAdventurePlayerController::RemoveInputMappingContext(const UInputMappingContext* MappingContext) const
+{
+	if (!MappingContext)
+	{
+		DebugHelper::Print(TEXT("Can NOT access MappingContext. Please check it"), FColor::Red);
+		return;
+	}
+	if (UEnhancedInputLocalPlayerSubsystem* SubSystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer()))
+	{
+		SubSystem->RemoveMappingContext(MappingContext);
+	}
 }
