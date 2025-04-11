@@ -38,8 +38,7 @@ protected:
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category=Movement)
 	float WalkingSpeed = 200.f;
-
-	/** 달리기(기본) 속도 **/
+	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category=Movement)
 	float RunSpeed = 500.f;
 
@@ -48,6 +47,19 @@ protected:
 	
 	bool bIsFirstLoading = true;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(Categories ="CharacterClass.Player"))
+	FGameplayTag CharacterTag;
+	
+	UFUNCTION(BlueprintImplementableEvent)
+	void SetWeaponMeshVisibility(bool bIsVisible);
+
+
+public:
+	FORCEINLINE UAdventureMovementComponent* GetAdventureMovementComponent() const { return AdventureMovementComponent; }
+
+protected:
+
+		
 #pragma region Components
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera")
@@ -97,13 +109,5 @@ protected:
 	void OnPlayerExitClimbState();
 	
 #pragma endregion
-
-	UFUNCTION(BlueprintImplementableEvent)
-	void SetWeaponMeshVisibility(bool bIsVisible);
-	
-private:
-
-public:
-	FORCEINLINE UAdventureMovementComponent* GetAdventureMovementComponent() const { return AdventureMovementComponent; }
 	
 };

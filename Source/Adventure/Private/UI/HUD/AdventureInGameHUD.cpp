@@ -6,13 +6,13 @@
 #include "UI/Widget/AdventureUserWidget.h"
 #include "UI/WidgetController/OverlayWidgetController.h"
 
-void AAdventureInGameHUD::InitOverlay(APlayerController* PC, APlayerState* PS, UAbilitySystemComponent* ASC, UAttributeSet* AS)
+void AAdventureInGameHUD::InitOverlay(APlayerController* PC, APlayerState* PS, UAbilitySystemComponent* ASC, UAttributeSet* AS, const FGameplayTag& CharacterTag)
 {
 	check(OverlayWidgetClass);
 	
 	OverlayWidget = CreateWidget<UAdventureUserWidget>(GetWorld(), OverlayWidgetClass);
 	
-	const FWidgetControllerParams WidgetParams(PC, PS, ASC, AS);
+	const FWidgetControllerParams WidgetParams(PC, PS, ASC, AS, CharacterTag);
 	UOverlayWidgetController* WidgetController = GetOverlayWidgetController(WidgetParams);
 	OverlayWidget->SetWidgetController(WidgetController);
 

@@ -17,6 +17,8 @@ namespace AdventureGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(InputTag_Climb_Stop, "InputTag.Climb.Stop");
 	UE_DEFINE_GAMEPLAY_TAG(InputTag_Climb_Move, "InputTag.Climb.Move");
 	UE_DEFINE_GAMEPLAY_TAG(InputTag_Climb_Hop, "InputTag.Climb.Hop");
+	UE_DEFINE_GAMEPLAY_TAG(InputTag_NormalAbility, "InputTag.NormalAbility");
+	UE_DEFINE_GAMEPLAY_TAG(InputTag_SpecialAbility, "InputTag.SpecialAbility");
 
 	
 	/** Status Tag **/
@@ -60,6 +62,9 @@ namespace AdventureGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(Event_HitReact, "Event.HitReact")
 	UE_DEFINE_GAMEPLAY_TAG(Event_HitPause, "Event.HitPause")
 
+	/** Class Tag **/
+	UE_DEFINE_GAMEPLAY_TAG(CharacterClass_Player_Warrior, "CharacterClass.Player.Warrior")
+	
 	
 
 }

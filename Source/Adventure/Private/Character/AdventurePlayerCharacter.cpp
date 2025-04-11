@@ -86,8 +86,12 @@ void AAdventurePlayerCharacter::InitPlayerStartUpData() const
 {
 	if (CharacterStartUpData.IsNull())
 	{
-		DebugHelper::Print(FString::Printf(TEXT("You need to assign startup data to %s"), *GetName()), FColor::Yellow);
+		DebugHelper::Print(FString::Printf(TEXT("You need to assign startup data to %s"), *GetName()), FColor::Red);
 		return;
+	}
+	if (!CharacterTag.IsValid())
+	{
+		DebugHelper::Print(FString::Printf(TEXT("You need to assign Character Tag to %s"), *GetName()), FColor::Yellow);
 	}
 	
 	UAdventureAbilitySystemComponent* AdventureAbilitySystemComponent = Cast<UAdventureAbilitySystemComponent>(AbilitySystemComponent);
@@ -104,12 +108,16 @@ void AAdventurePlayerCharacter::InitPlayerStartUpData() const
 	{
 		 if (AAdventureInGameHUD* AdventureInGameHUD = Cast<AAdventureInGameHUD>(PlayerController->GetHUD()))
 		 {
-		 	AdventureInGameHUD->InitOverlay(PlayerController, GetPlayerState(), AdventureAbilitySystemComponent, AttributeSet);
+		 	AdventureInGameHUD->InitOverlay(PlayerController, GetPlayerState(), AdventureAbilitySystemComponent, AttributeSet, CharacterTag);
 		 }
 	}
 
 }
 
+
+
+
+#pragma region Input
 
 void AAdventurePlayerCharacter::Input_Look(const FInputActionValue& InputActionValue)
 {
@@ -303,3 +311,5 @@ void AAdventurePlayerCharacter::OnPlayerExitClimbState()
 		PlayerController->RemoveClimbMappingContext();
 	}
 }
+
+#pragma endregion 

@@ -21,7 +21,6 @@ public:
 	virtual void BroadCastInitialValue() override;
 	virtual void BindCallbacksToDependencies() override;
 	
-	
 	UPROPERTY(BlueprintAssignable, Category = "GameplayAbility|Attribute")
 	FOnAttributeChangeDelegate OnHealthChangedDelegate;
 

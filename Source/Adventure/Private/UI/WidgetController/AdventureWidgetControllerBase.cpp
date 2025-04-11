@@ -12,6 +12,7 @@ void UAdventureWidgetControllerBase::SetWidgetControllerParams(const FWidgetCont
 	PlayerState = WCParams.PlayerState;
 	AbilitySystemComponent = WCParams.AbilitySystemComponent;
 	AttributeSet = WCParams.AttributeSet;
+	CurrentCharacterTag = WCParams.CharacterTag;
 }
 
 void UAdventureWidgetControllerBase::BroadCastInitialValue()
@@ -21,4 +22,11 @@ void UAdventureWidgetControllerBase::BroadCastInitialValue()
 
 void UAdventureWidgetControllerBase::BindCallbacksToDependencies()
 {
+}
+
+FAbilityInfoForWidget UAdventureWidgetControllerBase::FindAbilityInfoByTag() const
+{
+	if (!CharacterAbilityInformation) return FAbilityInfoForWidget();
+
+	return CharacterAbilityInformation->FindAbilityInfoByCharacterTag(CurrentCharacterTag);
 }

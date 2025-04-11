@@ -20,6 +20,8 @@ namespace AdventureGameplayTags
 	ADVENTURE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Climb_Stop);
 	ADVENTURE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Climb_Move);
 	ADVENTURE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Climb_Hop);
+	ADVENTURE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_NormalAbility);
+	ADVENTURE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_SpecialAbility);
 
 	
 	/** Status Tag **/
@@ -63,6 +65,10 @@ namespace AdventureGameplayTags
 	
 	ADVENTURE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Event_HitReact);
 	ADVENTURE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Event_HitPause);
+
+
+	/** Class Tag **/
+	ADVENTURE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(CharacterClass_Player_Warrior);
 
 	
 
