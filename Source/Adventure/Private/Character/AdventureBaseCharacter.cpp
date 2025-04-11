@@ -8,6 +8,7 @@
 #include "Component/Movement/AdventureMovementComponent.h"
 #include "Item/Weapon/AdventureWeaponBase.h"
 #include "MotionWarpingComponent.h"
+#include "Components/CapsuleComponent.h"
 
 
 AAdventureBaseCharacter::AAdventureBaseCharacter(const FObjectInitializer& ObjectInitializer)
@@ -18,6 +19,8 @@ AAdventureBaseCharacter::AAdventureBaseCharacter(const FObjectInitializer& Objec
 	PrimaryActorTick.bStartWithTickEnabled = false;
 
 	GetMesh()->bReceivesDecals = false;
+	GetMesh()->SetCollisionResponseToChannel(ECC_Camera, ECR_Ignore);
+	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_Camera, ECR_Ignore);
 
 	AbilitySystemComponent = CreateDefaultSubobject<UAdventureAbilitySystemComponent>("AbilitySystemComponent");
 	AttributeSet = CreateDefaultSubobject<UAdventureAttributeSet>("AttributeSet");
@@ -43,6 +46,11 @@ void AAdventureBaseCharacter::ToggleWeaponCollision_Implementation(const bool bI
 	}
 }
 
+bool AAdventureBaseCharacter::IsDead() const
+{
+	return bIsDead;
+}
+
 void AAdventureBaseCharacter::RegisterSpawnedWeapon(AAdventureWeaponBase* InWeaponToRegister)
 {
 	check(InWeaponToRegister);
@@ -60,4 +68,14 @@ void AAdventureBaseCharacter::PossessedBy(AController* NewController)
 	}
 	
 	
+}
+
+void AAdventureBaseCharacter::OnHitReactTagChanged(const FGameplayTag CallbackTag, int32 NewCount)
+{
+	bIsHitReacting = NewCount > 0;
+}
+
+void AAdventureBaseCharacter::OnDeathReactTagChanged(const FGameplayTag CallbackTag, int32 NewCount)
+{
+	bIsDead = NewCount > 0;
 }

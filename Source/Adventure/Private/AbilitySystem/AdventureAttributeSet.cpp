@@ -8,7 +8,9 @@
 #include "AdventureGameplayTag.h"
 #include "Controller/AdventurePlayerController.h"
 #include "GameFramework/Character.h"
+#include "Interface/EnemyInterface.h"
 #include "Kismet/GameplayStatics.h"
+#include "Perception/AISense_Damage.h"
 
 void UAdventureAttributeSet::SetEffectProperties(const FGameplayEffectModCallbackData& Data, FEffectProperties& Props)
 {
@@ -101,7 +103,6 @@ void UAdventureAttributeSet::HandleIncomingDamage(const FEffectProperties& Props
 	}
 	else
 	{
-
 		FGameplayEventData Data;
 		// TODO : 방향성 Hit 구현해야함 Data.EventTag = ;
 		
@@ -112,8 +113,19 @@ void UAdventureAttributeSet::HandleIncomingDamage(const FEffectProperties& Props
 		);
 	}
 
-
-	// 타격시 아주 짧은 시간동안 시간 지연
+	if (Props.TargetCharacter->Implements<UEnemyInterface>())
+	{
+		UAISense_Damage::ReportDamageEvent(
+			Props.TargetCharacter,
+			Props.TargetCharacter,
+			Props.SourceCharacter,
+			LocalIncomingDamage,
+			Props.SourceCharacter->GetActorLocation(),
+			Props.TargetCharacter->GetActorLocation()
+		);
+	}
+	
+	// 타격시 시간 지연
 	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(
 		Props.SourceCharacter,
 		AdventureGameplayTags::Event_HitPause,

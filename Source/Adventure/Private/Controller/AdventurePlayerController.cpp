@@ -14,6 +14,11 @@
 #include "Interface/PlayerInterface.h"
 
 
+AAdventurePlayerController::AAdventurePlayerController()
+{
+	HeroTeamId = FGenericTeamId(0);
+}
+
 void AAdventurePlayerController::ShowDamageNumber(const float DamageAmount, ACharacter* TargetCharacter, const bool bIsCriticalHit, const FGameplayTag& DamageType)
 {
 	check(DamageTextClass)
@@ -32,6 +37,11 @@ void AAdventurePlayerController::ShowDamageNumber(const float DamageAmount, ACha
 void AAdventurePlayerController::AddDefaultCharacterToManager(ACharacter* CharacterToAdd) const
 {
 	ControllableCharacterManager->RegisterPartyMember(CharacterToAdd, 1);
+}
+
+FGenericTeamId AAdventurePlayerController::GetGenericTeamId() const
+{
+	return HeroTeamId;
 }
 
 void AAdventurePlayerController::BeginPlay()

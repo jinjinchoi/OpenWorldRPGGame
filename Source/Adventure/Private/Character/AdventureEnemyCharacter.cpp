@@ -3,11 +3,14 @@
 
 #include "Character/AdventureEnemyCharacter.h"
 
+#include "AdventureGameplayTag.h"
 #include "DebugHelper.h"
 #include "AbilitySystem/AdventureAbilitySystemComponent.h"
 #include "AbilitySystem/AdventureAttributeSet.h"
+#include "BehaviorTree/BlackboardComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/WidgetComponent.h"
+#include "Controller/AdventureAIController.h"
 #include "DataAsset/StartUpData/DataAsset_StartUpDataBase.h"
 #include "Engine/AssetManager.h"
 #include "GameFramework/CharacterMovementComponent.h" 
@@ -48,7 +51,12 @@ void AAdventureEnemyCharacter::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
 
+	AdventureAIController = Cast<AAdventureAIController>(NewController);
+	AdventureAIController->RunBehaviorTree(BehaviorTree);
+	AdventureAIController->GetBlackboardComponent()->SetValueAsBool("bIsHitReacting", false);
+
 	InitEnemyStartUpData();
+	BindGameplayTagChange();
 
 	
 }
@@ -80,6 +88,39 @@ void AAdventureEnemyCharacter::BeginPlay()
 	
 }
 
+
+void AAdventureEnemyCharacter::BindGameplayTagChange()
+{
+	if (!AbilitySystemComponent) return;
+
+	AbilitySystemComponent->RegisterGameplayTagEvent(AdventureGameplayTags::Status_HitReact, EGameplayTagEventType::NewOrRemoved)
+		.AddUObject(this, &ThisClass::OnHitReactTagChanged);
+
+	AbilitySystemComponent->RegisterGameplayTagEvent(AdventureGameplayTags::Status_Dead, EGameplayTagEventType::NewOrRemoved)
+		.AddUObject(this, &ThisClass::OnDeathReactTagChanged);
+	
+}
+
+void AAdventureEnemyCharacter::OnHitReactTagChanged(const FGameplayTag CallbackTag, int32 NewCount)
+{
+	Super::OnHitReactTagChanged(CallbackTag, NewCount);
+	GetCharacterMovement()->MaxWalkSpeed = bIsHitReacting ? 0.f : MaxWalkSpeed;
+	AdventureAIController->GetBlackboardComponent()->SetValueAsBool("bIsHitReacting", bIsHitReacting);
+
+	
+}
+
+void AAdventureEnemyCharacter::OnDeathReactTagChanged(const FGameplayTag CallbackTag, int32 NewCount)
+{
+	Super::OnDeathReactTagChanged(CallbackTag, NewCount);
+	
+	AutoPossessAI = EAutoPossessAI::Disabled;
+	
+	if (AController* AIController = GetController())
+	{
+		AIController->UnPossess();
+	}
+}
 
 void AAdventureEnemyCharacter::InitEnemyStartUpData() const
 {

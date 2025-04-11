@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
+#include "GenericTeamAgentInterface.h"
 #include "AdventurePlayerController.generated.h"
 
 class UControllableCharacterManager;
@@ -17,19 +18,21 @@ struct FGameplayTag;
  * 
  */
 UCLASS()
-class ADVENTURE_API AAdventurePlayerController : public APlayerController
+class ADVENTURE_API AAdventurePlayerController : public APlayerController, public IGenericTeamAgentInterface
 {
 	GENERATED_BODY()
 
 public:
+	AAdventurePlayerController();
+	
 	void ShowDamageNumber(const float DamageAmount, ACharacter* TargetCharacter, const bool bIsCriticalHit, const FGameplayTag& DamageType);
 	void AddClimbMappingContext() const;
 	void RemoveClimbMappingContext() const;
-	
-	UPROPERTY()
-	TObjectPtr<UControllableCharacterManager> ControllableCharacterManager;
-
 	void AddDefaultCharacterToManager(ACharacter* CharacterToAdd) const;
+
+	/* Begin IGenericTeamAgentInterface Interface.*/
+	virtual FGenericTeamId GetGenericTeamId() const override;
+	/* End IGenericTeamAgentInterface Interface. */
 
 protected:
 	virtual void BeginPlay() override;
@@ -38,10 +41,14 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Input)
 	TObjectPtr<UDataAsset_InputConfig> InputConfigDataAsset;
 
+	UPROPERTY()
+	TObjectPtr<UControllableCharacterManager> ControllableCharacterManager;
 
 private:
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<UDamageTextComponent> DamageTextClass;
+
+	FGenericTeamId HeroTeamId;
 
 #pragma region Input Binding Functions
 	

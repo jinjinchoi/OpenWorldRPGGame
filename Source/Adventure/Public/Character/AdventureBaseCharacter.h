@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "AbilitySystemInterface.h"
+#include "GameplayTagContainer.h"
 #include "Interface/CombatInterface.h"
 #include "AdventureBaseCharacter.generated.h"
 
@@ -27,6 +28,7 @@ public:
 
 	/* Begin ICombat Interface */
 	virtual void ToggleWeaponCollision_Implementation(const bool bIsEnable, const EAdventureWeaponType AdventureWeaponType = EAdventureWeaponType::Weapon) override;
+	virtual bool IsDead() const;
 	/* End ICombat Interface */
 	
 	UFUNCTION(BlueprintCallable)
@@ -51,6 +53,14 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Combat")
 	TObjectPtr<AAdventureWeaponBase> OwningWeapon;
+
+	bool bIsDead = false;
+	bool bIsHitReacting = false;
+
+	// React GameplayTag Changed 
+	virtual void OnHitReactTagChanged(const FGameplayTag CallbackTag, int32 NewCount);
+	virtual void OnDeathReactTagChanged(const FGameplayTag CallbackTag, int32 NewCount);
+	
 
 
 public:

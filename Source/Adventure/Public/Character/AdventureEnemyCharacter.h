@@ -8,7 +8,9 @@
 #include "UI/WidgetController/OverlayWidgetController.h"
 #include "AdventureEnemyCharacter.generated.h"
 
+class AAdventureAIController;
 class UWidgetComponent;
+class UBehaviorTree;
 /**
  * 
  */
@@ -37,7 +39,26 @@ protected:
 	UPROPERTY(BlueprintAssignable)
 	FOnAttributeChangeDelegate OnMaxHealthChangeDelegate;
 
+	void BindGameplayTagChange();
+
+	/* Begin AAdventureBaseCharacter */
+	virtual void OnHitReactTagChanged(const FGameplayTag CallbackTag, int32 NewCount) override;
+	virtual void OnDeathReactTagChanged(const FGameplayTag CallbackTag, int32 NewCount) override;
+	/* End AAdventureBaseCharacter */
+
+	/* AI */
+
+	UPROPERTY()
+	TObjectPtr<AAdventureAIController> AdventureAIController;
+
+	UPROPERTY(EditAnywhere, Category="AI")
+	TObjectPtr<UBehaviorTree> BehaviorTree;
+	
+
+
 private:
 	void InitEnemyStartUpData() const;
+
+	
 	
 };

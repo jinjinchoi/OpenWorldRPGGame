@@ -31,10 +31,6 @@ namespace AdventureGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(Status_Dodging, "Status.Dodging")
 	
 	UE_DEFINE_GAMEPLAY_TAG(Status_HitReact, "Status.HitReact")
-	UE_DEFINE_GAMEPLAY_TAG(Status_HitReact_Front, "Status.HitReact.Front")
-	UE_DEFINE_GAMEPLAY_TAG(Status_HitReact_Back, "Status.HitReact.Back")
-	UE_DEFINE_GAMEPLAY_TAG(Status_HitReact_Left, "Status.HitReact.Left")
-	UE_DEFINE_GAMEPLAY_TAG(Status_HitReact_Right, "Status.HitReact.Right")
 	UE_DEFINE_GAMEPLAY_TAG(Status_Dead, "Status.Dead")
 
 	
@@ -60,6 +56,10 @@ namespace AdventureGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(Event_Hit_Melee, "Event.Hit.Melee")
 	
 	UE_DEFINE_GAMEPLAY_TAG(Event_HitReact, "Event.HitReact")
+	UE_DEFINE_GAMEPLAY_TAG(Evens_HitReact_Front, "Even.HitReact.Front")
+	UE_DEFINE_GAMEPLAY_TAG(Even_HitReact_Back, "Even.HitReact.Back")
+	UE_DEFINE_GAMEPLAY_TAG(Even_HitReact_Left, "Even.HitReact.Left")
+	UE_DEFINE_GAMEPLAY_TAG(Even_HitReact_Right, "Even.HitReact.Right")
 	UE_DEFINE_GAMEPLAY_TAG(Event_HitPause, "Event.HitPause")
 
 	/** Class Tag **/
