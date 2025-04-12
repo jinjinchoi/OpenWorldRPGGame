@@ -3,6 +3,9 @@
 
 #include "AnimInstance/AdventureCharacterAnimInstance.h"
 
+#include "AdventureFunctionLibrary.h"
+#include "AdventureGameplayTag.h"
+#include "KismetAnimationLibrary.h"
 #include "Character/AdventureBaseCharacter.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
@@ -25,6 +28,9 @@ void UAdventureCharacterAnimInstance::NativeThreadSafeUpdateAnimation(float Delt
 
 	bHasAcceleration = OwningMovementComponent->GetCurrentAcceleration().SizeSquared2D() > 0.f;
 	bIsFalling = OwningMovementComponent->IsFalling();
-	bIsSprint = GroundSpeed > 600; // 나중에 태그로 확인해야함
+	bIsSprint = UAdventureFunctionLibrary::DoseActorHaveTag(OwningCharacter, AdventureGameplayTags::Status_Locomotion_Sprint);
+	bIsStraing = UAdventureFunctionLibrary::DoseActorHaveTag(OwningCharacter, AdventureGameplayTags::Status_Enemy_Strafing);
+
+	LocomotionDirection = UKismetAnimationLibrary::CalculateDirection(Velocity, OwningCharacter->GetActorRotation());
 	
 }

@@ -36,6 +36,9 @@ namespace AdventureGameplayTags
 
 	ADVENTURE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Status_HitReact);
 	ADVENTURE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Status_Dead);
+
+	
+	ADVENTURE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Status_Enemy_Strafing);
 	
 	
 	/** Ability Tag **/

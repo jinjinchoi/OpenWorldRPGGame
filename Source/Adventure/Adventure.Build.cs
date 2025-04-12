@@ -22,7 +22,8 @@ public class Adventure : ModuleRules
 
 		PrivateDependencyModuleNames.AddRange(new string[]
 		{
-			"MotionWarping"
+			"MotionWarping",
+			"AnimGraphRuntime"
 		});
 
 		// Uncomment if you are using Slate UI

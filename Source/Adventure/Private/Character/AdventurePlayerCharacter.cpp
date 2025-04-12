@@ -2,6 +2,9 @@
 
 
 #include "Character/AdventurePlayerCharacter.h"
+
+#include "AdventureFunctionLibrary.h"
+#include "AdventureGameplayTag.h"
 #include "DebugHelper.h"
 #include "Camera/CameraComponent.h"
 #include "AbilitySystem/AdventureAbilitySystemComponent.h"
@@ -214,7 +217,7 @@ void AAdventurePlayerCharacter::StartSprint()
 	bIsSprint = true;
 	bIsWalking = false;
 
-	// TODO: Add Sprint Tag
+	UAdventureFunctionLibrary::AddGameplayTagToActorIfNone(this, AdventureGameplayTags::Status_Locomotion_Sprint);
 }
 
 void AAdventurePlayerCharacter::StopSprint()
@@ -223,7 +226,7 @@ void AAdventurePlayerCharacter::StopSprint()
 	bIsSprint = false;
 	GetWorld()->GetTimerManager().ClearTimer(SprintTimerHandle);
 
-	// TODO: Remove Sprint Tag
+	UAdventureFunctionLibrary::RemoveGameplayTagToActorIfFound(this, AdventureGameplayTags::Status_Locomotion_Sprint);
 }
 
 void AAdventurePlayerCharacter::Input_Walk()
@@ -239,6 +242,8 @@ void AAdventurePlayerCharacter::Input_Walk()
 		bIsWalking = true;
 		bIsSprint = false;
 	}
+	
+	UAdventureFunctionLibrary::RemoveGameplayTagToActorIfFound(this, AdventureGameplayTags::Status_Locomotion_Sprint);
 }
 
 
