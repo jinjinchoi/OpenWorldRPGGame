@@ -43,7 +43,7 @@ protected:
 	bool bIsSprint = false;
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category="AnimData|LocomotionData")
-	bool bIsStraing = false;
+	bool bIsStrafing = false;
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category="AnimData|LocomotionData")
 	float LocomotionDirection = 0.f;

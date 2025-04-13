@@ -92,7 +92,7 @@ void AAdventureAIController::OnEnemyPerceptionUpdated(AActor* Actor, FAIStimulus
 			const float CurrentTime = Actor->GetWorld()->GetTimeSeconds();
 			float TimeSinceLastSensed = CurrentTime - LastSensedTime;
 
-			if (TimeSinceLastSensed >= 5.f || !Actor)
+			if (TimeSinceLastSensed >= 10.f || !Actor)
 			{
 				BlackboardComponent->ClearValue(FName("TargetActor"));
 			}

@@ -5,6 +5,7 @@
 
 #include "AdventureFunctionLibrary.h"
 #include "AdventureGameplayTag.h"
+#include "DebugHelper.h"
 #include "KismetAnimationLibrary.h"
 #include "Character/AdventureBaseCharacter.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -29,7 +30,8 @@ void UAdventureCharacterAnimInstance::NativeThreadSafeUpdateAnimation(float Delt
 	bHasAcceleration = OwningMovementComponent->GetCurrentAcceleration().SizeSquared2D() > 0.f;
 	bIsFalling = OwningMovementComponent->IsFalling();
 	bIsSprint = UAdventureFunctionLibrary::DoseActorHaveTag(OwningCharacter, AdventureGameplayTags::Status_Locomotion_Sprint);
-	bIsStraing = UAdventureFunctionLibrary::DoseActorHaveTag(OwningCharacter, AdventureGameplayTags::Status_Enemy_Strafing);
+	bIsStrafing = UAdventureFunctionLibrary::DoseActorHaveTag(OwningCharacter, AdventureGameplayTags::Status_Enemy_Strafing);
+
 
 	LocomotionDirection = UKismetAnimationLibrary::CalculateDirection(Velocity, OwningCharacter->GetActorRotation());
 	
