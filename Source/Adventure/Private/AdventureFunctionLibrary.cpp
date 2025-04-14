@@ -5,6 +5,7 @@
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
 #include "AdventureGameplayTag.h"
+#include "GenericTeamAgentInterface.h"
 #include "AdventureType/AdventureAbilityTypes.h"
 #include "AdventureType/AdventureStructTypes.h"
 
@@ -129,4 +130,19 @@ FActiveGameplayEffectHandle UAdventureFunctionLibrary::ApplyDamageEffect(const F
 
 	return DamageEffectParams.TargetAbilitySystemComponent->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data);
 	
+}
+
+bool UAdventureFunctionLibrary::IsTargetPawnHostile(const APawn* QueryPawn, const APawn* TargetPawn)
+{
+	check(QueryPawn && TargetPawn);
+	
+	const IGenericTeamAgentInterface* QueryTeamAgent = Cast<IGenericTeamAgentInterface>(QueryPawn->GetController());
+	const IGenericTeamAgentInterface* TargetTeamAgent = Cast<IGenericTeamAgentInterface>(TargetPawn->GetController());
+
+	if (QueryTeamAgent && TargetTeamAgent)
+	{
+		return QueryTeamAgent->GetGenericTeamId() != TargetTeamAgent->GetGenericTeamId(); 
+	}
+
+	return false;
 }

@@ -4,6 +4,7 @@
 #include "Item/Weapon/AdventureWeaponBase.h"
 
 #include "AbilitySystemBlueprintLibrary.h"
+#include "AdventureFunctionLibrary.h"
 #include "AdventureGameplayTag.h"
 #include "DebugHelper.h"
 #include "Abilities/GameplayAbilityTypes.h"
@@ -54,13 +55,17 @@ void AAdventureWeaponBase::ToggleCollisionEnable(const bool bIsEnable)
 
 void AAdventureWeaponBase::CollisionBoxBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (OverlappedActors.Contains(OtherActor) || !OtherActor->Implements<UCombatInterface>()) return;
+	if (OverlappedActors.Contains(OtherActor)|| !OtherActor || !OtherActor->Implements<UCombatInterface>() || ICombatInterface::Execute_IsDead(OtherActor))
+	{
+		return;
+	}
 
 	APawn* WeaponOwningPawn = GetInstigator();
+	const APawn* TargetPawn = Cast<APawn>(OtherActor);
 
 	checkf(WeaponOwningPawn, TEXT("You need to set Instigator to %s"), *GetName());
-	
-	if (OtherActor != WeaponOwningPawn)
+
+	if (UAdventureFunctionLibrary::IsTargetPawnHostile(WeaponOwningPawn, TargetPawn))
 	{
 		FGameplayEventData Data;
 		Data.Instigator = WeaponOwningPawn;

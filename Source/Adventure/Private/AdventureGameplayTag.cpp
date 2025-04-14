@@ -28,10 +28,11 @@ namespace AdventureGameplayTags
 	
 	UE_DEFINE_GAMEPLAY_TAG(Status_CanHeavyAttack, "Status.CanHeavyAttack")
 	UE_DEFINE_GAMEPLAY_TAG(Status_HeavyAttackActive, "Status.HeavyAttackActive")
-	UE_DEFINE_GAMEPLAY_TAG(Status_Dodging, "Status.Dodging")
 	
 	UE_DEFINE_GAMEPLAY_TAG(Status_HitReact, "Status.HitReact")
 	UE_DEFINE_GAMEPLAY_TAG(Status_Dead, "Status.Dead")
+	
+	UE_DEFINE_GAMEPLAY_TAG(Status_Player_Dodging, "Status.Player.Dodging")
 	
 	UE_DEFINE_GAMEPLAY_TAG(Status_Enemy_Strafing, "Status.Enemy.Strafing")
 
@@ -41,6 +42,8 @@ namespace AdventureGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(Ability_Player_Attack_Heavy, "Ability.Player.Attack.Heavy")
 	UE_DEFINE_GAMEPLAY_TAG(Ability_Player_Dodge, "Ability.Player.Dodge")
 	UE_DEFINE_GAMEPLAY_TAG(Ability_Player_HitPause, "Ability.Player.HitPause")
+	
+	UE_DEFINE_GAMEPLAY_TAG(Ability_Enemy_Attack_Melee, "Ability.Enemy.Attack.Melee")
 	
 	UE_DEFINE_GAMEPLAY_TAG(Ability_Shared_HitReact, "Ability.Shared.HitReact")
 	UE_DEFINE_GAMEPLAY_TAG(Ability_Shared_Death, "Ability.Shared.Death")

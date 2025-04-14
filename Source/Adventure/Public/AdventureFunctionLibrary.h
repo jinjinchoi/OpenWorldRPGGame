@@ -40,6 +40,10 @@ public:
 	
 	
 	/** Gameplay Mechanics **/
-	UFUNCTION(BlueprintCallable, Category="AdventureFunctionLibrary|GameplayAbility")
+	UFUNCTION(BlueprintCallable, Category="AdventureFunctionLibrary|Gameplay Mechanics")
 	static FActiveGameplayEffectHandle ApplyDamageEffect(const FDamageEffectParams& DamageEffectParams);
+
+	UFUNCTION(BlueprintPure, Category="AdventureFunctionLibrary|Gameplay Mechanics")
+	static bool IsTargetPawnHostile(const APawn* QueryPawn, const APawn* TargetPawn);
+	
 };
