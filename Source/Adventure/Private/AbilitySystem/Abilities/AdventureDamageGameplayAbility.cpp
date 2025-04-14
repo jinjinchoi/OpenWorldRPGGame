@@ -4,6 +4,7 @@
 #include "AbilitySystem/Abilities/AdventureDamageGameplayAbility.h"
 
 #include "AbilitySystemBlueprintLibrary.h"
+#include "AdventureFunctionLibrary.h"
 
 
 FDamageEffectParams UAdventureDamageGameplayAbility::MakeDamageEffectParams(AActor* TargetActor, FVector KnockBackDirectionOverride) const
@@ -19,6 +20,7 @@ FDamageEffectParams UAdventureDamageGameplayAbility::MakeDamageEffectParams(AAct
 	Params.DamageGameplayEffectClass = DamageEffectClass;
 	Params.DamageType = DamageType;
 	Params.DamageCoefficient = DamageMultiplier.GetValueAtLevel(GetAbilityLevel());
+	Params.HitDirectionTag = UAdventureFunctionLibrary::ComputeHitReactDirection(GetAvatarActorFromActorInfo(), TargetActor);
 
 	if (KnockBackForceMagnitude > 0.f)
 	{

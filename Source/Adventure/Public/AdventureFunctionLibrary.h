@@ -33,10 +33,12 @@ public:
 	static bool IsCriticalHit(const FGameplayEffectContextHandle& EffectContextHandle);
 	static FVector GetKnockBackDirection(const FGameplayEffectContextHandle& EffectContextHandle);
 	static FGameplayTag GetDamageType(const FGameplayEffectContextHandle& EffectContextHandle);
+	static FGameplayTag GetHitDirectionTag(const FGameplayEffectContextHandle& EffectContextHandle);
 
 	static void SetIsCriticalHit(FGameplayEffectContextHandle& EffectContextHandle, const bool bInIsCriticalHit);
 	static void SetKnockBackDirection(FGameplayEffectContextHandle& EffectContextHandle, const FVector& InKnockBackDirection);
-	static void SetDamageType(UPARAM(ref) FGameplayEffectContextHandle& EffectContextHandle,  const FGameplayTag& InDamageType);
+	static void SetDamageType(FGameplayEffectContextHandle& EffectContextHandle,  const FGameplayTag& InDamageType);
+	static void SetHitDirectionTag(FGameplayEffectContextHandle& EffectContextHandle,  const FGameplayTag& InDamageType);
 	
 	
 	/** Gameplay Mechanics **/
@@ -45,5 +47,8 @@ public:
 
 	UFUNCTION(BlueprintPure, Category="AdventureFunctionLibrary|Gameplay Mechanics")
 	static bool IsTargetPawnHostile(const APawn* QueryPawn, const APawn* TargetPawn);
+
+	UFUNCTION(BlueprintPure, Category="AdventureFunctionLibrary|Gameplay Mechanics")
+	static FGameplayTag ComputeHitReactDirection(const AActor* InAttacker, const AActor* InTarget);
 	
 };

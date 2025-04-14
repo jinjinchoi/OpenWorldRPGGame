@@ -42,9 +42,17 @@ bool FAdventureGameplayEffectContext::NetSerialize(FArchive& Ar, class UPackageM
 		{
 			RepBits |= 1 << 8;
 		}
+		if (DamageType.IsValid())
+		{
+			RepBits |= 1 << 9;
+		}
+		if (HitDirectionTag.IsValid())
+		{
+			RepBits |= 1 << 10;
+		}
 	}
 
-	Ar.SerializeBits(&RepBits, 9);
+	Ar.SerializeBits(&RepBits, 11);
 
 	if (RepBits & (1 << 0))
 	{
@@ -93,6 +101,28 @@ bool FAdventureGameplayEffectContext::NetSerialize(FArchive& Ar, class UPackageM
 	if (RepBits & (1 << 8))
 	{
 		KnockBackDirection.NetSerialize(Ar, Map, bOutSuccess);
+	}
+	if (RepBits & (1 << 9))
+	{
+		if (Ar.IsLoading())
+		{
+			if (!DamageType.IsValid())
+			{
+				DamageType = MakeShared<FGameplayTag>();
+			}
+		}
+		DamageType->NetSerialize(Ar, Map, bOutSuccess);
+	}
+	if (RepBits & (1 << 10))
+	{
+		if (Ar.IsLoading())
+		{
+			if (!HitDirectionTag.IsValid())
+			{
+				HitDirectionTag = MakeShared<FGameplayTag>();
+			}
+		}
+		HitDirectionTag->NetSerialize(Ar, Map, bOutSuccess);
 	}
 
 	if (Ar.IsLoading())

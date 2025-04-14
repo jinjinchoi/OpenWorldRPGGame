@@ -8,6 +8,7 @@
 #include "GenericTeamAgentInterface.h"
 #include "AdventureType/AdventureAbilityTypes.h"
 #include "AdventureType/AdventureStructTypes.h"
+#include "Kismet/KismetMathLibrary.h"
 
 bool UAdventureFunctionLibrary::DoseActorHaveTag(AActor* InActor, const FGameplayTag TagToCheck)
 {
@@ -80,6 +81,19 @@ FGameplayTag UAdventureFunctionLibrary::GetDamageType(const FGameplayEffectConte
 	
 }
 
+FGameplayTag UAdventureFunctionLibrary::GetHitDirectionTag(const FGameplayEffectContextHandle& EffectContextHandle)
+{
+	if (const FAdventureGameplayEffectContext* AdventureContext = static_cast<const FAdventureGameplayEffectContext*>(EffectContextHandle.Get()))
+	{
+		if (AdventureContext->GetHitDirectionTag().IsValid())
+		{
+			return *AdventureContext->GetHitDirectionTag();
+		}
+	}
+
+	return FGameplayTag();
+}
+
 void UAdventureFunctionLibrary::SetIsCriticalHit(FGameplayEffectContextHandle& EffectContextHandle, const bool bInIsCriticalHit)
 {
 	if (FAdventureGameplayEffectContext* AdventureContext = static_cast<FAdventureGameplayEffectContext*>(EffectContextHandle.Get()))
@@ -105,6 +119,15 @@ void UAdventureFunctionLibrary::SetDamageType(FGameplayEffectContextHandle& Effe
 	}
 }
 
+void UAdventureFunctionLibrary::SetHitDirectionTag(FGameplayEffectContextHandle& EffectContextHandle, const FGameplayTag& InDamageType)
+{
+	if (FAdventureGameplayEffectContext* AdventureContext = static_cast<FAdventureGameplayEffectContext*>(EffectContextHandle.Get()))
+	{
+		const TSharedPtr<FGameplayTag> HitDirectionTag = MakeShared<FGameplayTag>(InDamageType);
+		AdventureContext->SetHitDirectionTag(HitDirectionTag);
+	}
+}
+
 FActiveGameplayEffectHandle UAdventureFunctionLibrary::ApplyDamageEffect(const FDamageEffectParams& DamageEffectParams)
 {
 	const AActor* SourceAvatarActor = DamageEffectParams.SourceAbilitySystemComponent->GetAvatarActor();
@@ -118,6 +141,10 @@ FActiveGameplayEffectHandle UAdventureFunctionLibrary::ApplyDamageEffect(const F
 	if (DamageEffectParams.DamageType.IsValid())
 	{
 		SetDamageType(ContextHandle, DamageEffectParams.DamageType);
+	}
+	if (DamageEffectParams.HitDirectionTag.IsValid())
+	{
+		SetHitDirectionTag(ContextHandle, DamageEffectParams.HitDirectionTag);
 	}
 
 	const FGameplayEffectSpecHandle SpecHandle = DamageEffectParams.SourceAbilitySystemComponent->MakeOutgoingSpec(
@@ -145,4 +172,41 @@ bool UAdventureFunctionLibrary::IsTargetPawnHostile(const APawn* QueryPawn, cons
 	}
 
 	return false;
+}
+
+FGameplayTag UAdventureFunctionLibrary::ComputeHitReactDirection(const AActor* InAttacker, const AActor* InTarget)
+{
+	check(InAttacker && InTarget);
+
+	const FVector VictimForward = InTarget->GetActorForwardVector();
+	const FVector VictimToAttackerNormalized = (InAttacker->GetActorLocation() - InTarget->GetActorLocation()).GetSafeNormal();
+
+	const float DotResult = FVector::DotProduct(VictimForward, VictimToAttackerNormalized);
+	float AngleDifference = UKismetMathLibrary::DegAcos(DotResult);
+
+	const FVector CrossResult = FVector::CrossProduct(VictimForward, VictimToAttackerNormalized);
+
+	if (CrossResult.Z < 0.f)
+	{
+		AngleDifference *= -1.f;
+	}
+
+	if (AngleDifference >= -45.f && AngleDifference <= 45.f)
+	{
+		return AdventureGameplayTags::Event_HitReact_Front;
+	}
+	else if (AngleDifference < -45.f && AngleDifference >= -135.f)
+	{
+		return AdventureGameplayTags::Event_HitReact_Left;
+	}
+	else if (AngleDifference < -135.f || AngleDifference > 135.f)
+	{
+		return AdventureGameplayTags::Event_HitReact_Back;
+	}
+	else if (AngleDifference > 45.f && AngleDifference <= 135.f)
+	{
+		return AdventureGameplayTags::Event_HitReact_Right;
+	}
+
+	return AdventureGameplayTags::Event_HitReact_Front;
 }

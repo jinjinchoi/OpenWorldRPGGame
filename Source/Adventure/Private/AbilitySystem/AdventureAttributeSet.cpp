@@ -104,17 +104,17 @@ void UAdventureAttributeSet::HandleIncomingDamage(const FEffectProperties& Props
 	else
 	{
 		FGameplayEventData Data;
-		// TODO : 방향성 Hit 구현해야함 Data.EventTag = ;
 		
 		UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(
 			Props.TargetCharacter,
-			AdventureGameplayTags::Event_HitReact,
+			UAdventureFunctionLibrary::GetHitDirectionTag(Props.EffectContextHandle),
 			Data
 		);
 	}
 
 	if (Props.TargetCharacter->Implements<UEnemyInterface>())
 	{
+		// Enemy's Sensing Component Update
 		UAISense_Damage::ReportDamageEvent(
 			Props.TargetCharacter,
 			Props.TargetCharacter,

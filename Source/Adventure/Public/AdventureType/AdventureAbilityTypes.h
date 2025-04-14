@@ -32,10 +32,12 @@ public:
 	bool IsCriticalHit () const { return bIsCriticalHit; }
 	TSharedPtr<FGameplayTag> GetDamageType() const { return DamageType;}
 	FVector GetKnockBackDirection() const { return KnockBackDirection; }
+	TSharedPtr<FGameplayTag> GetHitDirectionTag() const { return HitDirectionTag; }
 	
 	void SetIsCriticalHit(const bool bInIsCriticalHit) { bIsCriticalHit = bInIsCriticalHit; }
 	void SetDamageType(const TSharedPtr<FGameplayTag>& InDamageType) { DamageType = InDamageType; }
 	void SetKnockBackDirection(const FVector& InDirection ) { KnockBackDirection = InDirection; }
+	void SetHitDirectionTag(const TSharedPtr<FGameplayTag>& InDirectionTag) { HitDirectionTag = InDirectionTag;  }
 
 protected:
 	UPROPERTY()
@@ -45,6 +47,8 @@ protected:
 
 	UPROPERTY()
 	FVector KnockBackDirection = FVector::ZeroVector;
+
+	TSharedPtr<FGameplayTag> HitDirectionTag;
 	
 	
 };
