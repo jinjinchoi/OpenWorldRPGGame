@@ -40,10 +40,10 @@ protected:
 	float WalkingSpeed = 200.f;
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category=Movement)
-	float RunSpeed = 500.f;
+	float RunSpeed = 400.f;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category=Movement)
-	float SprintSpeed = 700.f;
+	float SprintSpeed = 600.f;
 	
 	bool bIsFirstLoading = true;
 

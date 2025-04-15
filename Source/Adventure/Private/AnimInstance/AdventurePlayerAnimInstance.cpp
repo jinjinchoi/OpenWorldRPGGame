@@ -3,6 +3,8 @@
 
 #include "AnimInstance/AdventurePlayerAnimInstance.h"
 
+#include "AdventureFunctionLibrary.h"
+#include "AdventureGameplayTag.h"
 #include "DebugHelper.h"
 #include "Character/AdventurePlayerCharacter.h"
 #include "Component/Movement/AdventureMovementComponent.h"
@@ -27,6 +29,7 @@ void UAdventurePlayerAnimInstance::NativeThreadSafeUpdateAnimation(float DeltaSe
 	AirSpeed = OwningCharacter->GetVelocity().Z;
 	bIsClimbing = AdventureMovementComponent->IsClimbing();
 	ClimbVelocity = AdventureMovementComponent->GetUnRotatedClimbVelocity();
+	bIsLockOn = UAdventureFunctionLibrary::DoseActorHaveTag(OwningCharacter, AdventureGameplayTags::Status_Player_TargetLock);
 
 	
 	
