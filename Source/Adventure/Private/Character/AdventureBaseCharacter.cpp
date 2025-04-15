@@ -46,7 +46,7 @@ void AAdventureBaseCharacter::ToggleWeaponCollision_Implementation(const bool bI
 	}
 }
 
-bool AAdventureBaseCharacter::IsDead() const
+bool AAdventureBaseCharacter::IsDead_Implementation() const
 {
 	return bIsDead;
 }

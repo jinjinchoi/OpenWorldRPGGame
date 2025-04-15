@@ -51,4 +51,7 @@ public:
 	UFUNCTION(BlueprintPure, Category="AdventureFunctionLibrary|Gameplay Mechanics")
 	static FGameplayTag ComputeHitReactDirection(const AActor* InAttacker, const AActor* InTarget);
 	
+	UFUNCTION(BlueprintCallable, Category="AdventureFunctionLibrary|Gameplay Mechanics")
+	static void GetLiveActorWithinRadius(const UObject* WorldContextObject, TArray<AActor*>& OutOverlappingActors, const TArray<AActor*>& ActorsToIgnore, float Radius, const FVector& SphereOrigin);
+	
 };

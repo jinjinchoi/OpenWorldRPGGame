@@ -33,8 +33,11 @@ namespace AdventureGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(Status_Dead, "Status.Dead")
 	
 	UE_DEFINE_GAMEPLAY_TAG(Status_Player_Dodging, "Status.Player.Dodging")
+	UE_DEFINE_GAMEPLAY_TAG(Status_Player_CanCounterAttack, "Status.Player.CanCounterAttack")
 	
 	UE_DEFINE_GAMEPLAY_TAG(Status_Enemy_Strafing, "Status.Enemy.Strafing")
+	
+	UE_DEFINE_GAMEPLAY_TAG(Status_Shared_Invincible, "Status.Shared.Invincible")
 
 	
 	/** Ability Tag **/
@@ -42,6 +45,7 @@ namespace AdventureGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(Ability_Player_Attack_Heavy, "Ability.Player.Attack.Heavy")
 	UE_DEFINE_GAMEPLAY_TAG(Ability_Player_Dodge, "Ability.Player.Dodge")
 	UE_DEFINE_GAMEPLAY_TAG(Ability_Player_HitPause, "Ability.Player.HitPause")
+	UE_DEFINE_GAMEPLAY_TAG(Ability_Player_PerfectDodge, "Ability.Player.PerfectDodge")
 	
 	UE_DEFINE_GAMEPLAY_TAG(Ability_Enemy_Attack_Melee, "Ability.Enemy.Attack.Melee")
 	
@@ -66,6 +70,8 @@ namespace AdventureGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(Event_HitReact_Left, "Event.HitReact.Left")
 	UE_DEFINE_GAMEPLAY_TAG(Event_HitReact_Right, "Event.HitReact.Right")
 	UE_DEFINE_GAMEPLAY_TAG(Event_HitPause, "Event.HitPause")
+	
+	UE_DEFINE_GAMEPLAY_TAG(Event_PerfectDodge, "Event.PerfectDodge")
 
 	/** Class Tag **/
 	UE_DEFINE_GAMEPLAY_TAG(CharacterClass_Player_Warrior, "CharacterClass.Player.Warrior")

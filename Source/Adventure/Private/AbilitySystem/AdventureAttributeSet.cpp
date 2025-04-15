@@ -6,6 +6,7 @@
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AdventureFunctionLibrary.h"
 #include "AdventureGameplayTag.h"
+#include "DebugHelper.h"
 #include "Controller/AdventurePlayerController.h"
 #include "GameFramework/Character.h"
 #include "Interface/EnemyInterface.h"
@@ -91,28 +92,39 @@ void UAdventureAttributeSet::HandleIncomingDamage(const FEffectProperties& Props
 {
 	const float LocalIncomingDamage = GetIncomingDamage();
 	SetIncomingDamage(0.f);
-	
-	if (LocalIncomingDamage <= 0) return;
 
+	if (LocalIncomingDamage <= 0) return; // ← return If Damage is 0 or Character is invincible ↓
+	if (UAdventureFunctionLibrary::DoseActorHaveTag(Props.TargetCharacter, AdventureGameplayTags::Status_Shared_Invincible)) return;
+
+	// Execute PerfectDodge Ability When Player is Dodging
+	if (UAdventureFunctionLibrary::DoseActorHaveTag(Props.TargetCharacter, AdventureGameplayTags::Status_Player_Dodging))
+	{
+		UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(
+			Props.TargetCharacter,
+			AdventureGameplayTags::Event_PerfectDodge,
+			FGameplayEventData()
+		);
+		return;
+	}
+	
 	const float NewHealth = GetCurrentHealth() - LocalIncomingDamage;
 	SetCurrentHealth(FMath::Clamp(NewHealth, 0.f, GetMaxHealth()));
-	if (NewHealth <= 0)
+	
+	if (NewHealth <= 0) // Death Logic
 	{
 		UAdventureFunctionLibrary::AddGameplayTagToActorIfNone(Props.TargetCharacter, AdventureGameplayTags::Status_Dead);
 		// TODO : 소울(보상) 시스템 추가해야함.
 	}
-	else
+	else // Hit Logic
 	{
-		FGameplayEventData Data;
-		
 		UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(
 			Props.TargetCharacter,
 			UAdventureFunctionLibrary::GetHitDirectionTag(Props.EffectContextHandle),
-			Data
+			FGameplayEventData()
 		);
 	}
 
-	if (Props.TargetCharacter->Implements<UEnemyInterface>())
+	if (Props.TargetCharacter->Implements<UEnemyInterface>()) // Enemy Logic
 	{
 		// Enemy's Sensing Component Update
 		UAISense_Damage::ReportDamageEvent(
@@ -124,14 +136,16 @@ void UAdventureAttributeSet::HandleIncomingDamage(const FEffectProperties& Props
 			Props.TargetCharacter->GetActorLocation()
 		);
 	}
-	
-	// 타격시 시간 지연
-	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(
-		Props.SourceCharacter,
-		AdventureGameplayTags::Event_HitPause,
-		FGameplayEventData()
-	);
-
+	else // Player Logic
+	{
+		// Delay Time On Hit
+		UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(
+			Props.SourceCharacter,
+			AdventureGameplayTags::Event_HitPause,
+			FGameplayEventData()
+		);
+		
+	}
 	
 	// Call Show Damage Text
 	ShowDamageText(Props, LocalIncomingDamage);

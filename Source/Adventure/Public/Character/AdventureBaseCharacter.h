@@ -28,7 +28,7 @@ public:
 
 	/* Begin ICombat Interface */
 	virtual void ToggleWeaponCollision_Implementation(const bool bIsEnable, const EAdventureWeaponType AdventureWeaponType = EAdventureWeaponType::Weapon) override;
-	virtual bool IsDead() const;
+	virtual bool IsDead_Implementation() const override;
 	/* End ICombat Interface */
 	
 	UFUNCTION(BlueprintCallable)
@@ -60,7 +60,6 @@ protected:
 	// React GameplayTag Changed 
 	virtual void OnHitReactTagChanged(const FGameplayTag CallbackTag, int32 NewCount);
 	virtual void OnDeathReactTagChanged(const FGameplayTag CallbackTag, int32 NewCount);
-	
 
 
 public:
