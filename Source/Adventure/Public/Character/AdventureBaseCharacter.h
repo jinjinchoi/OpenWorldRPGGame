@@ -29,6 +29,7 @@ public:
 	/* Begin ICombat Interface */
 	virtual void ToggleWeaponCollision_Implementation(const bool bIsEnable, const EAdventureWeaponType AdventureWeaponType = EAdventureWeaponType::Weapon) override;
 	virtual bool IsDead_Implementation() const override;
+	virtual void OnCharacterDied_Implementation() override;
 	/* End ICombat Interface */
 	
 	UFUNCTION(BlueprintCallable)
@@ -56,8 +57,11 @@ protected:
 
 	bool bIsDead = false;
 	bool bIsHitReacting = false;
-
-	// React GameplayTag Changed 
+	
+	/**
+	 * 태그 변경을 감지하는 것이 아닌 Ability 자체에서 인터페이스 함수를 호출하는 방식으로 사용하는 것이 통일성 유지에 좋을 것으로 보임.
+	 * 추후 코드 리팩토링 작업을 수행한다면 이 부분을 고칠 필요가 있음.
+	 */
 	virtual void OnHitReactTagChanged(const FGameplayTag CallbackTag, int32 NewCount);
 	virtual void OnDeathReactTagChanged(const FGameplayTag CallbackTag, int32 NewCount);
 

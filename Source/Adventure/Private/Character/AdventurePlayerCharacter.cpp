@@ -75,6 +75,12 @@ void AAdventurePlayerCharacter::HideWeaponMesh_Implementation()
 	SetWeaponMeshVisibility(false);
 }
 
+void AAdventurePlayerCharacter::OnCharacterDied_Implementation()
+{
+	Super::OnCharacterDied_Implementation();
+	
+	
+}
 
 
 void AAdventurePlayerCharacter::PossessedBy(AController* NewController)
@@ -82,6 +88,7 @@ void AAdventurePlayerCharacter::PossessedBy(AController* NewController)
 	Super::PossessedBy(NewController);
 	
 	InitPlayerStartUpData();
+	BindGameplayTagChanged();
 	
 }
 
@@ -117,7 +124,38 @@ void AAdventurePlayerCharacter::InitPlayerStartUpData() const
 
 }
 
+void AAdventurePlayerCharacter::BindGameplayTagChanged()
+{
+	if (!AbilitySystemComponent) return;
 
+	AbilitySystemComponent->RegisterGameplayTagEvent(AdventureGameplayTags::Status_HitReact, EGameplayTagEventType::NewOrRemoved)
+		.AddUObject(this, &ThisClass::OnHitReactTagChanged);
+
+	AbilitySystemComponent->RegisterGameplayTagEvent(AdventureGameplayTags::Status_Dead, EGameplayTagEventType::NewOrRemoved)
+		.AddUObject(this, &ThisClass::OnDeathReactTagChanged);
+}
+
+void AAdventurePlayerCharacter::OnHitReactTagChanged(const FGameplayTag CallbackTag, int32 NewCount)
+{
+	Super::OnHitReactTagChanged(CallbackTag, NewCount);
+	
+	if (bIsHitReacting)
+	{
+		AdventureMovementComponent->ToggleClimbing(false);
+	}
+	
+}
+
+void AAdventurePlayerCharacter::OnDeathReactTagChanged(const FGameplayTag CallbackTag, int32 NewCount)
+{
+	Super::OnDeathReactTagChanged(CallbackTag, NewCount);
+
+	if (bIsDead)
+	{
+		AdventureMovementComponent->ToggleClimbing(false);
+	}
+	
+}
 
 
 #pragma region Input
@@ -149,6 +187,12 @@ void AAdventurePlayerCharacter::Input_CameraScroll(const FInputActionValue& Inpu
 
 void AAdventurePlayerCharacter::Input_Move(const FInputActionValue& InputActionValue)
 {
+	if (bIsHitReacting || bIsDead)
+	{
+		Input_StopMove();
+		return;
+	}
+	
 	const FVector2D MovementVector = InputActionValue.Get<FVector2D>();
 	const FRotator MovementRotation(0.f, Controller->GetControlRotation().Yaw, 0.f);
 

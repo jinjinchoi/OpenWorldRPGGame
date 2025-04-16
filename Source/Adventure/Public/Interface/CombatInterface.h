@@ -29,4 +29,6 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	bool IsDead() const;
 	
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void OnCharacterDied();
 };

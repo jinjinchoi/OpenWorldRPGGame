@@ -21,7 +21,7 @@ class ADVENTURE_API AAdventureEnemyCharacter : public AAdventureBaseCharacter, p
 
 public:
 	AAdventureEnemyCharacter(const FObjectInitializer& ObjectInitializer);
-	virtual void OnEnemyDied_Implementation() override;
+	virtual void OnCharacterDied_Implementation() override;
 
 protected:
 	virtual void PossessedBy(AController* NewController) override;
@@ -39,7 +39,7 @@ protected:
 	UPROPERTY(BlueprintAssignable)
 	FOnAttributeChangeDelegate OnMaxHealthChangeDelegate;
 
-	void BindGameplayTagChange();
+	void BindGameplayTagChanged();
 
 	/* Begin AAdventureBaseCharacter */
 	virtual void OnHitReactTagChanged(const FGameplayTag CallbackTag, int32 NewCount) override;

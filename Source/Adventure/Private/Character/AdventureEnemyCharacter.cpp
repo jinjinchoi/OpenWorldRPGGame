@@ -8,7 +8,6 @@
 #include "AbilitySystem/AdventureAbilitySystemComponent.h"
 #include "AbilitySystem/AdventureAttributeSet.h"
 #include "BehaviorTree/BlackboardComponent.h"
-#include "Components/CapsuleComponent.h"
 #include "Components/WidgetComponent.h"
 #include "Controller/AdventureAIController.h"
 #include "DataAsset/StartUpData/DataAsset_StartUpDataBase.h"
@@ -36,15 +35,15 @@ AAdventureEnemyCharacter::AAdventureEnemyCharacter(const FObjectInitializer& Obj
 	
 }
 
-void AAdventureEnemyCharacter::OnEnemyDied_Implementation()
+void AAdventureEnemyCharacter::OnCharacterDied_Implementation()
 {
+	Super::OnCharacterDied_Implementation();
+	
 	AutoPossessAI = EAutoPossessAI::Disabled;
 	if (AController* AIController = GetController())
 	{
 		AIController->UnPossess();
 	}
-	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	GetMesh()->bPauseAnims = true;
 }
 
 void AAdventureEnemyCharacter::PossessedBy(AController* NewController)
@@ -56,7 +55,7 @@ void AAdventureEnemyCharacter::PossessedBy(AController* NewController)
 	AdventureAIController->GetBlackboardComponent()->SetValueAsBool("bIsHitReacting", false);
 
 	InitEnemyStartUpData();
-	BindGameplayTagChange();
+	BindGameplayTagChanged();
 
 	
 }
@@ -89,7 +88,7 @@ void AAdventureEnemyCharacter::BeginPlay()
 }
 
 
-void AAdventureEnemyCharacter::BindGameplayTagChange()
+void AAdventureEnemyCharacter::BindGameplayTagChanged()
 {
 	if (!AbilitySystemComponent) return;
 

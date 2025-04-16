@@ -60,6 +60,8 @@ void AAdventureWeaponBase::CollisionBoxBeginOverlap(UPrimitiveComponent* Overlap
 		return;
 	}
 
+	OverlappedActors.AddUnique(OtherActor);
+
 	APawn* WeaponOwningPawn = GetInstigator();
 	const APawn* TargetPawn = Cast<APawn>(OtherActor);
 
@@ -72,7 +74,6 @@ void AAdventureWeaponBase::CollisionBoxBeginOverlap(UPrimitiveComponent* Overlap
 		Data.Target = OtherActor;
 
 		UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(WeaponOwningPawn, AdventureGameplayTags::Event_Hit_Melee, Data);
-		
 	}
 }
 

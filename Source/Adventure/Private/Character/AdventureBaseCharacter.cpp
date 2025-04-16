@@ -51,6 +51,13 @@ bool AAdventureBaseCharacter::IsDead_Implementation() const
 	return bIsDead;
 }
 
+void AAdventureBaseCharacter::OnCharacterDied_Implementation()
+{
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	GetMesh()->bPauseAnims = true;
+	
+}
+
 void AAdventureBaseCharacter::RegisterSpawnedWeapon(AAdventureWeaponBase* InWeaponToRegister)
 {
 	check(InWeaponToRegister);

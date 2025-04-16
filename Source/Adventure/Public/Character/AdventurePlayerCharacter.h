@@ -32,10 +32,20 @@ public:
 	virtual void HideWeaponMesh_Implementation() override;
 	/* End Player Interface */
 
+	/* Begin Combat Interface */
+	virtual void OnCharacterDied_Implementation() override;
+	/* End Combat Interface */
+
 protected:
 	virtual void PossessedBy(AController* NewController) override;
 	void InitPlayerStartUpData() const;
-	
+	void BindGameplayTagChanged();
+
+	/* Begin Adventure Base Character */
+	virtual void OnHitReactTagChanged(const FGameplayTag CallbackTag, int32 NewCount) override;
+	virtual void OnDeathReactTagChanged(const FGameplayTag CallbackTag, int32 NewCount) override;
+	/* End Adventure Base Character */
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category=Movement)
 	float WalkingSpeed = 200.f;
 	
@@ -52,6 +62,7 @@ protected:
 	
 	UFUNCTION(BlueprintImplementableEvent)
 	void SetWeaponMeshVisibility(bool bIsVisible);
+
 
 
 public:
