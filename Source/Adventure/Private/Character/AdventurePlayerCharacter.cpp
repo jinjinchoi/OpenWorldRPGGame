@@ -270,6 +270,12 @@ void AAdventurePlayerCharacter::StopSprint()
 	bIsSprint = false;
 	GetWorld()->GetTimerManager().ClearTimer(SprintTimerHandle);
 
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+	if (AnimInstance && RunToStopMontage)
+	{
+		AnimInstance->Montage_Play(RunToStopMontage);
+	}
+
 	UAdventureFunctionLibrary::RemoveGameplayTagToActorIfFound(this, AdventureGameplayTags::Status_Locomotion_Sprint);
 }
 

@@ -59,6 +59,9 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(Categories ="CharacterClass.Player"))
 	FGameplayTag CharacterTag;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category=Movement)
+	TObjectPtr<UAnimMontage> RunToStopMontage;
 	
 	UFUNCTION(BlueprintImplementableEvent)
 	void SetWeaponMeshVisibility(bool bIsVisible);

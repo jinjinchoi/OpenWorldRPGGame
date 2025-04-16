@@ -29,7 +29,6 @@ void UAdventureCharacterAnimInstance::NativeThreadSafeUpdateAnimation(float Delt
 
 	bHasAcceleration = OwningMovementComponent->GetCurrentAcceleration().SizeSquared2D() > 0.f;
 	bIsFalling = OwningMovementComponent->IsFalling();
-	bIsSprint = UAdventureFunctionLibrary::DoseActorHaveTag(OwningCharacter, AdventureGameplayTags::Status_Locomotion_Sprint);
 	bIsStrafing = UAdventureFunctionLibrary::DoseActorHaveTag(OwningCharacter, AdventureGameplayTags::Status_Enemy_Strafing);
 
 	LocomotionDirection = UKismetAnimationLibrary::CalculateDirection(Velocity, OwningCharacter->GetActorRotation());
