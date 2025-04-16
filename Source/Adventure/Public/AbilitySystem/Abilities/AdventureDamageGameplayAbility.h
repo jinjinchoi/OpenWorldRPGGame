@@ -18,7 +18,7 @@ class ADVENTURE_API UAdventureDamageGameplayAbility : public UAdventureGameplayA
 public:
 
 	UFUNCTION(BlueprintPure)
-	FDamageEffectParams MakeDamageEffectParams(AActor* TargetActor, FVector KnockBackDirectionOverride = FVector::ZeroVector) const;
+	FDamageEffectParams MakeDamageEffectParams(AActor* TargetActor = nullptr, FVector KnockBackDirectionOverride = FVector::ZeroVector) const;
 
 protected:
 	

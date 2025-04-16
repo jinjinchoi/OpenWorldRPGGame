@@ -45,6 +45,9 @@ struct FDamageEffectParams
 	FVector KnockBackDirection = FVector::ZeroVector;
 
 	UPROPERTY()
+	float KnockBackForce = 0.0f; 
+
+	UPROPERTY()
 	FGameplayTag HitDirectionTag = FGameplayTag();
 	
 	

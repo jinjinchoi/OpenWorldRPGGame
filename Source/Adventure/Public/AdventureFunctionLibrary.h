@@ -47,7 +47,7 @@ public:
 
 	UFUNCTION(BlueprintPure, Category="AdventureFunctionLibrary|Gameplay Mechanics")
 	static bool IsTargetPawnHostile(const APawn* QueryPawn, const APawn* TargetPawn);
-
+	
 	UFUNCTION(BlueprintPure, Category="AdventureFunctionLibrary|Gameplay Mechanics")
 	static FGameplayTag ComputeHitReactDirection(const AActor* InAttacker, const AActor* InTarget);
 	

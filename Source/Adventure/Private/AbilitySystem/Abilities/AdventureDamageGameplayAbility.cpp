@@ -20,11 +20,14 @@ FDamageEffectParams UAdventureDamageGameplayAbility::MakeDamageEffectParams(AAct
 	Params.DamageGameplayEffectClass = DamageEffectClass;
 	Params.DamageType = DamageType;
 	Params.DamageCoefficient = DamageMultiplier.GetValueAtLevel(GetAbilityLevel());
-	Params.HitDirectionTag = UAdventureFunctionLibrary::ComputeHitReactDirection(GetAvatarActorFromActorInfo(), TargetActor);
+	if (TargetActor)
+	{
+		Params.HitDirectionTag = UAdventureFunctionLibrary::ComputeHitReactDirection(GetAvatarActorFromActorInfo(), TargetActor);
+	}
 
 	if (KnockBackForceMagnitude > 0.f)
 	{
-		if (KnockBackDirectionOverride.IsNearlyZero())
+		if (KnockBackDirectionOverride.IsNearlyZero() && TargetActor)
 		{
 			FRotator Rotation = (TargetActor->GetActorLocation() - GetAvatarActorFromActorInfo()->GetActorLocation()).Rotation();
 			const FVector ToTarget = Rotation.Vector();

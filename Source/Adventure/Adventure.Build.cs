@@ -14,16 +14,17 @@ public class Adventure : ModuleRules
 			"CoreUObject", 
 			"Engine", 
 			"InputCore",
-			"GameplayTags",
 			"EnhancedInput",
-			"GameplayTasks", 
 			"GameplayAbilities"
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[]
 		{
 			"MotionWarping",
-			"AnimGraphRuntime"
+			"GameplayTags",
+			"GameplayTasks",
+			"AnimGraphRuntime",
+			"Niagara"
 		});
 
 		// Uncomment if you are using Slate UI

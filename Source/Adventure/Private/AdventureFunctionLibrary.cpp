@@ -175,6 +175,7 @@ bool UAdventureFunctionLibrary::IsTargetPawnHostile(const APawn* QueryPawn, cons
 	return false;
 }
 
+
 FGameplayTag UAdventureFunctionLibrary::ComputeHitReactDirection(const AActor* InAttacker, const AActor* InTarget)
 {
 	check(InAttacker && InTarget);
