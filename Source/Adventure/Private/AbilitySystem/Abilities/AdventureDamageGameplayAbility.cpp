@@ -15,13 +15,13 @@ FDamageEffectParams UAdventureDamageGameplayAbility::MakeDamageEffectParams(AAct
 
 	Params.WorldContextObject = GetAvatarActorFromActorInfo();
 	Params.SourceAbilitySystemComponent = GetAbilitySystemComponentFromActorInfo();
-	Params.TargetAbilitySystemComponent = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetActor);
 	Params.AbilityLevel = GetAbilityLevel();
 	Params.DamageGameplayEffectClass = DamageEffectClass;
 	Params.DamageType = DamageType;
 	Params.DamageCoefficient = DamageMultiplier.GetValueAtLevel(GetAbilityLevel());
 	if (TargetActor)
 	{
+		Params.TargetAbilitySystemComponent = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetActor);
 		Params.HitDirectionTag = UAdventureFunctionLibrary::ComputeHitReactDirection(GetAvatarActorFromActorInfo(), TargetActor);
 	}
 

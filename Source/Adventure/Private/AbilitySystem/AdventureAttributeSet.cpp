@@ -113,6 +113,13 @@ void UAdventureAttributeSet::HandleIncomingDamage(const FEffectProperties& Props
 	if (NewHealth <= 0) // Death Logic
 	{
 		UAdventureFunctionLibrary::AddGameplayTagToActorIfNone(Props.TargetCharacter, AdventureGameplayTags::Status_Dead);
+		
+		UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(
+			Props.TargetCharacter,
+			AdventureGameplayTags::Status_Dead,
+			FGameplayEventData()
+		);
+		
 		// TODO : 소울(보상) 시스템 추가해야함.
 	}
 	else // Hit Logic

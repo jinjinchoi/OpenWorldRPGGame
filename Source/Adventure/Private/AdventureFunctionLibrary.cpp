@@ -132,6 +132,7 @@ void UAdventureFunctionLibrary::SetHitDirectionTag(FGameplayEffectContextHandle&
 FActiveGameplayEffectHandle UAdventureFunctionLibrary::ApplyDamageEffect(const FDamageEffectParams& DamageEffectParams)
 {
 	const AActor* SourceAvatarActor = DamageEffectParams.SourceAbilitySystemComponent->GetAvatarActor();
+	
 	FGameplayEffectContextHandle ContextHandle = DamageEffectParams.SourceAbilitySystemComponent->MakeEffectContext();
 	ContextHandle.AddSourceObject(SourceAvatarActor);
 

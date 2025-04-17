@@ -2,13 +2,14 @@
 
 
 #include "Actor/AdventureProjectileBase.h"
-
-#include "AbilitySystemBlueprintLibrary.h"
+#include "NiagaraFunctionLibrary.h"
 #include "AbilitySystemComponent.h"
 #include "AdventureFunctionLibrary.h"
+#include "Components/AudioComponent.h"
 #include "Components/SphereComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Interface/CombatInterface.h"
+#include "Kismet/GameplayStatics.h"
 
 
 AAdventureProjectileBase::AAdventureProjectileBase()
@@ -24,8 +25,6 @@ AAdventureProjectileBase::AAdventureProjectileBase()
 	SphereCollision->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
 	ProjectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>("ProjectileMovement");
 
-	
-
 }
 
 
@@ -35,24 +34,31 @@ void AAdventureProjectileBase::BeginPlay()
 
 	SetLifeSpan(LifeSpan);
 
-	SphereCollision->OnComponentBeginOverlap.AddUniqueDynamic(this, &ThisClass::OnSphereOverlap);
-	
+	SphereCollision->OnComponentBeginOverlap.AddUniqueDynamic(this, &ThisClass::OnSphereBeginOverlap);
+	SphereCollision->OnComponentEndOverlap.AddUniqueDynamic(this, &ThisClass::OnSphereEndOverlap);
+
+	LoopingSoundComponent = UGameplayStatics::SpawnSoundAttached(LoopingSound, GetRootComponent());
+	if (LoopingSoundComponent)
+	{
+		LoopingSoundComponent->bStopWhenOwnerDestroyed = true;
+	}
 	
 }
 
-void AAdventureProjectileBase::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+void AAdventureProjectileBase::OnSphereBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (!IsValidOverlap(OtherActor)) return;
+}
 
-	if (UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(OtherActor))
-	{
-		// FRotator Rotation = GetActorRotation();
-		// const FVector KnockBackDirection = Rotation.Vector();
-		// DamageEffectParams.KnockBackDirection = KnockBackDirection * DamageEffectParams.KnockBackForce;
-	}
-	
-	
+void AAdventureProjectileBase::OnSphereEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+{
+}
+
+void AAdventureProjectileBase::OnHit() const
+{
+	UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation(), GetActorRotation());
+	UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, ImpactEffect, GetActorLocation());
 }
 
 bool AAdventureProjectileBase::IsValidOverlap(AActor* OtherActor) const
@@ -68,9 +74,7 @@ bool AAdventureProjectileBase::IsValidOverlap(AActor* OtherActor) const
 	{
 		return false;
 	}
-
-	const APawn* TargetPawn = Cast<APawn>(OtherActor);
 	
-	return UAdventureFunctionLibrary::IsTargetPawnHostile(GetInstigator(), TargetPawn);
+	return UAdventureFunctionLibrary::IsTargetPawnHostile(GetInstigator(), Cast<APawn>(OtherActor));
 	
 }
