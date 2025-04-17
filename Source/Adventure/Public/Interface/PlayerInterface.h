@@ -31,7 +31,11 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void HideWeaponMesh();
 
-	// Input
+	virtual void OnStaminaDepleted() = 0;
+
+	
+
+#pragma region Input
 	virtual void Input_Look(const FInputActionValue& InputActionValue) = 0;
 	virtual void Input_CameraScroll(const FInputActionValue& InputActionValue) = 0;
 	
@@ -48,6 +52,6 @@ public:
 
 	virtual void Input_AbilityInputPressed(const FGameplayTag& InInputTag) = 0;
 	virtual void Input_AbilityInputReleased(const FGameplayTag& InInputTag) = 0;
-
+#pragma endregion
 	
 };

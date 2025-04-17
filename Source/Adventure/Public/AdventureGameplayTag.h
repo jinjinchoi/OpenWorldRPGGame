@@ -65,7 +65,6 @@ namespace AdventureGameplayTags
 
 	ADVENTURE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Ability_Shared_HitReact);
 	ADVENTURE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Ability_Shared_Death);
-
 	
 	/** Damage Type Tag **/
 	ADVENTURE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Damage);
@@ -88,8 +87,10 @@ namespace AdventureGameplayTags
 	ADVENTURE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Event_PerfectDodge);
 
 	
+	/* Block Tag */
+	ADVENTURE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Block_Player_StaminaRegen);
 
-
+	
 	/** Class Tag **/
 	ADVENTURE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(CharacterClass_Player_Warrior);
 

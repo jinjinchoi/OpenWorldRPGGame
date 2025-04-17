@@ -11,6 +11,8 @@ void UOverlayWidgetController::BroadCastInitialValue()
 
 	OnHealthChangedDelegate.Broadcast(AdventureAttributeSet->GetCurrentHealth());
 	OnMaxHealthChangedDelegate.Broadcast(AdventureAttributeSet->GetMaxHealth());
+	OnStaminaChangeDelegate.Broadcast(AdventureAttributeSet->GetCurrentStamina());
+	OnMaxStaminaChangeDelegate.Broadcast(AdventureAttributeSet->GetMaxStamina());
 	
 }
 

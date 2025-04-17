@@ -84,6 +84,11 @@ namespace AdventureGameplayTags
 	
 	UE_DEFINE_GAMEPLAY_TAG(Event_PerfectDodge, "Event.PerfectDodge")
 
+	
+	/* Block Tag */
+	UE_DEFINE_GAMEPLAY_TAG(Block_Player_StaminaRegen, "Block.Player.StaminaRegen")
+
+	
 	/** Class Tag **/
 	UE_DEFINE_GAMEPLAY_TAG(CharacterClass_Player_Warrior, "CharacterClass.Player.Warrior")
 	

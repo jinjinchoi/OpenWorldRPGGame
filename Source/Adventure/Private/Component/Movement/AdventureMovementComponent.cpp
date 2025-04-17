@@ -575,7 +575,6 @@ void UAdventureMovementComponent::RequestHopping()
 	{
 		HandleHopLeft();
 	}
-
 	
 }
 

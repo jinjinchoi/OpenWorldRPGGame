@@ -32,6 +32,7 @@ public:
 	/* Begin Player Interface */
 	virtual void ShowWeaponMesh_Implementation() override;
 	virtual void HideWeaponMesh_Implementation() override;
+	virtual void OnStaminaDepleted() override;
 	/* End Player Interface */
 
 	/* Begin Combat Interface */
@@ -66,16 +67,13 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, Category="Gameplay Effect")
 	TSubclassOf<UGameplayEffect> RunAndClimbCostEffectClass;
-
-	UPROPERTY(EditDefaultsOnly, Category="Gameplay Effect")
-	TSubclassOf<UGameplayEffect> ClimbHotCostEffectClass;
 	
 	UFUNCTION(BlueprintImplementableEvent)
 	void SetWeaponMeshVisibility(bool bIsVisible);
 
 private:
 	bool ApplyStaminaCostEffect(const TSubclassOf<UGameplayEffect>& InEffect);
-	void RemoveStaminaCostEffect() const;
+	void RemoveStaminaCostEffect();
 
 	FActiveGameplayEffectHandle StaminaCostEffectHandle;
 	

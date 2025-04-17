@@ -76,6 +76,24 @@ void AAdventurePlayerCharacter::HideWeaponMesh_Implementation()
 	SetWeaponMeshVisibility(false);
 }
 
+void AAdventurePlayerCharacter::OnStaminaDepleted()
+{
+	if (bIsSprint)
+	{
+		GetCharacterMovement()->MaxWalkSpeed = RunSpeed;
+		bIsSprint = false;
+		GetWorld()->GetTimerManager().ClearTimer(SprintTimerHandle);
+		UAdventureFunctionLibrary::RemoveGameplayTagToActorIfFound(this, AdventureGameplayTags::Status_Locomotion_Sprint);
+	}
+	if (AdventureMovementComponent->IsClimbing())
+	{
+		bool Unnecessary = false; 
+		AdventureMovementComponent->ToggleClimbing(false, Unnecessary);
+	}
+	
+	RemoveStaminaCostEffect();
+}
+
 void AAdventurePlayerCharacter::OnCharacterDied_Implementation()
 {
 	Super::OnCharacterDied_Implementation();
@@ -181,16 +199,20 @@ bool AAdventurePlayerCharacter::ApplyStaminaCostEffect(const TSubclassOf<UGamepl
 		StaminaCostEffectHandle = AbilitySystemComponent->ApplyGameplayEffectToSelf(InEffect->GetDefaultObject<UGameplayEffect>(), 1.f, ContextHandle);
 	}
 
+	UAdventureFunctionLibrary::AddGameplayTagToActorIfNone(this, AdventureGameplayTags::Block_Player_StaminaRegen);
+	
 	return true;
 	
 }
 
-void AAdventurePlayerCharacter::RemoveStaminaCostEffect() const
+void AAdventurePlayerCharacter::RemoveStaminaCostEffect()
 {
 	if (!bIsSprint)
 	{
 		AbilitySystemComponent->RemoveActiveGameplayEffect(StaminaCostEffectHandle);
+		UAdventureFunctionLibrary::RemoveGameplayTagToActorIfFound(this, AdventureGameplayTags::Block_Player_StaminaRegen);
 	}
+	
 }
 
 #pragma region Input
@@ -367,7 +389,6 @@ void AAdventurePlayerCharacter::Input_AbilityInputReleased(const FGameplayTag& I
 void AAdventurePlayerCharacter::TryClimbAction()
 {
 	if (!AdventureMovementComponent) return;
-
 	bool bIsClimbStarted = false;
 	
 	if (!AdventureMovementComponent->IsClimbing())
@@ -393,11 +414,11 @@ void AAdventurePlayerCharacter::Input_ClimbActionCompleted()
 
 void AAdventurePlayerCharacter::Input_ClimbHopActionStarted(const FInputActionValue& InputActionValue)
 {
-	if (!ApplyStaminaCostEffect(ClimbHotCostEffectClass))
-	{
-		return;
-	}
-	
+	// if (!ApplyStaminaCostEffect(ClimbHotCostEffectClass))
+	// {
+	// 	return;
+	// }
+	//
 	if (AdventureMovementComponent)
 	{
 		AdventureMovementComponent->RequestHopping();

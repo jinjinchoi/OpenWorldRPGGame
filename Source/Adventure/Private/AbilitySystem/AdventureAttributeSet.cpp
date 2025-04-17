@@ -10,6 +10,7 @@
 #include "Controller/AdventurePlayerController.h"
 #include "GameFramework/Character.h"
 #include "Interface/EnemyInterface.h"
+#include "Interface/PlayerInterface.h"
 #include "Kismet/GameplayStatics.h"
 #include "Perception/AISense_Damage.h"
 
@@ -180,5 +181,14 @@ void UAdventureAttributeSet::HandleInComingStaminaCost(const FEffectProperties& 
 
 	const float NewStamina = FMath::Clamp(GetCurrentStamina() - LocalIncomingCost, 0.f, GetMaxStamina());
 	SetCurrentStamina(NewStamina);
+
+	if (NewStamina <= 0)
+	{
+		if (IPlayerInterface* PlayerInterface = Cast<IPlayerInterface>(Props.SourceCharacter))
+		{
+			PlayerInterface->OnStaminaDepleted();
+		}
+	}
+	
 	
 }
