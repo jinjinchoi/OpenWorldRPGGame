@@ -58,12 +58,7 @@ protected:
 	bool bIsDead = false;
 	bool bIsHitReacting = false;
 	
-	/**
-	 * 태그 변경을 감지하는 것이 아닌 Ability 자체에서 인터페이스 함수를 호출하는 방식으로 사용하는 것이 통일성 유지에 좋을 것으로 보임.
-	 * 추후 코드 리팩토링 작업을 수행한다면 이 부분을 고칠 필요가 있음.
-	 */
 	virtual void OnHitReactTagChanged(const FGameplayTag CallbackTag, int32 NewCount);
-	virtual void OnDeathReactTagChanged(const FGameplayTag CallbackTag, int32 NewCount);
 
 
 public:

@@ -160,7 +160,7 @@ private:
 	
 public:
 	
-	void ToggleClimbing(bool bEnableClimb);
+	void ToggleClimbing(bool bEnableClimb, bool& OutbIsClimbStated);
 	bool IsClimbing() const;
 	void RequestHopping();
 	

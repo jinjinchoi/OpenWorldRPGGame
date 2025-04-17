@@ -56,7 +56,6 @@ void AAdventureEnemyCharacter::PossessedBy(AController* NewController)
 
 	InitEnemyStartUpData();
 	BindGameplayTagChanged();
-
 	
 }
 
@@ -94,9 +93,6 @@ void AAdventureEnemyCharacter::BindGameplayTagChanged()
 
 	AbilitySystemComponent->RegisterGameplayTagEvent(AdventureGameplayTags::Status_HitReact, EGameplayTagEventType::NewOrRemoved)
 		.AddUObject(this, &ThisClass::OnHitReactTagChanged);
-
-	AbilitySystemComponent->RegisterGameplayTagEvent(AdventureGameplayTags::Status_Dead, EGameplayTagEventType::NewOrRemoved)
-		.AddUObject(this, &ThisClass::OnDeathReactTagChanged);
 	
 }
 
@@ -107,18 +103,6 @@ void AAdventureEnemyCharacter::OnHitReactTagChanged(const FGameplayTag CallbackT
 	AdventureAIController->GetBlackboardComponent()->SetValueAsBool("bIsHitReacting", bIsHitReacting);
 
 	
-}
-
-void AAdventureEnemyCharacter::OnDeathReactTagChanged(const FGameplayTag CallbackTag, int32 NewCount)
-{
-	Super::OnDeathReactTagChanged(CallbackTag, NewCount);
-	
-	AutoPossessAI = EAutoPossessAI::Disabled;
-	
-	if (AController* AIController = GetController())
-	{
-		AIController->UnPossess();
-	}
 }
 
 void AAdventureEnemyCharacter::InitEnemyStartUpData() const

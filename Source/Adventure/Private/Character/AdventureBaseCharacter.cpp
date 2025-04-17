@@ -53,8 +53,8 @@ bool AAdventureBaseCharacter::IsDead_Implementation() const
 
 void AAdventureBaseCharacter::OnCharacterDied_Implementation()
 {
+	bIsDead = true;
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	GetMesh()->bPauseAnims = true;
 	
 }
 
@@ -80,9 +80,4 @@ void AAdventureBaseCharacter::PossessedBy(AController* NewController)
 void AAdventureBaseCharacter::OnHitReactTagChanged(const FGameplayTag CallbackTag, int32 NewCount)
 {
 	bIsHitReacting = NewCount > 0;
-}
-
-void AAdventureBaseCharacter::OnDeathReactTagChanged(const FGameplayTag CallbackTag, int32 NewCount)
-{
-	bIsDead = NewCount > 0;
 }

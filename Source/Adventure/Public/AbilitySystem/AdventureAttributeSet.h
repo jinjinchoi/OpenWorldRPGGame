@@ -99,16 +99,20 @@ public:
 	ATTRIBUTE_ACCESSORS(UAdventureAttributeSet, MaxStamina);
 
 	
-	/** 데미지 관련 속성  **/
-	UPROPERTY(BlueprintReadOnly, Category="Damage Attribute")
+	/** 메타 데이터 속성  **/
+	UPROPERTY(BlueprintReadOnly, Category="Meta Attribute")
 	FGameplayAttributeData IncomingDamage;
 	ATTRIBUTE_ACCESSORS(UAdventureAttributeSet, IncomingDamage);
 
+	UPROPERTY(BlueprintReadOnly, Category="Meta Attribute")
+	FGameplayAttributeData IncomingStaminaCost;
+	ATTRIBUTE_ACCESSORS(UAdventureAttributeSet, IncomingStaminaCost);
 	
 	
 private:
 	void SetEffectProperties(const FGameplayEffectModCallbackData& Data, FEffectProperties& Props);
 	void HandleIncomingDamage(const FEffectProperties& Props);
 	void ShowDamageText(const FEffectProperties& Props, const float Damage);
+	void HandleInComingStaminaCost(const FEffectProperties& Props);
 	
 };

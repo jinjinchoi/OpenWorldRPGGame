@@ -8,6 +8,7 @@
 #include "DebugHelper.h"
 #include "Camera/CameraComponent.h"
 #include "AbilitySystem/AdventureAbilitySystemComponent.h"
+#include "AbilitySystem/AdventureAttributeSet.h"
 #include "Component/Input/AdventureInputComponent.h"
 #include "Component/Movement/AdventureMovementComponent.h"
 #include "Controller/AdventurePlayerController.h"
@@ -78,8 +79,9 @@ void AAdventurePlayerCharacter::HideWeaponMesh_Implementation()
 void AAdventurePlayerCharacter::OnCharacterDied_Implementation()
 {
 	Super::OnCharacterDied_Implementation();
-	
-	
+
+	bool Unnecessary = false;
+	AdventureMovementComponent->ToggleClimbing(false, Unnecessary);
 }
 
 
@@ -130,9 +132,6 @@ void AAdventurePlayerCharacter::BindGameplayTagChanged()
 
 	AbilitySystemComponent->RegisterGameplayTagEvent(AdventureGameplayTags::Status_HitReact, EGameplayTagEventType::NewOrRemoved)
 		.AddUObject(this, &ThisClass::OnHitReactTagChanged);
-
-	AbilitySystemComponent->RegisterGameplayTagEvent(AdventureGameplayTags::Status_Dead, EGameplayTagEventType::NewOrRemoved)
-		.AddUObject(this, &ThisClass::OnDeathReactTagChanged);
 }
 
 void AAdventurePlayerCharacter::OnHitReactTagChanged(const FGameplayTag CallbackTag, int32 NewCount)
@@ -141,22 +140,58 @@ void AAdventurePlayerCharacter::OnHitReactTagChanged(const FGameplayTag Callback
 	
 	if (bIsHitReacting)
 	{
-		AdventureMovementComponent->ToggleClimbing(false);
+		bool Unnecessary = false;
+		AdventureMovementComponent->ToggleClimbing(false, Unnecessary);
 	}
 	
 }
 
-void AAdventurePlayerCharacter::OnDeathReactTagChanged(const FGameplayTag CallbackTag, int32 NewCount)
+bool AAdventurePlayerCharacter::ApplyStaminaCostEffect(const TSubclassOf<UGameplayEffect>& InEffect)
 {
-	Super::OnDeathReactTagChanged(CallbackTag, NewCount);
+	check(InEffect);
 
-	if (bIsDead)
+	float StaminaCost = 0.f;
+	for (const FGameplayModifierInfo& Modifier : InEffect->GetDefaultObject<UGameplayEffect>()->Modifiers)
 	{
-		AdventureMovementComponent->ToggleClimbing(false);
+		if (Modifier.Attribute == UAdventureAttributeSet::GetIncomingStaminaCostAttribute())
+		{
+			Modifier.ModifierMagnitude.GetStaticMagnitudeIfPossible(1.f, StaminaCost);
+		}
 	}
+
+	if (StaminaCost == 0.f) return true;
+
+	const UAdventureAttributeSet* AdventureAttributeSet = Cast<UAdventureAttributeSet>(AttributeSet);
+	check(AdventureAttributeSet);
+
+	if (AdventureAttributeSet->GetCurrentStamina() < StaminaCost)
+	{
+		return false;
+	}
+
+	FGameplayEffectContextHandle ContextHandle = AbilitySystemComponent->MakeEffectContext();
+	ContextHandle.AddSourceObject(this);
+
+	if (InEffect->GetDefaultObject<UGameplayEffect>()->DurationPolicy == EGameplayEffectDurationType::Instant)
+	{
+		AbilitySystemComponent->ApplyGameplayEffectToSelf(InEffect->GetDefaultObject<UGameplayEffect>(), 1.f, ContextHandle);
+	}
+	else
+	{
+		StaminaCostEffectHandle = AbilitySystemComponent->ApplyGameplayEffectToSelf(InEffect->GetDefaultObject<UGameplayEffect>(), 1.f, ContextHandle);
+	}
+
+	return true;
 	
 }
 
+void AAdventurePlayerCharacter::RemoveStaminaCostEffect() const
+{
+	if (!bIsSprint)
+	{
+		AbilitySystemComponent->RemoveActiveGameplayEffect(StaminaCostEffectHandle);
+	}
+}
 
 #pragma region Input
 
@@ -225,7 +260,6 @@ void AAdventurePlayerCharacter::Input_StopMove()
 void AAdventurePlayerCharacter::Input_ClimbMovement(const FInputActionValue& InputActionValue)
 {
 	const FVector2D MovementVector = InputActionValue.Get<FVector2D>();
-
 	const FVector ForwardDirection = FVector::CrossProduct(
 		-AdventureMovementComponent->GetClimbableSurfaceNormal(),
 		GetActorRightVector()
@@ -257,9 +291,15 @@ void AAdventurePlayerCharacter::Input_Sprint_Completed()
 
 void AAdventurePlayerCharacter::StartSprint()
 {
+	if (!ApplyStaminaCostEffect(RunAndClimbCostEffectClass))
+	{
+		return;
+	}
+	
 	GetCharacterMovement()->MaxWalkSpeed = SprintSpeed;
 	bIsSprint = true;
 	bIsWalking = false;
+
 
 	UAdventureFunctionLibrary::AddGameplayTagToActorIfNone(this, AdventureGameplayTags::Status_Locomotion_Sprint);
 }
@@ -271,11 +311,12 @@ void AAdventurePlayerCharacter::StopSprint()
 	GetWorld()->GetTimerManager().ClearTimer(SprintTimerHandle);
 
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
-	if (AnimInstance && RunToStopMontage)
+	if (AnimInstance && RunToStopMontage && !GetCharacterMovement()->IsFalling())
 	{
 		AnimInstance->Montage_Play(RunToStopMontage);
 	}
-
+	
+	RemoveStaminaCostEffect();
 	UAdventureFunctionLibrary::RemoveGameplayTagToActorIfFound(this, AdventureGameplayTags::Status_Locomotion_Sprint);
 }
 
@@ -292,7 +333,8 @@ void AAdventurePlayerCharacter::Input_Walk()
 		bIsWalking = true;
 		bIsSprint = false;
 	}
-	
+
+	RemoveStaminaCostEffect();
 	UAdventureFunctionLibrary::RemoveGameplayTagToActorIfFound(this, AdventureGameplayTags::Status_Locomotion_Sprint);
 }
 
@@ -326,11 +368,16 @@ void AAdventurePlayerCharacter::TryClimbAction()
 {
 	if (!AdventureMovementComponent) return;
 
+	bool bIsClimbStarted = false;
+	
 	if (!AdventureMovementComponent->IsClimbing())
 	{
-		AdventureMovementComponent->ToggleClimbing(true);
+		AdventureMovementComponent->ToggleClimbing(true, bIsClimbStarted);
 	}
-	
+	if (bIsClimbStarted)
+	{
+		ApplyStaminaCostEffect(RunAndClimbCostEffectClass);
+	}
 }
 
 void AAdventurePlayerCharacter::Input_ClimbActionCompleted()
@@ -339,12 +386,18 @@ void AAdventurePlayerCharacter::Input_ClimbActionCompleted()
 
 	if (AdventureMovementComponent->IsClimbing())
 	{
-		AdventureMovementComponent->ToggleClimbing(false);
+		bool Unnecessary = false;
+		AdventureMovementComponent->ToggleClimbing(false, Unnecessary);
 	}
 }
 
 void AAdventurePlayerCharacter::Input_ClimbHopActionStarted(const FInputActionValue& InputActionValue)
 {
+	if (!ApplyStaminaCostEffect(ClimbHotCostEffectClass))
+	{
+		return;
+	}
+	
 	if (AdventureMovementComponent)
 	{
 		AdventureMovementComponent->RequestHopping();
@@ -364,6 +417,10 @@ void AAdventurePlayerCharacter::OnPlayerExitClimbState()
 	if (AAdventurePlayerController* PlayerController = Cast<AAdventurePlayerController>(GetController()))
 	{
 		PlayerController->RemoveClimbMappingContext();
+	}
+	if (StaminaCostEffectHandle.IsValid())
+	{
+		RemoveStaminaCostEffect();
 	}
 }
 

@@ -3,11 +3,13 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "ActiveGameplayEffectHandle.h"
 #include "GameplayTagContainer.h"
 #include "Character/AdventureBaseCharacter.h"
 #include "Interface/PlayerInterface.h"
 #include "AdventurePlayerCharacter.generated.h"
 
+class UGameplayEffect;
 class UAdventureMovementComponent;
 struct FInputActionValue;
 class UDataAsset_InputConfig;
@@ -43,7 +45,6 @@ protected:
 
 	/* Begin Adventure Base Character */
 	virtual void OnHitReactTagChanged(const FGameplayTag CallbackTag, int32 NewCount) override;
-	virtual void OnDeathReactTagChanged(const FGameplayTag CallbackTag, int32 NewCount) override;
 	/* End Adventure Base Character */
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category=Movement)
@@ -62,11 +63,22 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category=Movement)
 	TObjectPtr<UAnimMontage> RunToStopMontage;
+
+	UPROPERTY(EditDefaultsOnly, Category="Gameplay Effect")
+	TSubclassOf<UGameplayEffect> RunAndClimbCostEffectClass;
+
+	UPROPERTY(EditDefaultsOnly, Category="Gameplay Effect")
+	TSubclassOf<UGameplayEffect> ClimbHotCostEffectClass;
 	
 	UFUNCTION(BlueprintImplementableEvent)
 	void SetWeaponMeshVisibility(bool bIsVisible);
 
+private:
+	bool ApplyStaminaCostEffect(const TSubclassOf<UGameplayEffect>& InEffect);
+	void RemoveStaminaCostEffect() const;
 
+	FActiveGameplayEffectHandle StaminaCostEffectHandle;
+	
 
 public:
 	FORCEINLINE UAdventureMovementComponent* GetAdventureMovementComponent() const { return AdventureMovementComponent; }

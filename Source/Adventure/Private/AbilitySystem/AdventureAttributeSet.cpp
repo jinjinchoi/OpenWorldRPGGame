@@ -84,6 +84,10 @@ void UAdventureAttributeSet::PostGameplayEffectExecute(const struct FGameplayEff
 	{
 		HandleIncomingDamage(Props);
 	}
+	if (Data.EvaluatedData.Attribute == GetIncomingStaminaCostAttribute())
+	{
+		HandleInComingStaminaCost(Props);
+	}
 	
 }
 
@@ -93,10 +97,11 @@ void UAdventureAttributeSet::HandleIncomingDamage(const FEffectProperties& Props
 	const float LocalIncomingDamage = GetIncomingDamage();
 	SetIncomingDamage(0.f);
 
-	if (LocalIncomingDamage <= 0) return; // ← return If Damage is 0 or Character is invincible ↓
+	if (LocalIncomingDamage <= 0) return; // ← return If Damage is 0 or Character is invincible or Dead ↓
 	if (UAdventureFunctionLibrary::DoseActorHaveTag(Props.TargetCharacter, AdventureGameplayTags::Status_Shared_Invincible)) return;
+	if (GetCurrentHealth() <= 0) return;
 
-	// Execute PerfectDodge Ability When Player is Dodging
+	// execute PerfectDodge Ability When Player is Dodging
 	if (UAdventureFunctionLibrary::DoseActorHaveTag(Props.TargetCharacter, AdventureGameplayTags::Status_Player_Dodging))
 	{
 		UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(
@@ -107,18 +112,12 @@ void UAdventureAttributeSet::HandleIncomingDamage(const FEffectProperties& Props
 		return;
 	}
 	
-	const float NewHealth = GetCurrentHealth() - LocalIncomingDamage;
-	SetCurrentHealth(FMath::Clamp(NewHealth, 0.f, GetMaxHealth()));
+	const float NewHealth = FMath::Clamp(GetCurrentHealth() - LocalIncomingDamage, 0.f, GetMaxHealth());
+	SetCurrentHealth(NewHealth);
 	
 	if (NewHealth <= 0) // Death Logic
 	{
 		UAdventureFunctionLibrary::AddGameplayTagToActorIfNone(Props.TargetCharacter, AdventureGameplayTags::Status_Dead);
-		
-		UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(
-			Props.TargetCharacter,
-			AdventureGameplayTags::Status_Dead,
-			FGameplayEventData()
-		);
 		
 		// TODO : 소울(보상) 시스템 추가해야함.
 	}
@@ -129,29 +128,29 @@ void UAdventureAttributeSet::HandleIncomingDamage(const FEffectProperties& Props
 			UAdventureFunctionLibrary::GetHitDirectionTag(Props.EffectContextHandle),
 			FGameplayEventData()
 		);
-	}
 
-	if (Props.TargetCharacter->Implements<UEnemyInterface>()) // Enemy Logic
-	{
-		// Enemy's Sensing Component Update
-		UAISense_Damage::ReportDamageEvent(
-			Props.TargetCharacter,
-			Props.TargetCharacter,
-			Props.SourceCharacter,
-			LocalIncomingDamage,
-			Props.SourceCharacter->GetActorLocation(),
-			Props.TargetCharacter->GetActorLocation()
-		);
+		if (Props.TargetCharacter->Implements<UEnemyInterface>()) // Enemy Logic
+		{
+			// Enemy's Sensing Component Update
+			UAISense_Damage::ReportDamageEvent(
+				Props.TargetCharacter,
+				Props.TargetCharacter,
+				Props.SourceCharacter,
+				LocalIncomingDamage,
+				Props.SourceCharacter->GetActorLocation(),
+				Props.TargetCharacter->GetActorLocation()
+			);
+		}
 	}
-	else // Player Logic
+	
+	if (UAdventureFunctionLibrary::IsCriticalHit(Props.EffectContextHandle))
 	{
-		// Delay Time On Hit
+		// Delay Time On Critical Hit
 		UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(
 			Props.SourceCharacter,
 			AdventureGameplayTags::Event_HitPause,
 			FGameplayEventData()
 		);
-		
 	}
 	
 	// Call Show Damage Text
@@ -170,4 +169,16 @@ void UAdventureAttributeSet::ShowDamageText(const FEffectProperties& Props, cons
 			PC->ShowDamageNumber(Damage, Props.TargetCharacter, bIsCriticalHit, DamageType);
 		}
 	}
+}
+
+void UAdventureAttributeSet::HandleInComingStaminaCost(const FEffectProperties& Props)
+{
+	const float LocalIncomingCost = GetIncomingStaminaCost();
+	SetIncomingStaminaCost(0.f);
+
+	if (LocalIncomingCost <= 0) return;
+
+	const float NewStamina = FMath::Clamp(GetCurrentStamina() - LocalIncomingCost, 0.f, GetMaxStamina());
+	SetCurrentStamina(NewStamina);
+	
 }

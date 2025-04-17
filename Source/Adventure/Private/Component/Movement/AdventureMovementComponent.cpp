@@ -580,13 +580,16 @@ void UAdventureMovementComponent::RequestHopping()
 }
 
 
-void UAdventureMovementComponent::ToggleClimbing(bool bEnableClimb)
+void UAdventureMovementComponent::ToggleClimbing(bool bEnableClimb, bool& OutbIsClimbStated)
 {
+	OutbIsClimbStated = false;
+	
 	if (bEnableClimb)
 	{
 		if (CanStartClimbing())
 		{
 			PlayClimbMontage(IdleToClimbMontage);
+			OutbIsClimbStated = true;
 		}
 		else if (CanStartMounting())
 		{

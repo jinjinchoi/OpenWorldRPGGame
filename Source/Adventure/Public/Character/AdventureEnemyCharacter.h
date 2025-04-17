@@ -43,7 +43,6 @@ protected:
 
 	/* Begin AAdventureBaseCharacter */
 	virtual void OnHitReactTagChanged(const FGameplayTag CallbackTag, int32 NewCount) override;
-	virtual void OnDeathReactTagChanged(const FGameplayTag CallbackTag, int32 NewCount) override;
 	/* End AAdventureBaseCharacter */
 
 	/* AI */
