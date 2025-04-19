@@ -3,11 +3,14 @@
 
 #include "Character/AdventureEnemyCharacter.h"
 
+#include "AbilitySystemBlueprintLibrary.h"
+#include "AdventureFunctionLibrary.h"
 #include "AdventureGameplayTag.h"
 #include "DebugHelper.h"
 #include "AbilitySystem/AdventureAbilitySystemComponent.h"
 #include "AbilitySystem/AdventureAttributeSet.h"
 #include "BehaviorTree/BlackboardComponent.h"
+#include "Components/BoxComponent.h"
 #include "Components/WidgetComponent.h"
 #include "Controller/AdventureAIController.h"
 #include "DataAsset/StartUpData/DataAsset_StartUpDataBase.h"
@@ -32,7 +35,17 @@ AAdventureEnemyCharacter::AAdventureEnemyCharacter(const FObjectInitializer& Obj
 
 	EnemyHealthBar = CreateDefaultSubobject<UWidgetComponent>("HealthBar");
 	EnemyHealthBar->SetupAttachment(GetRootComponent());
-	
+
+	LeftHandCollisionBox = CreateDefaultSubobject<UBoxComponent>("LeftHandCollisionBox");
+	LeftHandCollisionBox->SetupAttachment(GetMesh());
+	LeftHandCollisionBox->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+	RightHandCollisionBox = CreateDefaultSubobject<UBoxComponent>("RightHandCollisionBox");
+	RightHandCollisionBox->SetupAttachment(GetMesh());
+	RightHandCollisionBox->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+	LeftHandCollisionBox->OnComponentBeginOverlap.AddUniqueDynamic(this, &ThisClass::OnBodyCollisionBoxBeginOverlap);
+	RightHandCollisionBox->OnComponentBeginOverlap.AddUniqueDynamic(this, &ThisClass::OnBodyCollisionBoxBeginOverlap);
 }
 
 void AAdventureEnemyCharacter::OnCharacterDied_Implementation()
@@ -84,20 +97,29 @@ void AAdventureEnemyCharacter::BeginPlay()
 		{
 			OnMaxHealthChangeDelegate.Broadcast(Data.NewValue);
 		});
-		
 	}
 	
 }
 
 
-void AAdventureEnemyCharacter::BindGameplayTagChanged()
+#if WITH_EDITOR
+void AAdventureEnemyCharacter::PostEditChangeChainProperty(struct FPropertyChangedChainEvent& PropertyChangedEvent)
 {
-	if (!AbilitySystemComponent) return;
+	Super::PostEditChangeChainProperty(PropertyChangedEvent);
 
-	AbilitySystemComponent->RegisterGameplayTagEvent(AdventureGameplayTags::Status_HitReact, EGameplayTagEventType::NewOrRemoved)
-		.AddUObject(this, &ThisClass::OnHitReactTagChanged);
+	if (PropertyChangedEvent.GetMemberPropertyName() == GET_MEMBER_NAME_CHECKED(ThisClass, LeftHandCollisionBoxAttachBoneName))
+	{
+		LeftHandCollisionBox->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, LeftHandCollisionBoxAttachBoneName);
+	}
+
+	if (PropertyChangedEvent.GetMemberPropertyName() == GET_MEMBER_NAME_CHECKED(ThisClass, RightHandCollisionBoxAttachBoneName))
+	{
+		RightHandCollisionBox->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, RightHandCollisionBoxAttachBoneName);
+	}
 	
 }
+#endif
+
 
 void AAdventureEnemyCharacter::OnHitReactTagChanged(const FGameplayTag CallbackTag, int32 NewCount)
 {
@@ -107,7 +129,60 @@ void AAdventureEnemyCharacter::OnHitReactTagChanged(const FGameplayTag CallbackT
 	{
 		AdventureAIController->GetBlackboardComponent()->SetValueAsBool("IsHitReacting", bIsHitReacting);
 	}
+}
 
+void AAdventureEnemyCharacter::ToggleWeaponCollision_Implementation(const bool bIsEnable, const EAdventureWeaponType AdventureWeaponType)
+{
+	Super::ToggleWeaponCollision_Implementation(bIsEnable, AdventureWeaponType);
+
+	if (!bIsEnable)
+	{
+		LeftHandCollisionBox->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		RightHandCollisionBox->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		OverlappedActors.Empty();
+		return;
+	}
+	
+	if (AdventureWeaponType == EAdventureWeaponType::LeftHand)
+	{
+		LeftHandCollisionBox->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	}
+	else if (AdventureWeaponType == EAdventureWeaponType::RightHand)
+	{
+		RightHandCollisionBox->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	}
+	
+	
+}
+
+void AAdventureEnemyCharacter::BindGameplayTagChanged()
+{
+	if (!AbilitySystemComponent) return;
+
+	AbilitySystemComponent->RegisterGameplayTagEvent(AdventureGameplayTags::Status_HitReact, EGameplayTagEventType::NewOrRemoved)
+		.AddUObject(this, &ThisClass::OnHitReactTagChanged);
+}
+
+
+void AAdventureEnemyCharacter::OnBodyCollisionBoxBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	AAdventureBaseCharacter* AdventureBaseCharacter = Cast<AAdventureBaseCharacter>(OtherActor);
+	
+	if (OverlappedActors.Contains(OtherActor) || !AdventureBaseCharacter || AdventureBaseCharacter->IsDead_Implementation())
+	{
+		return;
+	}
+
+	OverlappedActors.AddUnique(OtherActor);
+
+	if (UAdventureFunctionLibrary::IsTargetPawnHostile(this, Cast<APawn>(OtherActor)))
+	{
+		FGameplayEventData Data;
+		Data.Instigator = this;
+		Data.Target = OtherActor;
+
+		UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(this, AdventureGameplayTags::Event_Hit_Melee, Data);
+	}
 	
 }
 

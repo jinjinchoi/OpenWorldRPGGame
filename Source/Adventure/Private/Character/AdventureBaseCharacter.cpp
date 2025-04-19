@@ -40,10 +40,6 @@ void AAdventureBaseCharacter::ToggleWeaponCollision_Implementation(const bool bI
 	{
 		OwningWeapon->ToggleCollisionEnable(bIsEnable);
 	}
-	else
-	{
-		
-	}
 }
 
 bool AAdventureBaseCharacter::IsDead_Implementation() const

@@ -8,6 +8,7 @@
 #include "UI/WidgetController/OverlayWidgetController.h"
 #include "AdventureEnemyCharacter.generated.h"
 
+class UBoxComponent;
 class AAdventureAIController;
 class UWidgetComponent;
 class UBehaviorTree;
@@ -24,8 +25,42 @@ public:
 	virtual void OnCharacterDied_Implementation() override;
 
 protected:
+	/* Begin APawn */
 	virtual void PossessedBy(AController* NewController) override;
 	virtual void BeginPlay() override;
+	/* End APawn */
+
+#if WITH_EDITOR
+	/* Begin UObject */
+	virtual void PostEditChangeChainProperty(struct FPropertyChangedChainEvent& PropertyChangedEvent) override;
+	/* End UObject */
+#endif
+	
+	/* Begin AAdventureBaseCharacter */
+	virtual void OnHitReactTagChanged(const FGameplayTag CallbackTag, int32 NewCount) override;
+	/* End AAdventureBaseCharacter */
+
+	/* Begin ICombatInterface */
+	virtual void ToggleWeaponCollision_Implementation(const bool bIsEnable, const EAdventureWeaponType AdventureWeaponType = EAdventureWeaponType::Weapon) override;
+	/* End ICombatInterface */
+
+	
+	void BindGameplayTagChanged();
+
+	UFUNCTION()
+	virtual void OnBodyCollisionBoxBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Combat")
+	TObjectPtr<UBoxComponent> LeftHandCollisionBox;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Combat")
+	TObjectPtr<UBoxComponent> RightHandCollisionBox;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Combat")
+	FName LeftHandCollisionBoxAttachBoneName;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Combat")
+	FName RightHandCollisionBoxAttachBoneName;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Movement")
 	float MaxWalkSpeed = 400;
@@ -39,24 +74,18 @@ protected:
 	UPROPERTY(BlueprintAssignable)
 	FOnAttributeChangeDelegate OnMaxHealthChangeDelegate;
 
-	void BindGameplayTagChanged();
-
-	/* Begin AAdventureBaseCharacter */
-	virtual void OnHitReactTagChanged(const FGameplayTag CallbackTag, int32 NewCount) override;
-	/* End AAdventureBaseCharacter */
-
 	/* AI */
-
 	UPROPERTY()
 	TObjectPtr<AAdventureAIController> AdventureAIController;
 
 	UPROPERTY(EditAnywhere, Category="AI")
 	TObjectPtr<UBehaviorTree> BehaviorTree;
-	
-
 
 private:
 	void InitEnemyStartUpData() const;
+
+	UPROPERTY()
+	TArray<AActor*> OverlappedActors;
 
 	
 	
