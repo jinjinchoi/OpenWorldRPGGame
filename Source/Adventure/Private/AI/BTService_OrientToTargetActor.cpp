@@ -3,6 +3,8 @@
 
 #include "AI/BTService_OrientToTargetActor.h"
 
+#include "AdventureFunctionLibrary.h"
+#include "AdventureGameplayTag.h"
 #include "AIController.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Kismet/KismetMathLibrary.h"

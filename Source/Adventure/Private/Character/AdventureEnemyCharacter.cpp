@@ -50,9 +50,12 @@ void AAdventureEnemyCharacter::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
 
-	AdventureAIController = Cast<AAdventureAIController>(NewController);
-	AdventureAIController->RunBehaviorTree(BehaviorTree);
-	AdventureAIController->GetBlackboardComponent()->SetValueAsBool("bIsHitReacting", false);
+	if (BehaviorTree)
+	{
+		AdventureAIController = Cast<AAdventureAIController>(NewController);
+		AdventureAIController->RunBehaviorTree(BehaviorTree);
+		AdventureAIController->GetBlackboardComponent()->SetValueAsBool("bIsHitReacting", false);
+	}
 
 	InitEnemyStartUpData();
 	BindGameplayTagChanged();
@@ -100,7 +103,10 @@ void AAdventureEnemyCharacter::OnHitReactTagChanged(const FGameplayTag CallbackT
 {
 	Super::OnHitReactTagChanged(CallbackTag, NewCount);
 	GetCharacterMovement()->MaxWalkSpeed = bIsHitReacting ? 0.f : MaxWalkSpeed;
-	AdventureAIController->GetBlackboardComponent()->SetValueAsBool("bIsHitReacting", bIsHitReacting);
+	if (AdventureAIController)
+	{
+		AdventureAIController->GetBlackboardComponent()->SetValueAsBool("IsHitReacting", bIsHitReacting);
+	}
 
 	
 }

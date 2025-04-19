@@ -2,10 +2,7 @@
 
 
 #include "Actor/AdventureMultiHitProjectile.h"
-
-#include "AbilitySystemBlueprintLibrary.h"
-#include "AbilitySystemComponent.h"
-#include "AdventureFunctionLibrary.h"
+#include "Interface/CombatInterface.h"
 #include "Kismet/GameplayStatics.h"
 
 
@@ -46,18 +43,12 @@ void AAdventureMultiHitProjectile::ApplyDamageEffectToOverlappedActors()
 
 	for (AActor* TargetActor : OverlappingActors)
 	{
-		if (UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetActor))
+		if (ICombatInterface::Execute_IsDead(TargetActor))
 		{
-			DamageEffectParams.TargetAbilitySystemComponent = TargetASC;
-			DamageEffectParams.HitDirectionTag = UAdventureFunctionLibrary::ComputeHitReactDirection(this, TargetActor);
-			if (DamageEffectParams.KnockBackForce > 0)
-			{
-				FRotator TargetRotation = (TargetActor->GetActorLocation() - this->GetActorLocation()).Rotation();
-				FVector ToTarget = TargetRotation.Vector();
-				DamageEffectParams.KnockBackDirection = ToTarget * DamageEffectParams.KnockBackForce;
-			}
-			UAdventureFunctionLibrary::ApplyDamageEffect(DamageEffectParams);
+			continue;
 		}
+		
+		ApplyGameplayEffectToTargetActor(TargetActor);
 	}
 
 	UGameplayStatics::PlaySoundAtLocation(this, HitSound, GetActorLocation(), GetActorRotation());

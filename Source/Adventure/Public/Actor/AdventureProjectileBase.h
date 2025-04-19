@@ -33,6 +33,7 @@ protected:
 
 	void OnHit() const;
 	bool IsValidOverlap(AActor* OtherActor) const;
+	void ApplyGameplayEffectToTargetActor(AActor* InTargetActor);
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	TObjectPtr<USphereComponent> SphereCollision;

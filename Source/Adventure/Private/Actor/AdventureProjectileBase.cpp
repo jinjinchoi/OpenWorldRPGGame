@@ -2,6 +2,8 @@
 
 
 #include "Actor/AdventureProjectileBase.h"
+
+#include "AbilitySystemBlueprintLibrary.h"
 #include "NiagaraFunctionLibrary.h"
 #include "AbilitySystemComponent.h"
 #include "AdventureFunctionLibrary.h"
@@ -77,4 +79,20 @@ bool AAdventureProjectileBase::IsValidOverlap(AActor* OtherActor) const
 	
 	return UAdventureFunctionLibrary::IsTargetPawnHostile(GetInstigator(), Cast<APawn>(OtherActor));
 	
+}
+
+void AAdventureProjectileBase::ApplyGameplayEffectToTargetActor(AActor* InTargetActor)
+{
+	if (UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(InTargetActor))
+	{
+		DamageEffectParams.TargetAbilitySystemComponent = TargetASC;
+		DamageEffectParams.HitDirectionTag = UAdventureFunctionLibrary::ComputeHitReactDirection(this, InTargetActor);
+		if (DamageEffectParams.KnockBackForce > 0)
+		{
+			const FRotator TargetRotation = (InTargetActor->GetActorLocation() - this->GetActorLocation()).Rotation();
+			const FVector ToTarget = TargetRotation.Vector();
+			DamageEffectParams.KnockBackDirection = ToTarget * DamageEffectParams.KnockBackForce;
+		}
+		UAdventureFunctionLibrary::ApplyDamageEffect(DamageEffectParams);
+	}
 }

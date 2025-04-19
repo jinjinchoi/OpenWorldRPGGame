@@ -59,6 +59,7 @@ namespace AdventureGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(Ability_Player_RSkill, "Ability.Player.RSkill")
 	
 	UE_DEFINE_GAMEPLAY_TAG(Ability_Enemy_Attack_Melee, "Ability.Enemy.Attack.Melee")
+	UE_DEFINE_GAMEPLAY_TAG(Ability_Enemy_Attack_Ranged, "Ability.Enemy.Attack.Ranged")
 	
 	UE_DEFINE_GAMEPLAY_TAG(Ability_Shared_HitReact, "Ability.Shared.HitReact")
 	UE_DEFINE_GAMEPLAY_TAG(Ability_Shared_Death, "Ability.Shared.Death")
@@ -83,10 +84,13 @@ namespace AdventureGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(Event_HitPause, "Event.HitPause")
 	
 	UE_DEFINE_GAMEPLAY_TAG(Event_PerfectDodge, "Event.PerfectDodge")
-
+	
+	UE_DEFINE_GAMEPLAY_TAG(Event_SpawnProjectile, "Event.SpawnProjectile")
+	
 	
 	/* Block Tag */
 	UE_DEFINE_GAMEPLAY_TAG(Block_Player_StaminaRegen, "Block.Player.StaminaRegen")
+	UE_DEFINE_GAMEPLAY_TAG(Block_Player_Move, "Block.Player.Move")
 
 	
 	/** Class Tag **/
