@@ -28,7 +28,6 @@ public:
 	void ShowDamageNumber(const float DamageAmount, ACharacter* TargetCharacter, const bool bIsCriticalHit, const FGameplayTag& DamageType);
 	void AddClimbMappingContext() const;
 	void RemoveClimbMappingContext() const;
-	void AddDefaultCharacterToManager(ACharacter* CharacterToAdd) const;
 
 	/* Begin IGenericTeamAgentInterface Interface.*/
 	virtual FGenericTeamId GetGenericTeamId() const override;
@@ -41,8 +40,6 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Input)
 	TObjectPtr<UDataAsset_InputConfig> InputConfigDataAsset;
 
-	UPROPERTY()
-	TObjectPtr<UControllableCharacterManager> ControllableCharacterManager;
 
 private:
 	UPROPERTY(EditDefaultsOnly)
@@ -71,6 +68,10 @@ private:
 
 	void AddInputMappingContext(const UInputMappingContext* MappingContext, const int32 InPriority) const;
 	void RemoveInputMappingContext(const UInputMappingContext* MappingContext) const;
+
+	void Input_ChangeCharacter_One();
+	void Input_ChangeCharacter_Two();
+	void Input_ChangeCharacter_Three();
 	
 #pragma endregion
 	

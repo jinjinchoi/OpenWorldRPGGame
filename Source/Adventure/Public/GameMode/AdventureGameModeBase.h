@@ -14,6 +14,4 @@ UCLASS()
 class ADVENTURE_API AAdventureGameModeBase : public AGameModeBase
 {
 	GENERATED_BODY()
-	
-	
 };

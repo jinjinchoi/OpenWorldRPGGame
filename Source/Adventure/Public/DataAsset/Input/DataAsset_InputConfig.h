@@ -37,6 +37,7 @@ class ADVENTURE_API UDataAsset_InputConfig : public UDataAsset
 	GENERATED_BODY()
 
 public:
+	const UInputAction* FindLocomotionInputActionByTag(const FGameplayTag& InputTag) const;
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TObjectPtr<UInputMappingContext> DefaultMappingContext;
@@ -47,9 +48,7 @@ public:
 	/* 기본적인 움직임을 담당하는 Action과 Tag를 저장하는 배열 */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(TitleProperty="InputTag"))
 	TArray<FAdventureInputAction> LocomotionInputActions;
-
-	const UInputAction* FindLocomotionInputActionByTag(const FGameplayTag& InputTag) const;
-
+	
 	/* Pressed 시 발동하는 Ability */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(TitleProperty="InputTag"))
 	TArray<FAdventureInputAction> StartedAbilityInputActions;

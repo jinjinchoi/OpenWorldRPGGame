@@ -3,6 +3,7 @@
 
 #include "Character/AdventurePlayerCharacter.h"
 
+#include "AbilitySystemBlueprintLibrary.h"
 #include "AdventureFunctionLibrary.h"
 #include "AdventureGameplayTag.h"
 #include "DebugHelper.h"
@@ -15,6 +16,7 @@
 #include "DataAsset/StartUpData/DataAsset_StartUpDataBase.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "Player/AdventurePlayerState.h"
 #include "UI/HUD/AdventureInGameHUD.h"
 
 AAdventurePlayerCharacter::AAdventurePlayerCharacter(const FObjectInitializer& ObjectInitializer)
@@ -53,16 +55,7 @@ void AAdventurePlayerCharacter::BeginPlay()
 		AdventureMovementComponent->OnEnterClimbStateDelegate.BindUObject(this, &AAdventurePlayerCharacter::OnPlayerEnterClimbState);
 		AdventureMovementComponent->OnExitClimbStateDelegate.BindUObject(this, &AAdventurePlayerCharacter::OnPlayerExitClimbState);
 	}
-
-	if (bIsFirstLoading)
-	{
-		if (AAdventurePlayerController* PlayerController = Cast<AAdventurePlayerController>(GetController()))
-		{
-			PlayerController->AddDefaultCharacterToManager(this);
-		}
-
-		bIsFirstLoading = false;
-	}
+	
 }
 
 
@@ -109,6 +102,14 @@ void AAdventurePlayerCharacter::PossessedBy(AController* NewController)
 	
 	InitPlayerStartUpData();
 	BindGameplayTagChanged();
+
+	if (bIsFirstLoading)
+	{
+		AAdventurePlayerState* AdventurePlayerState = GetPlayerState<AAdventurePlayerState>();
+		check(AdventurePlayerState);
+		AdventurePlayerState->AddCharacterToPartyMember(this, 0);
+		bIsFirstLoading = false;
+	}
 	
 }
 
@@ -443,6 +444,29 @@ void AAdventurePlayerCharacter::OnPlayerExitClimbState()
 	{
 		RemoveStaminaCostEffect();
 	}
+}
+
+void AAdventurePlayerCharacter::Input_CharacterChange_One()
+{
+	if (CurrentCharacterIndex == 0) return;
+
+	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(this, AdventureGameplayTags::Event_CharacterChange_One, FGameplayEventData());
+}
+
+void AAdventurePlayerCharacter::Input_CharacterChange_Two()
+{
+	if (CurrentCharacterIndex == 1) return;
+
+	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(this, AdventureGameplayTags::Event_CharacterChange_Two, FGameplayEventData());
+
+}
+
+void AAdventurePlayerCharacter::Input_CharacterChange_Three()
+{
+	if (CurrentCharacterIndex == 3) return;
+
+	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(this, AdventureGameplayTags::Event_CharacterChange_Three, FGameplayEventData());
+
 }
 
 #pragma endregion 

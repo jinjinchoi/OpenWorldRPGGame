@@ -49,6 +49,10 @@ public:
 	virtual void Input_ClimbMovement(const FInputActionValue& InputActionValue) = 0;
 	virtual void Input_ClimbActionCompleted() = 0;
 	virtual void Input_ClimbHopActionStarted(const FInputActionValue& InputActionValue) = 0;
+	
+	virtual void Input_CharacterChange_One() = 0;
+	virtual void Input_CharacterChange_Two() = 0;
+	virtual void Input_CharacterChange_Three() = 0;
 
 	virtual void Input_AbilityInputPressed(const FGameplayTag& InInputTag) = 0;
 	virtual void Input_AbilityInputReleased(const FGameplayTag& InInputTag) = 0;

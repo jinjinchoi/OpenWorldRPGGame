@@ -27,7 +27,6 @@ class ADVENTURE_API AAdventurePlayerCharacter : public AAdventureBaseCharacter, 
 public:
 	AAdventurePlayerCharacter(const FObjectInitializer& ObjectInitializer);
 	virtual void BeginPlay() override;
-
 	
 	/* Begin Player Interface */
 	virtual void ShowWeaponMesh_Implementation() override;
@@ -38,6 +37,9 @@ public:
 	/* Begin Combat Interface */
 	virtual void OnCharacterDied_Implementation() override;
 	/* End Combat Interface */
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Character Data")
+	int32 CurrentCharacterIndex = -1;
 
 protected:
 	virtual void PossessedBy(AController* NewController) override;
@@ -131,6 +133,12 @@ protected:
 	
 	void OnPlayerEnterClimbState();
 	void OnPlayerExitClimbState();
+
+	/* Character Change */
+	virtual void Input_CharacterChange_One() override;
+	virtual void Input_CharacterChange_Two() override;
+	virtual void Input_CharacterChange_Three() override;
+	
 	
 #pragma endregion
 	

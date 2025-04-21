@@ -3,7 +3,3 @@
 
 #include "GameManager/ControllableCharacterManager.h"
 
-void UControllableCharacterManager::RegisterPartyMember(ACharacter* CharacterToAdd, int32 PartyIndex)
-{
-
-}

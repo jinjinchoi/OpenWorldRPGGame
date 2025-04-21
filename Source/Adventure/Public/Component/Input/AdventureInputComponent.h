@@ -21,6 +21,10 @@ public:
 
 	template<class UserObject, typename CallbackFunc>
 	void BindAbilityInputAction(const UDataAsset_InputConfig* InInputConfig, UserObject* ContextObject, CallbackFunc InputPressedFunc, CallbackFunc InputReleasedFunc);
+
+	template <class UserClass, typename CallbackFunc>
+	void BindAbilityInputActionForTag(const UDataAsset_InputConfig* InInputConfig, UserClass* ContextObject, const FGameplayTag& InInputTag, ETriggerEvent TriggerEvent, CallbackFunc Func);	
+	
 };
 
 template <class UserClass, typename CallbackFunc>

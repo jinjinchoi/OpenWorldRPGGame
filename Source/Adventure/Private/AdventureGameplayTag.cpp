@@ -21,6 +21,9 @@ namespace AdventureGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(InputTag_SpecialAbility, "InputTag.SpecialAbility");
 	UE_DEFINE_GAMEPLAY_TAG(InputTag_ESkill, "InputTag.ESkill");
 	UE_DEFINE_GAMEPLAY_TAG(InputTag_RSkill, "InputTag.RSkill");
+	UE_DEFINE_GAMEPLAY_TAG(InputTag_ChangeCharacter_One, "InputTag.ChangeCharacter.One");
+	UE_DEFINE_GAMEPLAY_TAG(InputTag_ChangeCharacter_Two, "InputTag.ChangeCharacter.Two");
+	UE_DEFINE_GAMEPLAY_TAG(InputTag_ChangeCharacter_Three, "InputTag.ChangeCharacter.Three");
 	
 	UE_DEFINE_GAMEPLAY_TAG(InputTag_Toggleable, "InputTag.Toggleable");
 	UE_DEFINE_GAMEPLAY_TAG(InputTag_Toggleable_TargetLock, "InputTag.Toggleable.TargetLock");
@@ -57,6 +60,7 @@ namespace AdventureGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(Ability_Player_TargetLock, "Ability.Player.TargetLock")
 	UE_DEFINE_GAMEPLAY_TAG(Ability_Player_ESkill, "Ability.Player.ESkill")
 	UE_DEFINE_GAMEPLAY_TAG(Ability_Player_RSkill, "Ability.Player.RSkill")
+	UE_DEFINE_GAMEPLAY_TAG(Ability_Player_CharacterChange, "Ability.Player.CharacterChange")
 	
 	UE_DEFINE_GAMEPLAY_TAG(Ability_Enemy_Attack_Melee, "Ability.Enemy.Attack.Melee")
 	UE_DEFINE_GAMEPLAY_TAG(Ability_Enemy_Attack_Ranged, "Ability.Enemy.Attack.Ranged")
@@ -86,6 +90,10 @@ namespace AdventureGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(Event_PerfectDodge, "Event.PerfectDodge")
 	
 	UE_DEFINE_GAMEPLAY_TAG(Event_SpawnProjectile, "Event.SpawnProjectile")
+	
+	UE_DEFINE_GAMEPLAY_TAG(Event_CharacterChange_One, "Event.CharacterChange.One")
+	UE_DEFINE_GAMEPLAY_TAG(Event_CharacterChange_Two, "Event.CharacterChange.Two")
+	UE_DEFINE_GAMEPLAY_TAG(Event_CharacterChange_Three, "Event.CharacterChange.Three")
 	
 	
 	/* Block Tag */
