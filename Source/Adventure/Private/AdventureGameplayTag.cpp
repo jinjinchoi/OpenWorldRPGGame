@@ -67,6 +67,14 @@ namespace AdventureGameplayTags
 	
 	UE_DEFINE_GAMEPLAY_TAG(Ability_Shared_HitReact, "Ability.Shared.HitReact")
 	UE_DEFINE_GAMEPLAY_TAG(Ability_Shared_Death, "Ability.Shared.Death")
+
+	/** Attribute Tag **/
+	UE_DEFINE_GAMEPLAY_TAG(Attribute_Player_AttackPower, "Attribute.Player.AttackPower")
+	UE_DEFINE_GAMEPLAY_TAG(Attribute_Player_DefensePower, "Attribute.Player.AttackPower")
+	UE_DEFINE_GAMEPLAY_TAG(Attribute_Player_CriticalChance, "Attribute.Player.AttackPower")
+	UE_DEFINE_GAMEPLAY_TAG(Attribute_Player_CriticalMagnitude, "Attribute.Player.AttackPower")
+	UE_DEFINE_GAMEPLAY_TAG(Attribute_Player_CurrentHealth, "Attribute.Player.AttackPower")
+	UE_DEFINE_GAMEPLAY_TAG(Attribute_Player_MaxHealth, "Attribute.Player.AttackPower")
 	
 	
 	/** Damage Type Tag **/
@@ -103,6 +111,7 @@ namespace AdventureGameplayTags
 	
 	/** Class Tag **/
 	UE_DEFINE_GAMEPLAY_TAG(CharacterClass_Player_Warrior, "CharacterClass.Player.Warrior")
+	UE_DEFINE_GAMEPLAY_TAG(CharacterClass_Player_Knight, "CharacterClass.Player.Knight")
 	
 	
 

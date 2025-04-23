@@ -6,10 +6,13 @@
 #include "AbilitySystemComponent.h"
 #include "AdventureGameplayTag.h"
 #include "GenericTeamAgentInterface.h"
+#include "AbilitySystem/AdventureAttributeSet.h"
 #include "AdventureType/AdventureAbilityTypes.h"
 #include "AdventureType/AdventureStructTypes.h"
+#include "GameManager/ControllableCharacterManager.h"
 #include "Interface/CombatInterface.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Player/AdventurePlayerState.h"
 
 bool UAdventureFunctionLibrary::DoseActorHaveTag(AActor* InActor, const FGameplayTag TagToCheck)
 {
@@ -46,6 +49,44 @@ void UAdventureFunctionLibrary::RemoveGameplayTagToActorIfFound(AActor* InActor,
 			ASC->RemoveLooseGameplayTag(TagToRemove);
 		}
 	}
+}
+
+void UAdventureFunctionLibrary::InitializeAttributeFromCharacterInfo(const FPartyCharacterInfo& InCharacterInfo, const FGameplayEffectSpecHandle& SpecHandle, UAbilitySystemComponent* ASC)
+{
+	if (!ASC) return;
+	
+	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, AdventureGameplayTags::Attribute_Player_AttackPower, InCharacterInfo.AttackPower);
+	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, AdventureGameplayTags::Attribute_Player_DefensePower, InCharacterInfo.DefensePower);
+	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, AdventureGameplayTags::Attribute_Player_CriticalChance, InCharacterInfo.CriticalChance);
+	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, AdventureGameplayTags::Attribute_Player_CriticalMagnitude, InCharacterInfo.CriticalMagnitude);
+	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, AdventureGameplayTags::Attribute_Player_CriticalMagnitude, InCharacterInfo.CurrentHealth);
+	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, AdventureGameplayTags::Attribute_Player_CurrentHealth, InCharacterInfo.CurrentHealth);
+	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, AdventureGameplayTags::Attribute_Player_MaxHealth, InCharacterInfo.MaxHealth);
+	
+	ASC->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get());
+}
+
+FPartyCharacterInfo UAdventureFunctionLibrary::MakePartyCharacterInfo(const UAttributeSet* InAttributeSet,
+	const FGameplayTag& InCharacterTag, const bool InIsNotSpawned, const bool InIsPartyMember)
+{
+	FPartyCharacterInfo CharacterInfo = FPartyCharacterInfo();
+	CharacterInfo.bIsNotSpawned = InIsNotSpawned;
+	CharacterInfo.bIsPartyMember = InIsPartyMember;
+	CharacterInfo.ClassTag = InCharacterTag;
+	
+	if (const UAdventureAttributeSet* AdventureAttributeSet = Cast<UAdventureAttributeSet>(InAttributeSet))
+	{
+		CharacterInfo.CharacterLevel = 1.f; // TODO: Level System 구현하면 수정해야함.
+		CharacterInfo.CharacterXP = 0.f; // TODO: Level System 구현하면 수정해야함.
+		CharacterInfo.AttackPower = AdventureAttributeSet->GetAttackPower();
+		CharacterInfo.CriticalChance = AdventureAttributeSet->GetCriticalChance();
+		CharacterInfo.CriticalMagnitude = AdventureAttributeSet->GetCriticalMagnitude();
+		CharacterInfo.DefensePower = AdventureAttributeSet->GetDefensePower();
+		CharacterInfo.CurrentHealth = AdventureAttributeSet->GetCurrentHealth();
+		CharacterInfo.MaxHealth = AdventureAttributeSet->GetMaxHealth();
+	}
+
+	return CharacterInfo;
 }
 
 bool UAdventureFunctionLibrary::IsCriticalHit(const FGameplayEffectContextHandle& EffectContextHandle)

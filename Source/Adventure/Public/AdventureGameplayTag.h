@@ -70,6 +70,15 @@ namespace AdventureGameplayTags
 
 	ADVENTURE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Ability_Shared_HitReact);
 	ADVENTURE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Ability_Shared_Death);
+
+	/** Attribute Tag **/
+	ADVENTURE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Attribute_Player_AttackPower);
+	ADVENTURE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Attribute_Player_DefensePower);
+	ADVENTURE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Attribute_Player_CriticalChance);
+	ADVENTURE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Attribute_Player_CriticalMagnitude);
+	ADVENTURE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Attribute_Player_CurrentHealth);
+	ADVENTURE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Attribute_Player_MaxHealth);
+	
 	
 	/** Damage Type Tag **/
 	ADVENTURE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Damage);
@@ -105,6 +114,7 @@ namespace AdventureGameplayTags
 	
 	/** Class Tag **/
 	ADVENTURE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(CharacterClass_Player_Warrior);
+	ADVENTURE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(CharacterClass_Player_Knight);
 
 	
 

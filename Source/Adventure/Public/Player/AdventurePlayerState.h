@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GameplayTagContainer.h"
 #include "GameFramework/PlayerState.h"
 #include "AdventurePlayerState.generated.h"
 
@@ -17,17 +18,19 @@ class ADVENTURE_API AAdventurePlayerState : public APlayerState
 	GENERATED_BODY()
 
 public:
-	void AddCharacterToPartyMember(ACharacter* CharacterToAdd, const int32 MemberIndex) const;
 	UControllableCharacterManager* GetControllableCharacterManager();
 
 protected:
 	virtual void BeginPlay() override;
+
+	UPROPERTY(EditDefaultsOnly, Category="Character")
+	TSubclassOf<UControllableCharacterManager> ControllableCharacterManagerClass;
 	
 	UPROPERTY()
 	TObjectPtr<UControllableCharacterManager> ControllableCharacterManager;
 
-	UPROPERTY(EditDefaultsOnly, Category="Test")
-	TMap<TSubclassOf<ACharacter>, int32> TestPartyMembers;
+	UPROPERTY(EditDefaultsOnly, Category="Character")
+	TMap<FGameplayTag /* ClassNameTag */, int32 /* PartyIndex */> InitialPartyMembers;
 	
 	
 	

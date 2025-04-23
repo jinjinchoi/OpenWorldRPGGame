@@ -17,8 +17,6 @@ void UAdventureTargetLockAbility::ActivateAbility(const FGameplayAbilitySpecHand
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
 	TryLockOnTarget();
-
-	
 }
 
 void UAdventureTargetLockAbility::EndAbility(const FGameplayAbilitySpecHandle Handle,

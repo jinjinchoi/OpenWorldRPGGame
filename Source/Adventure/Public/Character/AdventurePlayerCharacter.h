@@ -39,12 +39,15 @@ public:
 	/* End Combat Interface */
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Character Data")
-	int32 CurrentCharacterIndex = -1;
+	int32 CurrentCharacterIndex = 1;
+
+	bool bIsFirstLoading = true;
 
 protected:
 	virtual void PossessedBy(AController* NewController) override;
 	void InitPlayerStartUpData() const;
 	void BindGameplayTagChanged();
+	void AddCharacterInfoToManager() const;
 
 	/* Begin Adventure Base Character */
 	virtual void OnHitReactTagChanged(const FGameplayTag CallbackTag, int32 NewCount) override;
@@ -58,8 +61,6 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category=Movement)
 	float SprintSpeed = 600.f;
-	
-	bool bIsFirstLoading = true;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(Categories ="CharacterClass.Player"))
 	FGameplayTag CharacterTag;
@@ -82,6 +83,7 @@ private:
 
 public:
 	FORCEINLINE UAdventureMovementComponent* GetAdventureMovementComponent() const { return AdventureMovementComponent; }
+	FORCEINLINE FGameplayTag GetCharacterClassTag() const { return CharacterTag; }
 
 protected:
 

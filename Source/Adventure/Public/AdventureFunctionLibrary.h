@@ -8,6 +8,9 @@
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "AdventureFunctionLibrary.generated.h"
 
+class UAttributeSet;
+struct FGameplayEffectSpecHandle;
+struct FPartyCharacterInfo;
 struct FGameplayEffectContextHandle;
 struct FDamageEffectParams;
 /**
@@ -28,6 +31,10 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category="AdventureFunctionLibrary|GameplayAbility")
 	static void RemoveGameplayTagToActorIfFound(AActor* InActor, const FGameplayTag TagToRemove);
+	
+	/* Gameplay Ability System Setup */
+	static void InitializeAttributeFromCharacterInfo(const FPartyCharacterInfo& InCharacterInfo, const FGameplayEffectSpecHandle& SpecHandle, UAbilitySystemComponent* ASC);
+	static FPartyCharacterInfo MakePartyCharacterInfo(const UAttributeSet* InAttributeSet /* , const UAdventureAbilitySystem ASC */, const FGameplayTag& InCharacterTag, const bool InIsNotSpawned, const bool InIsPartyMember);
 
 	/** Effect Context **/
 	static bool IsCriticalHit(const FGameplayEffectContextHandle& EffectContextHandle);

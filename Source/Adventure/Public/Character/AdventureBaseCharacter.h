@@ -34,6 +34,8 @@ public:
 	
 	UFUNCTION(BlueprintCallable)
 	void RegisterSpawnedWeapon(AAdventureWeaponBase* InWeaponToRegister);
+
+
 	
 protected:
 	/* Begin APawn Class */
@@ -59,7 +61,6 @@ protected:
 	bool bIsHitReacting = false;
 	
 	virtual void OnHitReactTagChanged(const FGameplayTag CallbackTag, int32 NewCount);
-
 
 public:
 	FORCEINLINE UAttributeSet* GetAttributeSet() const { return AttributeSet; }

@@ -16,6 +16,7 @@
 #include "DataAsset/StartUpData/DataAsset_StartUpDataBase.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "GameManager/ControllableCharacterManager.h"
 #include "Player/AdventurePlayerState.h"
 #include "UI/HUD/AdventureInGameHUD.h"
 
@@ -99,17 +100,14 @@ void AAdventurePlayerCharacter::OnCharacterDied_Implementation()
 void AAdventurePlayerCharacter::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
-	
-	InitPlayerStartUpData();
-	BindGameplayTagChanged();
 
 	if (bIsFirstLoading)
 	{
-		AAdventurePlayerState* AdventurePlayerState = GetPlayerState<AAdventurePlayerState>();
-		check(AdventurePlayerState);
-		AdventurePlayerState->AddCharacterToPartyMember(this, 0);
+		InitPlayerStartUpData();
 		bIsFirstLoading = false;
 	}
+	BindGameplayTagChanged();
+	AddCharacterInfoToManager();
 	
 }
 
@@ -127,14 +125,17 @@ void AAdventurePlayerCharacter::InitPlayerStartUpData() const
 	
 	UAdventureAbilitySystemComponent* AdventureAbilitySystemComponent = Cast<UAdventureAbilitySystemComponent>(AbilitySystemComponent);
 	check(AdventureAbilitySystemComponent);
-	
+
+
 	if (UDataAsset_StartUpDataBase* LoadedDataAsset = CharacterStartUpData.LoadSynchronous())
 	{
 		check(AdventureAbilitySystemComponent);
 		
 		LoadedDataAsset->GiveToAbilitySystemComponent(AdventureAbilitySystemComponent);
+		
 	}
-
+	
+	
 	if (AAdventurePlayerController* PlayerController = Cast<AAdventurePlayerController>(GetController()))
 	{
 		 if (AAdventureInGameHUD* AdventureInGameHUD = Cast<AAdventureInGameHUD>(PlayerController->GetHUD()))
@@ -151,6 +152,33 @@ void AAdventurePlayerCharacter::BindGameplayTagChanged()
 
 	AbilitySystemComponent->RegisterGameplayTagEvent(AdventureGameplayTags::Status_HitReact, EGameplayTagEventType::NewOrRemoved)
 		.AddUObject(this, &ThisClass::OnHitReactTagChanged);
+}
+
+void AAdventurePlayerCharacter::AddCharacterInfoToManager() const
+{
+	FPartyCharacterInfo CharacterInfo = FPartyCharacterInfo();
+	CharacterInfo.bIsNotSpawned = false;
+	CharacterInfo.bIsPartyMember = true;
+	CharacterInfo.ClassTag = CharacterTag;
+	
+	if (const UAdventureAttributeSet* AdventureAttributeSet = Cast<UAdventureAttributeSet>(AttributeSet))
+	{
+		CharacterInfo.CharacterLevel = 1.f; // TODO: Level System 구현하면 수정해야함.
+		CharacterInfo.CharacterXP = 0.f; // TODO: Level System 구현하면 수정해야함.
+		CharacterInfo.AttackPower = AdventureAttributeSet->GetAttackPower();
+		CharacterInfo.CriticalChance = AdventureAttributeSet->GetCriticalChance();
+		CharacterInfo.CriticalMagnitude = AdventureAttributeSet->GetCriticalMagnitude();
+		CharacterInfo.DefensePower = AdventureAttributeSet->GetDefensePower();
+		CharacterInfo.CurrentHealth = AdventureAttributeSet->GetCurrentHealth();
+		CharacterInfo.MaxHealth = AdventureAttributeSet->GetMaxHealth();
+	}
+
+	// TODO: Delegate 통해서 Ability 정보 가져와야함.
+
+	if (AAdventurePlayerState* AdventurePlayerState = Cast<AAdventurePlayerState>(GetPlayerState()))
+	{
+		AdventurePlayerState->GetControllableCharacterManager()->AddOrUpdatePartyCharactersInfo(CurrentCharacterIndex, CharacterInfo);
+	}
 }
 
 void AAdventurePlayerCharacter::OnHitReactTagChanged(const FGameplayTag CallbackTag, int32 NewCount)
@@ -448,14 +476,14 @@ void AAdventurePlayerCharacter::OnPlayerExitClimbState()
 
 void AAdventurePlayerCharacter::Input_CharacterChange_One()
 {
-	if (CurrentCharacterIndex == 0) return;
+	if (CurrentCharacterIndex == 1) return;
 
 	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(this, AdventureGameplayTags::Event_CharacterChange_One, FGameplayEventData());
 }
 
 void AAdventurePlayerCharacter::Input_CharacterChange_Two()
 {
-	if (CurrentCharacterIndex == 1) return;
+	if (CurrentCharacterIndex == 2) return;
 
 	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(this, AdventureGameplayTags::Event_CharacterChange_Two, FGameplayEventData());
 

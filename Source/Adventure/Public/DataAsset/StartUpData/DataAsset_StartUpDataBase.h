@@ -48,10 +48,12 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category="StartUpData", meta = (TitleProperty = "InputTag"))
 	TArray<FAdventureAbilityInfo> StartUpAbilityInfo;
 
+	/* 제일 처음 적용할 게임플레이 이펙트 */
 	UPROPERTY(EditDefaultsOnly, Category="StartUpData")
 	TArray<TSubclassOf<UGameplayEffect>> StartUpGameplayEffects;
 
+
 private:
 	void GrantAbilities(const TArray<TSubclassOf<UAdventureGameplayAbility>>& InAbilityToGive, UAdventureAbilitySystemComponent* InASC, int32 ApplyLevel = 1);
-	
+	void GrantGameplayEffect(const TArray<TSubclassOf<UGameplayEffect>>& InGameplayEffectsToGive, UAdventureAbilitySystemComponent* InASC, int32 ApplyLevel = 1);
 };
