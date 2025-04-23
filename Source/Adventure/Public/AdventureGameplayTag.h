@@ -78,6 +78,8 @@ namespace AdventureGameplayTags
 	ADVENTURE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Attribute_Player_CriticalMagnitude);
 	ADVENTURE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Attribute_Player_CurrentHealth);
 	ADVENTURE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Attribute_Player_MaxHealth);
+	ADVENTURE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Attribute_Player_CurrentStamina);
+	ADVENTURE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Attribute_Player_MaxStamina);
 	
 	
 	/** Damage Type Tag **/

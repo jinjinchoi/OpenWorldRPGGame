@@ -6,6 +6,9 @@
 #include "AbilitySystemComponent.h"
 #include "AdventureAbilitySystemComponent.generated.h"
 
+struct FPartyCharacterInfo;
+DECLARE_DELEGATE_OneParam(FForEachAbility, const FGameplayAbilitySpec&);
+
 /**
  * 
  */
@@ -17,6 +20,10 @@ class ADVENTURE_API UAdventureAbilitySystemComponent : public UAbilitySystemComp
 public:
 	void OnAbilityInputPressed(const FGameplayTag& InInputTag);
 	void OnAbilityInputReleased(const FGameplayTag& InInputTag);
+	void InitializeAbilityFromCharacterInfo(const FPartyCharacterInfo& InCharacterInfo);
+
+	void ForEachAbility(const FForEachAbility& Delegate);
 	
-	
+private:
+	FGameplayAbilitySpec* GetAbilitySpecFromAbilityTag(const FGameplayTag& AbilityTag);
 };

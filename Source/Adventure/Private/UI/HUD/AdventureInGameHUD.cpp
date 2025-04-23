@@ -9,6 +9,11 @@
 void AAdventureInGameHUD::InitOverlay(APlayerController* PC, APlayerState* PS, UAbilitySystemComponent* ASC, UAttributeSet* AS, const FGameplayTag& CharacterTag)
 {
 	check(OverlayWidgetClass);
+
+	if (OverlayWidget)
+	{
+		OverlayWidget->RemoveFromParent();
+	}
 	
 	OverlayWidget = CreateWidget<UAdventureUserWidget>(GetWorld(), OverlayWidgetClass);
 	
@@ -23,12 +28,14 @@ void AAdventureInGameHUD::InitOverlay(APlayerController* PC, APlayerState* PS, U
 
 UOverlayWidgetController* AAdventureInGameHUD::GetOverlayWidgetController(const FWidgetControllerParams& Params)
 {
+	
 	if (!OverlayWidgetController)
 	{
 		OverlayWidgetController = NewObject<UOverlayWidgetController>(this, OverlayWidgetControllerClass);
-		OverlayWidgetController->SetWidgetControllerParams(Params);
-		OverlayWidgetController->BindCallbacksToDependencies();
 	}
+	OverlayWidgetController->SetWidgetControllerParams(Params);
+	OverlayWidgetController->BindCallbacksToDependencies();
+
 
 	return OverlayWidgetController;
 }

@@ -6,13 +6,12 @@
 #include "AbilitySystemComponent.h"
 #include "AdventureGameplayTag.h"
 #include "GenericTeamAgentInterface.h"
+#include "AbilitySystem/AdventureAbilitySystemComponent.h"
 #include "AbilitySystem/AdventureAttributeSet.h"
 #include "AdventureType/AdventureAbilityTypes.h"
 #include "AdventureType/AdventureStructTypes.h"
-#include "GameManager/ControllableCharacterManager.h"
 #include "Interface/CombatInterface.h"
 #include "Kismet/KismetMathLibrary.h"
-#include "Player/AdventurePlayerState.h"
 
 bool UAdventureFunctionLibrary::DoseActorHaveTag(AActor* InActor, const FGameplayTag TagToCheck)
 {
@@ -62,12 +61,15 @@ void UAdventureFunctionLibrary::InitializeAttributeFromCharacterInfo(const FPart
 	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, AdventureGameplayTags::Attribute_Player_CriticalMagnitude, InCharacterInfo.CurrentHealth);
 	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, AdventureGameplayTags::Attribute_Player_CurrentHealth, InCharacterInfo.CurrentHealth);
 	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, AdventureGameplayTags::Attribute_Player_MaxHealth, InCharacterInfo.MaxHealth);
+	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, AdventureGameplayTags::Attribute_Player_CurrentStamina, InCharacterInfo.CurrentStamina);
+	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, AdventureGameplayTags::Attribute_Player_MaxStamina, InCharacterInfo.MaxStamina);
 	
 	ASC->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get());
 }
 
-FPartyCharacterInfo UAdventureFunctionLibrary::MakePartyCharacterInfo(const UAttributeSet* InAttributeSet,
-	const FGameplayTag& InCharacterTag, const bool InIsNotSpawned, const bool InIsPartyMember)
+
+FPartyCharacterInfo UAdventureFunctionLibrary::MakePartyCharacterInfo(const UAttributeSet* InAttributeSet, UAdventureAbilitySystemComponent* ASC,
+                                                                      const FGameplayTag& InCharacterTag, const bool InIsNotSpawned, const bool InIsPartyMember)
 {
 	FPartyCharacterInfo CharacterInfo = FPartyCharacterInfo();
 	CharacterInfo.bIsNotSpawned = InIsNotSpawned;
@@ -84,7 +86,27 @@ FPartyCharacterInfo UAdventureFunctionLibrary::MakePartyCharacterInfo(const UAtt
 		CharacterInfo.DefensePower = AdventureAttributeSet->GetDefensePower();
 		CharacterInfo.CurrentHealth = AdventureAttributeSet->GetCurrentHealth();
 		CharacterInfo.MaxHealth = AdventureAttributeSet->GetMaxHealth();
+		CharacterInfo.CurrentStamina = AdventureAttributeSet->GetCurrentStamina();
+		CharacterInfo.MaxStamina = AdventureAttributeSet->GetMaxStamina();
 	}
+
+	FForEachAbility EachAbilityDelegate;
+	EachAbilityDelegate.BindLambda([&CharacterInfo](const FGameplayAbilitySpec& AbilitySpec)
+	{
+		if (AbilitySpec.DynamicAbilityTags.HasTagExact(AdventureGameplayTags::InputTag_NormalAttack))
+		{
+			CharacterInfo.NormalAttackLevel = AbilitySpec.Level;
+		}
+		if (AbilitySpec.DynamicAbilityTags.HasTagExact(AdventureGameplayTags::InputTag_ESkill))
+		{
+			CharacterInfo.ESkillLevel = AbilitySpec.Level;
+		}
+		if (AbilitySpec.DynamicAbilityTags.HasTagExact(AdventureGameplayTags::InputTag_RSkill))
+		{
+			CharacterInfo.RSkillLevel = AbilitySpec.Level;
+		}
+	});
+	ASC->ForEachAbility(EachAbilityDelegate);
 
 	return CharacterInfo;
 }

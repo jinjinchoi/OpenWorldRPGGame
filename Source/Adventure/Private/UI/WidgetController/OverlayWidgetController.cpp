@@ -20,6 +20,11 @@ void UOverlayWidgetController::BindCallbacksToDependencies()
 {
 	const UAdventureAttributeSet* AdventureAttributeSet = CastChecked<UAdventureAttributeSet>(AttributeSet);
 
+	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AdventureAttributeSet->GetCurrentHealthAttribute()).Clear();
+	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AdventureAttributeSet->GetMaxHealthAttribute()).Clear();
+	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AdventureAttributeSet->GetCurrentStaminaAttribute()).Clear();
+	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AdventureAttributeSet->GetMaxStaminaAttribute()).Clear();
+
 	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AdventureAttributeSet->GetCurrentHealthAttribute()).
 	AddLambda([this](const FOnAttributeChangeData& Data)
 	{

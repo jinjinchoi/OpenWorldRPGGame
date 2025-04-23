@@ -70,11 +70,13 @@ namespace AdventureGameplayTags
 
 	/** Attribute Tag **/
 	UE_DEFINE_GAMEPLAY_TAG(Attribute_Player_AttackPower, "Attribute.Player.AttackPower")
-	UE_DEFINE_GAMEPLAY_TAG(Attribute_Player_DefensePower, "Attribute.Player.AttackPower")
-	UE_DEFINE_GAMEPLAY_TAG(Attribute_Player_CriticalChance, "Attribute.Player.AttackPower")
-	UE_DEFINE_GAMEPLAY_TAG(Attribute_Player_CriticalMagnitude, "Attribute.Player.AttackPower")
-	UE_DEFINE_GAMEPLAY_TAG(Attribute_Player_CurrentHealth, "Attribute.Player.AttackPower")
-	UE_DEFINE_GAMEPLAY_TAG(Attribute_Player_MaxHealth, "Attribute.Player.AttackPower")
+	UE_DEFINE_GAMEPLAY_TAG(Attribute_Player_DefensePower, "Attribute.Player.DefensePower")
+	UE_DEFINE_GAMEPLAY_TAG(Attribute_Player_CriticalChance, "Attribute.Player.CriticalChance")
+	UE_DEFINE_GAMEPLAY_TAG(Attribute_Player_CriticalMagnitude, "Attribute.Player.CriticalMagnitude")
+	UE_DEFINE_GAMEPLAY_TAG(Attribute_Player_CurrentHealth, "Attribute.Player.CurrentHealth")
+	UE_DEFINE_GAMEPLAY_TAG(Attribute_Player_MaxHealth, "Attribute.Player.MaxHealth")
+	UE_DEFINE_GAMEPLAY_TAG(Attribute_Player_CurrentStamina, "Attribute.Player.CurrentStamina")
+	UE_DEFINE_GAMEPLAY_TAG(Attribute_Player_MaxStamina, "Attribute.Player.MaxStamina")
 	
 	
 	/** Damage Type Tag **/

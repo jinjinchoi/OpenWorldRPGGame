@@ -135,7 +135,6 @@ void AAdventurePlayerCharacter::InitPlayerStartUpData() const
 		
 	}
 	
-	
 	if (AAdventurePlayerController* PlayerController = Cast<AAdventurePlayerController>(GetController()))
 	{
 		 if (AAdventureInGameHUD* AdventureInGameHUD = Cast<AAdventureInGameHUD>(PlayerController->GetHUD()))

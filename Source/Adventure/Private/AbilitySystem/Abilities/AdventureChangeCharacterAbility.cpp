@@ -3,8 +3,10 @@
 
 #include "AbilitySystem/Abilities/AdventureChangeCharacterAbility.h"
 
+#include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
 #include "AdventureFunctionLibrary.h"
+#include "AbilitySystem/AdventureAbilitySystemComponent.h"
 #include "Camera/CameraComponent.h"
 #include "Character/AdventurePlayerCharacter.h"
 #include "GameFramework/SpringArmComponent.h"
@@ -57,7 +59,9 @@ void UAdventureChangeCharacterAbility::SpawnNewCharacterAndRemoveOldCharacter(co
 	CurrentControlCharacter->DisableInput(nullptr);
 
 	// 현재 사용중인 캐릭터 정보 저장
-	const FPartyCharacterInfo CurrentCharacterInfo = UAdventureFunctionLibrary::MakePartyCharacterInfo(CurrentControlCharacter->GetAttributeSet(), CurrentControlCharacter->GetCharacterClassTag(), false, true);
+	UAdventureAbilitySystemComponent* AdventureASC = Cast<UAdventureAbilitySystemComponent>(UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetAvatarActorFromActorInfo())); 
+	
+	const FPartyCharacterInfo CurrentCharacterInfo = UAdventureFunctionLibrary::MakePartyCharacterInfo(CurrentControlCharacter->GetAttributeSet(), AdventureASC, CurrentControlCharacter->GetCharacterClassTag(), false, true);
 	const int32 CurrentCharacterIndex = CurrentControlCharacter->CurrentCharacterIndex;
 	CharacterManager->AddOrUpdatePartyCharactersInfo(CurrentCharacterIndex, CurrentCharacterInfo);
 
@@ -72,77 +76,68 @@ void UAdventureChangeCharacterAbility::SpawnNewCharacterAndRemoveOldCharacter(co
 				SpawnTransform
 			);
 			
-			
+			// 소환 된 적 있으면 정보가 있기 때문에 복구 진행
+			if (!CachedPartyInfo.bIsNotSpawned)
+			{
+				check(CharacterLoadGameplayEffect);
+				
+				if (UAdventureAbilitySystemComponent* ASC = SpawnedCharacter->FindComponentByClass<UAdventureAbilitySystemComponent>())
+				{
+					SpawnedCharacter->bIsFirstLoading = false;
+				
+					ASC->InitAbilityActorInfo(SpawnedCharacter, SpawnedCharacter);
+					FGameplayEffectContextHandle ContextHandle = ASC->MakeEffectContext();
+					ContextHandle.AddSourceObject(SpawnedCharacter);
+
+					const FGameplayEffectSpecHandle SpecHandle = ASC->MakeOutgoingSpec(CharacterLoadGameplayEffect, 1.f, ContextHandle);
+					UAdventureFunctionLibrary::InitializeAttributeFromCharacterInfo(CachedPartyInfo, SpecHandle, ASC);
+
+					// TODO : 실제로 어빌리티 Give 하는 작업 해야함.
+					
+					ASC->InitializeAbilityFromCharacterInfo(CachedPartyInfo);
+				}
+			}
+
 			// 소환할 캐릭터 인덱스 설정
 			SpawnedCharacter->CurrentCharacterIndex = CachedCharacterIndex;
 
+			// 기존 캐릭터 카메라 정보 저장
 			const FRotator OldControlRotation = GetAdventurePlayerCharacter()->GetControlRotation();
 			const USpringArmComponent* OldSpringArm = GetAvatarActorFromActorInfo()->FindComponentByClass<USpringArmComponent>();
 			const UCameraComponent* OldCamera = GetAvatarActorFromActorInfo()->FindComponentByClass<UCameraComponent>();
-			
+
+			// 바뀔 캐릭터 카메라 정보 저장
 			USpringArmComponent* NewSpringArm = SpawnedCharacter->FindComponentByClass<USpringArmComponent>();
 			UCameraComponent* NewCamera = SpawnedCharacter->FindComponentByClass<UCameraComponent>();
 			
+			// 소환 후 Possess
+			SpawnedCharacter->FinishSpawning(SpawnTransform);
+			CurrentActorInfo->PlayerController->Possess(SpawnedCharacter);
 
-			// 한번도 소환된적 없으면 그냥 소환 (복구할 정보가 없음)
-			if (CachedPartyInfo.bIsNotSpawned)
+			// 카메라 세팅
+			if (AController* NewController = SpawnedCharacter->GetController())
 			{
-				// 소환 후 Possess
-	
-				SpawnedCharacter->FinishSpawning(SpawnTransform);
-				CurrentActorInfo->PlayerController->Possess(SpawnedCharacter);
-
-				// 카메라 세팅
-				if (AController* NewController = SpawnedCharacter->GetController())
-				{
-					NewController->SetControlRotation(OldControlRotation);
-				}
-				
-				if (OldSpringArm && NewSpringArm)
-				{
-					NewSpringArm->TargetArmLength = OldSpringArm->TargetArmLength;
-					NewSpringArm->SetRelativeRotation(OldSpringArm->GetRelativeRotation());
-					NewSpringArm->SetRelativeLocation(OldSpringArm->GetRelativeLocation());
-				}
-
-				if (OldCamera && NewCamera)
-				{
-					NewCamera->FieldOfView = OldCamera->FieldOfView;
-					NewCamera->SetRelativeRotation(OldCamera->GetRelativeRotation());
-					NewCamera->SetRelativeLocation(OldCamera->GetRelativeLocation());
-				}
-				
-				if (GetAvatarActorFromActorInfo())
-				{
-					GetAvatarActorFromActorInfo()->SetLifeSpan(0.1);
-				}
-				
-				
-				return;
+				NewController->SetControlRotation(OldControlRotation);
+			}
+						
+			if (OldSpringArm && NewSpringArm)
+			{
+				NewSpringArm->TargetArmLength = OldSpringArm->TargetArmLength;
+				NewSpringArm->SetRelativeRotation(OldSpringArm->GetRelativeRotation());
+				NewSpringArm->SetRelativeLocation(OldSpringArm->GetRelativeLocation());
 			}
 
-			// 소환 된 적 있으면 정보가 있기 때문에 복구 진행
-			if (UAbilitySystemComponent* ASC = SpawnedCharacter->FindComponentByClass<UAbilitySystemComponent>())
+			if (OldCamera && NewCamera)
 			{
-				SpawnedCharacter->bIsFirstLoading = false;
-				
-				ASC->InitAbilityActorInfo(SpawnedCharacter, SpawnedCharacter);
-				FGameplayEffectContextHandle ContextHandle = ASC->MakeEffectContext();
-				ContextHandle.AddSourceObject(SpawnedCharacter);
-
-				FGameplayEffectSpecHandle SpecHandle = ASC->MakeOutgoingSpec(CharacterLoadGameplayEffect, 1.f, ContextHandle);
-				UAdventureFunctionLibrary::InitializeAttributeFromCharacterInfo(CachedPartyInfo, SpecHandle, ASC);
-				
-				//TODO: Gameplay Ability 적용해야함.
-
-				SpawnedCharacter->FinishSpawning(SpawnTransform);
-
-				if (GetAvatarActorFromActorInfo())
-				{
-					GetAvatarActorFromActorInfo()->SetLifeSpan(0.1);
-				}
+				NewCamera->FieldOfView = OldCamera->FieldOfView;
+				NewCamera->SetRelativeRotation(OldCamera->GetRelativeRotation());
+				NewCamera->SetRelativeLocation(OldCamera->GetRelativeLocation());
 			}
-			
+						
+			if (GetAvatarActorFromActorInfo())
+			{
+				GetAvatarActorFromActorInfo()->SetLifeSpan(0.1);
+			}
 		}
 	});
 	

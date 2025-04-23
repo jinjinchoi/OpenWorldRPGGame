@@ -8,6 +8,7 @@
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "AdventureFunctionLibrary.generated.h"
 
+class UAdventureAbilitySystemComponent;
 class UAttributeSet;
 struct FGameplayEffectSpecHandle;
 struct FPartyCharacterInfo;
@@ -34,7 +35,7 @@ public:
 	
 	/* Gameplay Ability System Setup */
 	static void InitializeAttributeFromCharacterInfo(const FPartyCharacterInfo& InCharacterInfo, const FGameplayEffectSpecHandle& SpecHandle, UAbilitySystemComponent* ASC);
-	static FPartyCharacterInfo MakePartyCharacterInfo(const UAttributeSet* InAttributeSet /* , const UAdventureAbilitySystem ASC */, const FGameplayTag& InCharacterTag, const bool InIsNotSpawned, const bool InIsPartyMember);
+	static FPartyCharacterInfo MakePartyCharacterInfo(const UAttributeSet* InAttributeSet, UAdventureAbilitySystemComponent* ASC, const FGameplayTag& InCharacterTag, const bool InIsNotSpawned, const bool InIsPartyMember);
 
 	/** Effect Context **/
 	static bool IsCriticalHit(const FGameplayEffectContextHandle& EffectContextHandle);
