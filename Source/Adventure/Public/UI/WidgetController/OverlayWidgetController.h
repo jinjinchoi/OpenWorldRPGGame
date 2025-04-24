@@ -8,6 +8,7 @@
 
 struct FOnAttributeChangeData;
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAttributeChangeDelegate, float, NewValue);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnMovementChangeDelegate, const ECharacterMovementType, MovementType);
 
 /**
  * 
@@ -32,7 +33,9 @@ public:
 
 	UPROPERTY(BlueprintAssignable, Category = "GameplayAbility|Attribute")
 	FOnAttributeChangeDelegate OnMaxStaminaChangeDelegate;
-	
+
+	UPROPERTY(BlueprintAssignable, Category = "Character Info")
+	FOnMovementChangeDelegate MovementChangeDelegate;
 
 	
 };

@@ -33,8 +33,9 @@ class ADVENTURE_API UDataAsset_StartUpDataBase : public UDataAsset
 	GENERATED_BODY()
 
 public:
-	virtual void GiveToAbilitySystemComponent(UAdventureAbilitySystemComponent* InASC, int32 ApplyLevel = 1);
-	
+	void GiveToAbilitySystemComponent(UAdventureAbilitySystemComponent* InASC);
+	void GrantStartUpGameplayEffect(UAdventureAbilitySystemComponent* InASC);
+
 	
 protected:
 	/* Ability가 주어지면(Given) 실행할 Ability */
@@ -54,6 +55,5 @@ protected:
 
 
 private:
-	void GrantAbilities(const TArray<TSubclassOf<UAdventureGameplayAbility>>& InAbilityToGive, UAdventureAbilitySystemComponent* InASC, int32 ApplyLevel = 1);
-	void GrantGameplayEffect(const TArray<TSubclassOf<UGameplayEffect>>& InGameplayEffectsToGive, UAdventureAbilitySystemComponent* InASC, int32 ApplyLevel = 1);
+	void GrantAbilities(const TArray<TSubclassOf<UAdventureGameplayAbility>>& InAbilityToGive, UAdventureAbilitySystemComponent* InASC);
 };

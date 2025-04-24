@@ -9,6 +9,8 @@
 #include "Interface/PlayerInterface.h"
 #include "AdventurePlayerCharacter.generated.h"
 
+DECLARE_DELEGATE_OneParam(FOnMovementModechanged, const ECharacterMovementType /* Movement Type */);
+
 class UGameplayEffect;
 class UAdventureMovementComponent;
 struct FInputActionValue;
@@ -43,6 +45,8 @@ public:
 
 	bool bIsFirstLoading = true;
 
+	FOnMovementModechanged OnMovementModeChangedDelegate;
+
 protected:
 	virtual void PossessedBy(AController* NewController) override;
 	void InitPlayerStartUpData() const;
@@ -61,15 +65,18 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category=Movement)
 	float SprintSpeed = 600.f;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(Categories ="CharacterClass.Player"))
-	FGameplayTag CharacterTag;
-
+	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category=Movement)
 	TObjectPtr<UAnimMontage> RunToStopMontage;
 
 	UPROPERTY(EditDefaultsOnly, Category="Gameplay Effect")
 	TSubclassOf<UGameplayEffect> RunAndClimbCostEffectClass;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CharacterData")
+	TObjectPtr<UDataAsset_StartUpDataBase> CharacterStartUpData;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(Categories ="CharacterClass.Player"))
+	FGameplayTag CharacterTag;
 	
 	UFUNCTION(BlueprintImplementableEvent)
 	void SetWeaponMeshVisibility(bool bIsVisible);
@@ -84,6 +91,7 @@ private:
 public:
 	FORCEINLINE UAdventureMovementComponent* GetAdventureMovementComponent() const { return AdventureMovementComponent; }
 	FORCEINLINE FGameplayTag GetCharacterClassTag() const { return CharacterTag; }
+	FORCEINLINE UDataAsset_StartUpDataBase* GetCharacterStartUpData() const { return CharacterStartUpData; }
 
 protected:
 

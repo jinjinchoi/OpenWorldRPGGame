@@ -9,6 +9,7 @@
 #include "AbilitySystem/AdventureAbilitySystemComponent.h"
 #include "Camera/CameraComponent.h"
 #include "Character/AdventurePlayerCharacter.h"
+#include "DataAsset/StartUpData/DataAsset_StartUpDataBase.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameManager/ControllableCharacterManager.h"
 #include "Player/AdventurePlayerState.h"
@@ -32,8 +33,6 @@ void UAdventureChangeCharacterAbility::OnCharacterChangeAbilityActivated()
 			CharacterManager = AdventurePlayerState->GetControllableCharacterManager();
 		}
 	}
-
-	
 }
 
 
@@ -92,8 +91,8 @@ void UAdventureChangeCharacterAbility::SpawnNewCharacterAndRemoveOldCharacter(co
 					const FGameplayEffectSpecHandle SpecHandle = ASC->MakeOutgoingSpec(CharacterLoadGameplayEffect, 1.f, ContextHandle);
 					UAdventureFunctionLibrary::InitializeAttributeFromCharacterInfo(CachedPartyInfo, SpecHandle, ASC);
 
-					// TODO : 실제로 어빌리티 Give 하는 작업 해야함.
-					
+					// 어빌리티 부여하고 레벨 설정
+					SpawnedCharacter->GetCharacterStartUpData()->GiveToAbilitySystemComponent(ASC);
 					ASC->InitializeAbilityFromCharacterInfo(CachedPartyInfo);
 				}
 			}

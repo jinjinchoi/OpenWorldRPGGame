@@ -4,6 +4,7 @@
 #include "UI/WidgetController/OverlayWidgetController.h"
 
 #include "AbilitySystem/AdventureAttributeSet.h"
+#include "Character/AdventurePlayerCharacter.h"
 
 void UOverlayWidgetController::BroadCastInitialValue()
 {
@@ -48,6 +49,13 @@ void UOverlayWidgetController::BindCallbacksToDependencies()
 	{
 		OnMaxStaminaChangeDelegate.Broadcast(Data.NewValue);
 	});
+
+	Cast<AAdventurePlayerCharacter>(AbilitySystemComponent->GetAvatarActor())->OnMovementModeChangedDelegate.
+	BindLambda([this](const ECharacterMovementType MoveType)
+	{
+		MovementChangeDelegate.Broadcast(MoveType);
+	});
+	
 	
 }
 

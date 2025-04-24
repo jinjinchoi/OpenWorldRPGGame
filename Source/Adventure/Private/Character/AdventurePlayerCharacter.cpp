@@ -113,7 +113,7 @@ void AAdventurePlayerCharacter::PossessedBy(AController* NewController)
 
 void AAdventurePlayerCharacter::InitPlayerStartUpData() const
 {
-	if (CharacterStartUpData.IsNull())
+	if (!CharacterStartUpData)
 	{
 		DebugHelper::Print(FString::Printf(TEXT("You need to assign startup data to %s"), *GetName()), FColor::Red);
 		return;
@@ -125,15 +125,9 @@ void AAdventurePlayerCharacter::InitPlayerStartUpData() const
 	
 	UAdventureAbilitySystemComponent* AdventureAbilitySystemComponent = Cast<UAdventureAbilitySystemComponent>(AbilitySystemComponent);
 	check(AdventureAbilitySystemComponent);
-
-
-	if (UDataAsset_StartUpDataBase* LoadedDataAsset = CharacterStartUpData.LoadSynchronous())
-	{
-		check(AdventureAbilitySystemComponent);
 		
-		LoadedDataAsset->GiveToAbilitySystemComponent(AdventureAbilitySystemComponent);
-		
-	}
+	CharacterStartUpData->GiveToAbilitySystemComponent(AdventureAbilitySystemComponent);
+	CharacterStartUpData->GrantStartUpGameplayEffect(AdventureAbilitySystemComponent);
 	
 	if (AAdventurePlayerController* PlayerController = Cast<AAdventurePlayerController>(GetController()))
 	{
@@ -458,6 +452,7 @@ void AAdventurePlayerCharacter::OnPlayerEnterClimbState()
 	if (AAdventurePlayerController* PlayerController = Cast<AAdventurePlayerController>(GetController()))
 	{
 		PlayerController->AddClimbMappingContext();
+		OnMovementModeChangedDelegate.ExecuteIfBound(ECharacterMovementType::Climb);
 	}
 }
 
@@ -466,6 +461,7 @@ void AAdventurePlayerCharacter::OnPlayerExitClimbState()
 	if (AAdventurePlayerController* PlayerController = Cast<AAdventurePlayerController>(GetController()))
 	{
 		PlayerController->RemoveClimbMappingContext();
+		OnMovementModeChangedDelegate.ExecuteIfBound(ECharacterMovementType::Normal);
 	}
 	if (StaminaCostEffectHandle.IsValid())
 	{

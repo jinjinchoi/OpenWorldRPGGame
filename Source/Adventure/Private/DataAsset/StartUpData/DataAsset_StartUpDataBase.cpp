@@ -6,12 +6,12 @@
 #include "AbilitySystem/Abilities/AdventureGameplayAbility.h"
 
 
-void UDataAsset_StartUpDataBase::GiveToAbilitySystemComponent(UAdventureAbilitySystemComponent* InASC, int32 ApplyLevel)
+void UDataAsset_StartUpDataBase::GiveToAbilitySystemComponent(UAdventureAbilitySystemComponent* InASC)
 {
 	check(InASC);
 
-	GrantAbilities(ActivateOnGivenAbilities, InASC, ApplyLevel);
-	GrantAbilities(ReactiveAbilities, InASC, ApplyLevel);
+	GrantAbilities(ActivateOnGivenAbilities, InASC);
+	GrantAbilities(ReactiveAbilities, InASC);
 
 	if (!StartUpAbilityInfo.IsEmpty())
 	{
@@ -20,7 +20,7 @@ void UDataAsset_StartUpDataBase::GiveToAbilitySystemComponent(UAdventureAbilityS
 			if (!AbilityInfo.AbilityToGrant) continue;
 
 			FGameplayAbilitySpec AbilitySpec(AbilityInfo.AbilityToGrant);
-			AbilitySpec.Level = ApplyLevel;
+			AbilitySpec.Level = 1.f;
 			AbilitySpec.SourceObject = InASC->GetAvatarActor();
 
 			if (AbilityInfo.InputTag.IsValid())
@@ -31,15 +31,10 @@ void UDataAsset_StartUpDataBase::GiveToAbilitySystemComponent(UAdventureAbilityS
 			InASC->GiveAbility(AbilitySpec);
 		}
 	}
-
-
-	GrantGameplayEffect(StartUpGameplayEffects, InASC, ApplyLevel);
-
-	
 	
 }
 
-void UDataAsset_StartUpDataBase::GrantAbilities(const TArray<TSubclassOf<UAdventureGameplayAbility>>& InAbilityToGive, UAdventureAbilitySystemComponent* InASC, int32 ApplyLevel)
+void UDataAsset_StartUpDataBase::GrantAbilities(const TArray<TSubclassOf<UAdventureGameplayAbility>>& InAbilityToGive, UAdventureAbilitySystemComponent* InASC)
 {
 	if (InAbilityToGive.IsEmpty()) return;
 
@@ -49,7 +44,7 @@ void UDataAsset_StartUpDataBase::GrantAbilities(const TArray<TSubclassOf<UAdvent
 
 		FGameplayAbilitySpec AbilitySpec(Ability);
 		AbilitySpec.SourceObject = InASC->GetAvatarActor();
-		AbilitySpec.Level = ApplyLevel;
+		AbilitySpec.Level = 1.f;
 		
 		InASC->GiveAbility(AbilitySpec);
 	}
@@ -57,16 +52,18 @@ void UDataAsset_StartUpDataBase::GrantAbilities(const TArray<TSubclassOf<UAdvent
 	
 }
 
-void UDataAsset_StartUpDataBase::GrantGameplayEffect(const TArray<TSubclassOf<UGameplayEffect>>& InGameplayEffectsToGive, UAdventureAbilitySystemComponent* InASC, int32 ApplyLevel)
+void UDataAsset_StartUpDataBase::GrantStartUpGameplayEffect(UAdventureAbilitySystemComponent* InASC)
 {
-	if (!InGameplayEffectsToGive.IsEmpty())
+	check(InASC);
+	
+	if (!StartUpGameplayEffects.IsEmpty())
 	{
-		for (const TSubclassOf<UGameplayEffect>& EffectClass : InGameplayEffectsToGive)
+		for (const TSubclassOf<UGameplayEffect>& EffectClass : StartUpGameplayEffects)
 		{
 			if (!EffectClass) continue;
 
 			FGameplayEffectContextHandle EffectContextHandle = InASC->MakeEffectContext();
-			FGameplayEffectSpecHandle EffectSpecHandle = InASC->MakeOutgoingSpec(EffectClass, ApplyLevel, EffectContextHandle);
+			FGameplayEffectSpecHandle EffectSpecHandle = InASC->MakeOutgoingSpec(EffectClass, 1.f, EffectContextHandle);
 			InASC->ApplyGameplayEffectSpecToSelf(*EffectSpecHandle.Data.Get());
 			
 		}

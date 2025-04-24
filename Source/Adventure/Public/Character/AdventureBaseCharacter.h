@@ -50,9 +50,6 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="MotionWarping")
 	TObjectPtr<UMotionWarpingComponent> MotionWarpingComponent;
-	
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CharacterData")
-	TSoftObjectPtr<UDataAsset_StartUpDataBase> CharacterStartUpData;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Combat")
 	TObjectPtr<AAdventureWeaponBase> OwningWeapon;

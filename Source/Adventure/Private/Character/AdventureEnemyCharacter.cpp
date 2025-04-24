@@ -201,6 +201,7 @@ void AAdventureEnemyCharacter::InitEnemyStartUpData() const
 			if (UDataAsset_StartUpDataBase* LoadedData = CharacterStartUpData.Get())
 			{
 				LoadedData->GiveToAbilitySystemComponent(Cast<UAdventureAbilitySystemComponent>(AbilitySystemComponent));
+				LoadedData->GrantStartUpGameplayEffect(Cast<UAdventureAbilitySystemComponent>(AbilitySystemComponent));
 			}
 		})
 	);

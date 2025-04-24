@@ -18,3 +18,10 @@ namespace ECustomMovementMode
 		MOVE_Climb UMETA(DisplayName = "Climb Mode"),
 	};
 }
+
+UENUM(BlueprintType)
+enum class ECharacterMovementType : uint8
+{
+	Normal,
+	Climb
+};
