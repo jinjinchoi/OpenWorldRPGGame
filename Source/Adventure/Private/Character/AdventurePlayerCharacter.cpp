@@ -106,8 +106,27 @@ void AAdventurePlayerCharacter::PossessedBy(AController* NewController)
 		InitPlayerStartUpData();
 		bIsFirstLoading = false;
 	}
+	else
+	{
+		FGameplayEffectContextHandle ContextHandle = AbilitySystemComponent->MakeEffectContext();
+		ContextHandle.AddSourceObject(this);
+	
+		// Effect 적용
+		const FGameplayEffectSpecHandle SpecHandle = AbilitySystemComponent->MakeOutgoingSpec(CharacterLoadGameplayEffect, 1.f, ContextHandle);
+		UAdventureFunctionLibrary::InitializeAttributeFromCharacterInfo(PreviousCharacterInfo, SpecHandle, AbilitySystemComponent);
+		CharacterLoadGameplayEffect = nullptr;
+	}
+	
 	BindGameplayTagChanged();
 	AddCharacterInfoToManager();
+
+	if (AAdventurePlayerController* PlayerController = Cast<AAdventurePlayerController>(GetController()))
+	{
+		if (AAdventureInGameHUD* AdventureInGameHUD = Cast<AAdventureInGameHUD>(PlayerController->GetHUD()))
+		{
+			AdventureInGameHUD->InitOverlay(PlayerController, GetPlayerState(), AbilitySystemComponent, AttributeSet, CharacterTag);
+		}
+	}
 	
 }
 
@@ -128,14 +147,6 @@ void AAdventurePlayerCharacter::InitPlayerStartUpData() const
 		
 	CharacterStartUpData->GiveToAbilitySystemComponent(AdventureAbilitySystemComponent);
 	CharacterStartUpData->GrantStartUpGameplayEffect(AdventureAbilitySystemComponent);
-	
-	if (AAdventurePlayerController* PlayerController = Cast<AAdventurePlayerController>(GetController()))
-	{
-		 if (AAdventureInGameHUD* AdventureInGameHUD = Cast<AAdventureInGameHUD>(PlayerController->GetHUD()))
-		 {
-		 	AdventureInGameHUD->InitOverlay(PlayerController, GetPlayerState(), AdventureAbilitySystemComponent, AttributeSet, CharacterTag);
-		 }
-	}
 
 }
 

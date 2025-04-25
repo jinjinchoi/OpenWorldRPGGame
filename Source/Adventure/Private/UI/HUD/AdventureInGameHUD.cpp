@@ -10,12 +10,10 @@ void AAdventureInGameHUD::InitOverlay(APlayerController* PC, APlayerState* PS, U
 {
 	check(OverlayWidgetClass);
 
-	if (OverlayWidget)
+	if (!OverlayWidget)
 	{
-		OverlayWidget->RemoveFromParent();
+		OverlayWidget = CreateWidget<UAdventureUserWidget>(GetWorld(), OverlayWidgetClass);
 	}
-	
-	OverlayWidget = CreateWidget<UAdventureUserWidget>(GetWorld(), OverlayWidgetClass);
 	
 	const FWidgetControllerParams WidgetParams(PC, PS, ASC, AS, CharacterTag);
 	UOverlayWidgetController* WidgetController = GetOverlayWidgetController(WidgetParams);

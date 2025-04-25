@@ -7,6 +7,7 @@
 #include "AdventureType/AdventureStructTypes.h"
 #include "ControllableCharacterManager.generated.h"
 
+DECLARE_DELEGATE_TwoParams(FOnPartyCharacterChanged, const FGameplayTag& /* Class Tag */, int32 /* PartyIndex */)
 
 /**
  * 
@@ -26,6 +27,8 @@ public:
 	FPartyCharacterInfo* FindCharacterInfoInPartyCharacterInfo(const int32 InCharacterIndex);
 	void GetCharacterClassByTag(const FGameplayTag& InClassTag, const TFunction<void(TSubclassOf<ACharacter>)>& Callback);
 
+	FOnPartyCharacterChanged OnPartyCharacterChangedDelegate;
+
 protected:
 	UPROPERTY(EditDefaultsOnly)
 	TMap<FGameplayTag, TSoftClassPtr<ACharacter>> CharacterClassInfoMap;
@@ -35,6 +38,8 @@ protected:
 
 	UPROPERTY()
 	TMap<int32, FPartyCharacterInfo> PartyCharacterInfo;
-	
+
+private:
+	void BroadcastPartyCharacterInfo();
 	
 };

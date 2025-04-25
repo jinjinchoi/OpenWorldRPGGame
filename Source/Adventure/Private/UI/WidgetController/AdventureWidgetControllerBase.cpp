@@ -24,9 +24,16 @@ void UAdventureWidgetControllerBase::BindCallbacksToDependencies()
 {
 }
 
-FAbilityInfoForWidget UAdventureWidgetControllerBase::FindAbilityInfoByTag() const
+FAbilityInfoForWidget UAdventureWidgetControllerBase::FindAbilityInfoByCurrentCharacterTag() const
 {
 	if (!CharacterAbilityInformation) return FAbilityInfoForWidget();
 
 	return CharacterAbilityInformation->FindAbilityInfoByCharacterTag(CurrentCharacterTag);
+}
+
+FAbilityInfoForWidget UAdventureWidgetControllerBase::FindAbilityInfoByTag(const FGameplayTag& InCharacterTag) const
+{
+	if (!CharacterAbilityInformation) return FAbilityInfoForWidget();
+
+	return CharacterAbilityInformation->FindAbilityInfoByCharacterTag(InCharacterTag);
 }

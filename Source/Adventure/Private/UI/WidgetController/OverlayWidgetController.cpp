@@ -5,6 +5,8 @@
 
 #include "AbilitySystem/AdventureAttributeSet.h"
 #include "Character/AdventurePlayerCharacter.h"
+#include "GameManager/ControllableCharacterManager.h"
+#include "Player/AdventurePlayerState.h"
 
 void UOverlayWidgetController::BroadCastInitialValue()
 {
@@ -55,7 +57,12 @@ void UOverlayWidgetController::BindCallbacksToDependencies()
 	{
 		MovementChangeDelegate.Broadcast(MoveType);
 	});
-	
+
+	Cast<AAdventurePlayerState>(PlayerState)->GetControllableCharacterManager()->OnPartyCharacterChangedDelegate.
+	BindLambda([this](const FGameplayTag& ClassTag , int32 PartyIndex)
+	{
+		OnPartyCharacterChangedDelegate.Broadcast(ClassTag, PartyIndex);
+	});
 	
 }
 

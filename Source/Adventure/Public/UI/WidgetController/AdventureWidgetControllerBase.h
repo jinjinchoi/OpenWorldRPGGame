@@ -57,7 +57,10 @@ public:
 	virtual void BindCallbacksToDependencies();
 
 	UFUNCTION(BlueprintPure)
-	FAbilityInfoForWidget FindAbilityInfoByTag() const;
+	FAbilityInfoForWidget FindAbilityInfoByCurrentCharacterTag() const;
+
+	UFUNCTION(BlueprintPure)
+	FAbilityInfoForWidget FindAbilityInfoByTag(const FGameplayTag& InCharacterTag) const;
 
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Widget Data")

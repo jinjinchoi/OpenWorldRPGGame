@@ -83,14 +83,18 @@ void UAdventureChangeCharacterAbility::SpawnNewCharacterAndRemoveOldCharacter(co
 				if (UAdventureAbilitySystemComponent* ASC = SpawnedCharacter->FindComponentByClass<UAdventureAbilitySystemComponent>())
 				{
 					SpawnedCharacter->bIsFirstLoading = false;
-				
+					
 					ASC->InitAbilityActorInfo(SpawnedCharacter, SpawnedCharacter);
-					FGameplayEffectContextHandle ContextHandle = ASC->MakeEffectContext();
-					ContextHandle.AddSourceObject(SpawnedCharacter);
 
-					const FGameplayEffectSpecHandle SpecHandle = ASC->MakeOutgoingSpec(CharacterLoadGameplayEffect, 1.f, ContextHandle);
-					UAdventureFunctionLibrary::InitializeAttributeFromCharacterInfo(CachedPartyInfo, SpecHandle, ASC);
-
+					SpawnedCharacter->CharacterLoadGameplayEffect = CharacterLoadGameplayEffect;
+					SpawnedCharacter->PreviousCharacterInfo = CachedPartyInfo;
+					
+					// Effect 적용
+					// FGameplayEffectContextHandle ContextHandle = ASC->MakeEffectContext();
+					// ContextHandle.AddSourceObject(SpawnedCharacter);
+					// const FGameplayEffectSpecHandle SpecHandle = ASC->MakeOutgoingSpec(CharacterLoadGameplayEffect, 1.f, ContextHandle);
+					// UAdventureFunctionLibrary::InitializeAttributeFromCharacterInfo(CachedPartyInfo, SpecHandle, ASC);
+					
 					// 어빌리티 부여하고 레벨 설정
 					SpawnedCharacter->GetCharacterStartUpData()->GiveToAbilitySystemComponent(ASC);
 					ASC->InitializeAbilityFromCharacterInfo(CachedPartyInfo);

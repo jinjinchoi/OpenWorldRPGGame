@@ -9,6 +9,7 @@
 struct FOnAttributeChangeData;
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAttributeChangeDelegate, float, NewValue);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnMovementChangeDelegate, const ECharacterMovementType, MovementType);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnPartyCharacterChangedDelegate, const FGameplayTag&, ClassTag, int32, PartyIndex);
 
 /**
  * 
@@ -36,6 +37,9 @@ public:
 
 	UPROPERTY(BlueprintAssignable, Category = "Character Info")
 	FOnMovementChangeDelegate MovementChangeDelegate;
+
+	UPROPERTY(BlueprintAssignable, Category = "Character Info")
+	FOnPartyCharacterChangedDelegate OnPartyCharacterChangedDelegate;
 
 	
 };

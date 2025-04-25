@@ -16,13 +16,19 @@ struct FAbilityInfoForWidget
 	FGameplayTag CharacterTag = FGameplayTag();
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	TSoftObjectPtr<UTexture2D> ESkillIcon;
+	TSoftObjectPtr<UTexture2D> PortraitImg = nullptr;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	FName CharacterName = FName();
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TSoftObjectPtr<UTexture2D> ESkillIcon = nullptr;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(Categories ="Cooldown.Adventure.ESkill"))
 	FGameplayTag ESkillCooldownTag = FGameplayTag();
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	TSoftObjectPtr<UTexture2D> RSkillIcon;
+	TSoftObjectPtr<UTexture2D> RSkillIcon = nullptr;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(Categories ="Cooldown.Adventure.RSkill"))
 	FGameplayTag RSkillCooldownTag = FGameplayTag();

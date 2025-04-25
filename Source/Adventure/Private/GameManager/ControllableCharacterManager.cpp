@@ -26,6 +26,7 @@ void UControllableCharacterManager::AddOrUpdatePartyCharactersInfo(int32 PartyIn
 	PartyCharacterInfo.Add(PartyIndex, NewCharacterInfo);
 
 	AddOrUpdateOwningCharactersInfo(NewCharacterInfo);
+	BroadcastPartyCharacterInfo();
 }
 
 FPartyCharacterInfo* UControllableCharacterManager::FindCharacterInfoInOwningCharacters(const FGameplayTag& InClassTag)
@@ -70,6 +71,14 @@ void UControllableCharacterManager::GetCharacterClassByTag(const FGameplayTag& I
 	else
 	{
 		Callback(nullptr);
+	}
+}
+
+void UControllableCharacterManager::BroadcastPartyCharacterInfo()
+{
+	for (const TPair<int, FPartyCharacterInfo>& CharacterInfo : PartyCharacterInfo)
+	{
+		OnPartyCharacterChangedDelegate.ExecuteIfBound(CharacterInfo.Value.ClassTag, CharacterInfo.Key);
 	}
 }
 

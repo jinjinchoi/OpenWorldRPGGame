@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "ActiveGameplayEffectHandle.h"
 #include "GameplayTagContainer.h"
+#include "AdventureType/AdventureStructTypes.h"
 #include "Character/AdventureBaseCharacter.h"
 #include "Interface/PlayerInterface.h"
 #include "AdventurePlayerCharacter.generated.h"
@@ -28,7 +29,6 @@ class ADVENTURE_API AAdventurePlayerCharacter : public AAdventureBaseCharacter, 
 
 public:
 	AAdventurePlayerCharacter(const FObjectInitializer& ObjectInitializer);
-	virtual void BeginPlay() override;
 	
 	/* Begin Player Interface */
 	virtual void ShowWeaponMesh_Implementation() override;
@@ -44,10 +44,15 @@ public:
 	int32 CurrentCharacterIndex = 1;
 
 	bool bIsFirstLoading = true;
+	FPartyCharacterInfo PreviousCharacterInfo;
 
+	TSubclassOf<UGameplayEffect> CharacterLoadGameplayEffect;
+	
 	FOnMovementModechanged OnMovementModeChangedDelegate;
+	
 
 protected:
+	virtual void BeginPlay() override;
 	virtual void PossessedBy(AController* NewController) override;
 	void InitPlayerStartUpData() const;
 	void BindGameplayTagChanged();
