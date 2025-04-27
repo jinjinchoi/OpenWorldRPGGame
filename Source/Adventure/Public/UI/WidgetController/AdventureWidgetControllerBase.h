@@ -48,8 +48,8 @@ class ADVENTURE_API UAdventureWidgetControllerBase : public UObject
 	GENERATED_BODY()
 
 public:
-	UFUNCTION(BlueprintCallable)
 	void SetWidgetControllerParams(const FWidgetControllerParams& WCParams);
+	void SetPlayerState(APlayerState* InPlayerState);
 
 	UFUNCTION(BlueprintCallable)
 	virtual void BroadCastInitialValue();

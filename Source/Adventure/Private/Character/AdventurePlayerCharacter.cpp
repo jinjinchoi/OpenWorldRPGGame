@@ -163,6 +163,7 @@ void AAdventurePlayerCharacter::AddCharacterInfoToManager() const
 	FPartyCharacterInfo CharacterInfo = FPartyCharacterInfo();
 	CharacterInfo.bIsNotSpawned = false;
 	CharacterInfo.bIsPartyMember = true;
+	CharacterInfo.PartyIndex = CurrentCharacterIndex;
 	CharacterInfo.ClassTag = CharacterTag;
 	
 	if (const UAdventureAttributeSet* AdventureAttributeSet = Cast<UAdventureAttributeSet>(AttributeSet))

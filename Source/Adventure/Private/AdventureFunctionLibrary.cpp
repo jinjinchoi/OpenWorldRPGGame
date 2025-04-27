@@ -12,6 +12,9 @@
 #include "AdventureType/AdventureStructTypes.h"
 #include "Interface/CombatInterface.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Player/AdventurePlayerState.h"
+#include "UI/HUD/AdventureInGameHUD.h"
+#include "UI/WidgetController/AdventureWidgetControllerBase.h"
 
 bool UAdventureFunctionLibrary::DoseActorHaveTag(AActor* InActor, const FGameplayTag TagToCheck)
 {
@@ -69,12 +72,13 @@ void UAdventureFunctionLibrary::InitializeAttributeFromCharacterInfo(const FPart
 
 
 FPartyCharacterInfo UAdventureFunctionLibrary::MakePartyCharacterInfo(const UAttributeSet* InAttributeSet, UAdventureAbilitySystemComponent* ASC,
-                                                                      const FGameplayTag& InCharacterTag, const bool InIsNotSpawned, const bool InIsPartyMember)
+	const FGameplayTag& InCharacterTag, const bool InIsNotSpawned, const bool InIsPartyMember, int32 InPartyIndex)
 {
 	FPartyCharacterInfo CharacterInfo = FPartyCharacterInfo();
 	CharacterInfo.bIsNotSpawned = InIsNotSpawned;
 	CharacterInfo.bIsPartyMember = InIsPartyMember;
 	CharacterInfo.ClassTag = InCharacterTag;
+	CharacterInfo.PartyIndex = InPartyIndex;
 	
 	if (const UAdventureAttributeSet* AdventureAttributeSet = Cast<UAdventureAttributeSet>(InAttributeSet))
 	{
@@ -305,4 +309,18 @@ void UAdventureFunctionLibrary::GetLiveActorWithinRadius(const UObject* WorldCon
 		}
 		
 	}
+}
+
+
+UCharacterInfoWidgetController* UAdventureFunctionLibrary::GetCharacterInfoWidgetController(const UObject* WorldContextObject)
+{
+	if (const APlayerController* PlayerController = WorldContextObject->GetWorld()->GetFirstPlayerController())
+	{
+		if (AAdventureInGameHUD* AdventureInGameHUD = Cast<AAdventureInGameHUD>(PlayerController->GetHUD()))
+		{
+			return AdventureInGameHUD->GetCharacterInfoWidgetController(PlayerController->GetPlayerState<APlayerState>());
+		}
+	}
+
+	return nullptr;
 }

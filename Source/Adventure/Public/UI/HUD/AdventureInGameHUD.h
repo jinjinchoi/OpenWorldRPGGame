@@ -6,6 +6,7 @@
 #include "GameFramework/HUD.h"
 #include "AdventureInGameHUD.generated.h"
 
+class UCharacterInfoWidgetController;
 struct FGameplayTag;
 class UAbilitySystemComponent;
 class UAttributeSet;
@@ -23,9 +24,12 @@ class ADVENTURE_API AAdventureInGameHUD : public AHUD
 public:
 	void InitOverlay(APlayerController* PC, APlayerState* PS, UAbilitySystemComponent* ASC, UAttributeSet* AS, const FGameplayTag& CharacterTag);
 	UOverlayWidgetController* GetOverlayWidgetController(const FWidgetControllerParams& Params);
+	UCharacterInfoWidgetController* GetCharacterInfoWidgetController(APlayerState* InPlayerState);
+	
 
 
 private:
+	/* Overlay */
 	UPROPERTY()
 	TObjectPtr<UAdventureUserWidget> OverlayWidget;
 
@@ -37,5 +41,13 @@ private:
 
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<UOverlayWidgetController> OverlayWidgetControllerClass;
+
+
+	/* CharacterInfo */
+	UPROPERTY()
+	TObjectPtr<UCharacterInfoWidgetController> CharacterInfoWidgetController;
+
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<UCharacterInfoWidgetController> CharacterInfoWidgetControllerClass;
 	
 };

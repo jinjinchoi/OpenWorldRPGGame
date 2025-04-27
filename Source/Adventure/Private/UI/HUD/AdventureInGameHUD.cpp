@@ -4,6 +4,7 @@
 #include "UI/HUD/AdventureInGameHUD.h"
 
 #include "UI/Widget/AdventureUserWidget.h"
+#include "UI/WidgetController/CharacterInfoWidgetController.h"
 #include "UI/WidgetController/OverlayWidgetController.h"
 
 void AAdventureInGameHUD::InitOverlay(APlayerController* PC, APlayerState* PS, UAbilitySystemComponent* ASC, UAttributeSet* AS, const FGameplayTag& CharacterTag)
@@ -26,7 +27,6 @@ void AAdventureInGameHUD::InitOverlay(APlayerController* PC, APlayerState* PS, U
 
 UOverlayWidgetController* AAdventureInGameHUD::GetOverlayWidgetController(const FWidgetControllerParams& Params)
 {
-	
 	if (!OverlayWidgetController)
 	{
 		OverlayWidgetController = NewObject<UOverlayWidgetController>(this, OverlayWidgetControllerClass);
@@ -36,4 +36,19 @@ UOverlayWidgetController* AAdventureInGameHUD::GetOverlayWidgetController(const 
 
 
 	return OverlayWidgetController;
+}
+
+UCharacterInfoWidgetController* AAdventureInGameHUD::GetCharacterInfoWidgetController(APlayerState* InPlayerState)
+{
+	check(InPlayerState && CharacterInfoWidgetControllerClass);
+
+	if (!CharacterInfoWidgetController)
+	{
+		CharacterInfoWidgetController = NewObject<UCharacterInfoWidgetController>(this, CharacterInfoWidgetControllerClass);
+		CharacterInfoWidgetController->SetPlayerState(InPlayerState);
+		CharacterInfoWidgetController->BindCallbacksToDependencies();
+	}
+
+	return CharacterInfoWidgetController;
+	
 }

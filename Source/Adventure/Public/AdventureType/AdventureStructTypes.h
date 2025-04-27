@@ -61,43 +61,46 @@ struct FPartyCharacterInfo
 	UPROPERTY()
 	bool bIsNotSpawned = true;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly)
 	bool bIsPartyMember = false;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly)
+	int32 PartyIndex = INT_MAX;
+
+	UPROPERTY(BlueprintReadOnly)
 	FGameplayTag ClassTag;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly)
 	int32 CharacterLevel = 1;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly)
 	int32 CharacterXP = 0;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly)
 	int32 NormalAttackLevel = 1;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly)
 	int32 ESkillLevel = 1;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly)
 	int32 RSkillLevel = 1;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly)
 	float AttackPower = 0;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly)
 	float DefensePower = 0;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly)
 	float CriticalChance = 0;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly)
 	float CriticalMagnitude = 0;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly)
 	float CurrentHealth = 0;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly)
 	float MaxHealth = 0;
 
 	UPROPERTY()

@@ -41,5 +41,8 @@ protected:
 
 private:
 	void BroadcastPartyCharacterInfo();
+
+public:
+	FORCEINLINE TArray<FPartyCharacterInfo>& GetOwningCharactersInfo() { return OwningCharacters; }
 	
 };

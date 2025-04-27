@@ -8,6 +8,8 @@
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "AdventureFunctionLibrary.generated.h"
 
+class AAdventureInGameHUD;
+class UCharacterInfoWidgetController;
 class UAdventureAbilitySystemComponent;
 class UAttributeSet;
 struct FGameplayEffectSpecHandle;
@@ -35,7 +37,7 @@ public:
 	
 	/* Gameplay Ability System Setup */
 	static void InitializeAttributeFromCharacterInfo(const FPartyCharacterInfo& InCharacterInfo, const FGameplayEffectSpecHandle& SpecHandle, UAbilitySystemComponent* ASC);
-	static FPartyCharacterInfo MakePartyCharacterInfo(const UAttributeSet* InAttributeSet, UAdventureAbilitySystemComponent* ASC, const FGameplayTag& InCharacterTag, const bool InIsNotSpawned, const bool InIsPartyMember);
+	static FPartyCharacterInfo MakePartyCharacterInfo(const UAttributeSet* InAttributeSet, UAdventureAbilitySystemComponent* ASC, const FGameplayTag& InCharacterTag, const bool InIsNotSpawned, const bool InIsPartyMember, int32 InPartyIndex = INT_MAX);
 
 	/** Effect Context **/
 	static bool IsCriticalHit(const FGameplayEffectContextHandle& EffectContextHandle);
@@ -47,7 +49,6 @@ public:
 	static void SetKnockBackDirection(FGameplayEffectContextHandle& EffectContextHandle, const FVector& InKnockBackDirection);
 	static void SetDamageType(FGameplayEffectContextHandle& EffectContextHandle,  const FGameplayTag& InDamageType);
 	static void SetHitDirectionTag(FGameplayEffectContextHandle& EffectContextHandle,  const FGameplayTag& InDamageType);
-	
 	
 	/** Gameplay Mechanics **/
 	UFUNCTION(BlueprintCallable, Category="AdventureFunctionLibrary|Gameplay Mechanics")
@@ -61,5 +62,10 @@ public:
 	
 	UFUNCTION(BlueprintCallable, Category="AdventureFunctionLibrary|Gameplay Mechanics")
 	static void GetLiveActorWithinRadius(const UObject* WorldContextObject, TArray<AActor*>& OutOverlappingActors, const TArray<AActor*>& ActorsToIgnore, float Radius, const FVector& SphereOrigin);
+
+
+	/* Widget Controller */
+	UFUNCTION(BlueprintPure, Category="CaveFunctionLibrary|WidgetController", meta = (DefaultToSelf = "WorldContextObject"))
+	static UCharacterInfoWidgetController* GetCharacterInfoWidgetController(const UObject* WorldContextObject);
 	
 };

@@ -15,6 +15,11 @@ void UAdventureWidgetControllerBase::SetWidgetControllerParams(const FWidgetCont
 	CurrentCharacterTag = WCParams.CharacterTag;
 }
 
+void UAdventureWidgetControllerBase::SetPlayerState(APlayerState* InPlayerState)
+{
+	PlayerState = InPlayerState;
+}
+
 void UAdventureWidgetControllerBase::BroadCastInitialValue()
 {
 	

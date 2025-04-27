@@ -36,6 +36,9 @@ void AAdventurePlayerState::BeginPlay()
 		FPartyCharacterInfo CharacterInfo = FPartyCharacterInfo();
 		CharacterInfo.ClassTag = InitialCharacterInfo.Key;
 		CharacterInfo.bIsNotSpawned = true;
+		CharacterInfo.bIsPartyMember = true;
+		CharacterInfo.PartyIndex = InitialCharacterInfo.Value;
+		
 		
 		ControllableCharacterManager->AddOrUpdatePartyCharactersInfo(InitialCharacterInfo.Value, CharacterInfo);
 		
