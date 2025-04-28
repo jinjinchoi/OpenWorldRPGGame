@@ -24,6 +24,7 @@ namespace AdventureGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(InputTag_ChangeCharacter_One, "InputTag.ChangeCharacter.One");
 	UE_DEFINE_GAMEPLAY_TAG(InputTag_ChangeCharacter_Two, "InputTag.ChangeCharacter.Two");
 	UE_DEFINE_GAMEPLAY_TAG(InputTag_ChangeCharacter_Three, "InputTag.ChangeCharacter.Three");
+	UE_DEFINE_GAMEPLAY_TAG(InputTag_Interaction, "InputTag.Interaction");
 	
 	UE_DEFINE_GAMEPLAY_TAG(InputTag_Toggleable, "InputTag.Toggleable");
 	UE_DEFINE_GAMEPLAY_TAG(InputTag_Toggleable_TargetLock, "InputTag.Toggleable.TargetLock");
@@ -114,6 +115,21 @@ namespace AdventureGameplayTags
 	/** Class Tag **/
 	UE_DEFINE_GAMEPLAY_TAG(CharacterClass_Player_Warrior, "CharacterClass.Player.Warrior")
 	UE_DEFINE_GAMEPLAY_TAG(CharacterClass_Player_Knight, "CharacterClass.Player.Knight")
+
+	/** Item Tag **/
+	UE_DEFINE_GAMEPLAY_TAG(Item_Sword, "Item.Sword")
+	UE_DEFINE_GAMEPLAY_TAG(Item_Sword_BroadSword, "Item.Sword.BroadSword")
+	UE_DEFINE_GAMEPLAY_TAG(Item_Sword_BlizzardRod, "Item.Sword.BlizzardRod")
+	UE_DEFINE_GAMEPLAY_TAG(Item_Sword_SpikedBat, "Item.Sword.SpikedBat")
+	
+	UE_DEFINE_GAMEPLAY_TAG(Item_Shield, "Item.Shield")
+	UE_DEFINE_GAMEPLAY_TAG(Item_Shield_DayBreaker, "Item.Shield.DayBreaker")
+	UE_DEFINE_GAMEPLAY_TAG(Item_Shield_RoyalGuard, "Item.Shield.RoyalGuard")
+	UE_DEFINE_GAMEPLAY_TAG(Item_Shield_SteelShield, "Item.Shield.SteelShield")
+	
+	UE_DEFINE_GAMEPLAY_TAG(Item_Eatable, "Item.Eatable")
+	UE_DEFINE_GAMEPLAY_TAG(Item_Eatable_Apple, "Item.Eatable.Apple")
+	UE_DEFINE_GAMEPLAY_TAG(Item_Eatable_Banana, "Item.Eatable.Banana")
 	
 	
 

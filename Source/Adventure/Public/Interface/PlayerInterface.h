@@ -6,6 +6,7 @@
 #include "UObject/Interface.h"
 #include "PlayerInterface.generated.h"
 
+class AAdventureInventoryItem;
 struct FGameplayTag;
 struct FInputActionValue;
 
@@ -32,6 +33,8 @@ public:
 	void HideWeaponMesh();
 
 	virtual void OnStaminaDepleted() = 0;
+	virtual void PickUpItemBeginOverlap(AAdventureInventoryItem* InOverlappedItem) = 0;
+	virtual void PickUpItemEndOverlap(AAdventureInventoryItem* InOverlappedItem) = 0;
 
 	
 
@@ -56,6 +59,8 @@ public:
 
 	virtual void Input_AbilityInputPressed(const FGameplayTag& InInputTag) = 0;
 	virtual void Input_AbilityInputReleased(const FGameplayTag& InInputTag) = 0;
+	
+	virtual void Input_Interaction() = 0;
 #pragma endregion
 	
 };

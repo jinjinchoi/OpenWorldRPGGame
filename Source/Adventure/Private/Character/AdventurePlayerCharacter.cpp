@@ -17,6 +17,8 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameManager/ControllableCharacterManager.h"
+#include "Item/Inventory/AdventureInventoryItem.h"
+#include "Player/AdventureInventory.h"
 #include "Player/AdventurePlayerState.h"
 #include "UI/HUD/AdventureInGameHUD.h"
 
@@ -86,6 +88,26 @@ void AAdventurePlayerCharacter::OnStaminaDepleted()
 	}
 	
 	RemoveStaminaCostEffect();
+}
+
+void AAdventurePlayerCharacter::PickUpItemBeginOverlap(AAdventureInventoryItem* InOverlappedItem)
+{
+	OverlappedItems.AddUnique(InOverlappedItem);
+
+}
+
+void AAdventurePlayerCharacter::PickUpItemEndOverlap(AAdventureInventoryItem* InOverlappedItem)
+{
+	for (int32 i = OverlappedItems.Num() - 1; i >= 0; --i)
+	{
+		if (!OverlappedItems[i].IsValid())
+		{
+			OverlappedItems.RemoveAt(i);
+		}
+	}
+
+	OverlappedItems.Remove(InOverlappedItem);
+	
 }
 
 void AAdventurePlayerCharacter::OnCharacterDied_Implementation()
@@ -160,26 +182,9 @@ void AAdventurePlayerCharacter::BindGameplayTagChanged()
 
 void AAdventurePlayerCharacter::AddCharacterInfoToManager() const
 {
-	FPartyCharacterInfo CharacterInfo = FPartyCharacterInfo();
-	CharacterInfo.bIsNotSpawned = false;
-	CharacterInfo.bIsPartyMember = true;
-	CharacterInfo.PartyIndex = CurrentCharacterIndex;
-	CharacterInfo.ClassTag = CharacterTag;
+	const FPartyCharacterInfo CharacterInfo = UAdventureFunctionLibrary::MakePartyCharacterInfo(
+		AttributeSet, AbilitySystemComponent, CharacterTag, false, true, CurrentCharacterIndex);
 	
-	if (const UAdventureAttributeSet* AdventureAttributeSet = Cast<UAdventureAttributeSet>(AttributeSet))
-	{
-		CharacterInfo.CharacterLevel = 1.f; // TODO: Level System 구현하면 수정해야함.
-		CharacterInfo.CharacterXP = 0.f; // TODO: Level System 구현하면 수정해야함.
-		CharacterInfo.AttackPower = AdventureAttributeSet->GetAttackPower();
-		CharacterInfo.CriticalChance = AdventureAttributeSet->GetCriticalChance();
-		CharacterInfo.CriticalMagnitude = AdventureAttributeSet->GetCriticalMagnitude();
-		CharacterInfo.DefensePower = AdventureAttributeSet->GetDefensePower();
-		CharacterInfo.CurrentHealth = AdventureAttributeSet->GetCurrentHealth();
-		CharacterInfo.MaxHealth = AdventureAttributeSet->GetMaxHealth();
-	}
-
-	// TODO: Delegate 통해서 Ability 정보 가져와야함.
-
 	if (AAdventurePlayerState* AdventurePlayerState = Cast<AAdventurePlayerState>(GetPlayerState()))
 	{
 		AdventurePlayerState->GetControllableCharacterManager()->AddOrUpdatePartyCharactersInfo(CurrentCharacterIndex, CharacterInfo);
@@ -502,6 +507,31 @@ void AAdventurePlayerCharacter::Input_CharacterChange_Three()
 
 	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(this, AdventureGameplayTags::Event_CharacterChange_Three, FGameplayEventData());
 
+}
+
+void AAdventurePlayerCharacter::Input_Interaction()
+{
+	if (OverlappedItems.Num() > 0 && OverlappedItems.Last().IsValid())
+	{
+		if (AAdventurePlayerState* AdventurePlayerState = Cast<AAdventurePlayerState>(GetPlayerState()))
+		{
+			FItemSlot ItemSlot = FItemSlot();
+			ItemSlot.ItemTag = OverlappedItems.Last().Get()->ItemTag;
+			ItemSlot.Quantity = 1;
+			
+			AdventurePlayerState->GetPickupItemInventory()->AddPickupsToAllItems(ItemSlot);
+			OverlappedItems.Last()->Destroy();
+		}
+		
+	}
+
+	for (int32 i = OverlappedItems.Num() - 1; i >= 0; --i)
+	{
+		if (!OverlappedItems[i].IsValid())
+		{
+			OverlappedItems.RemoveAt(i);
+		}
+	}
 }
 
 #pragma endregion 

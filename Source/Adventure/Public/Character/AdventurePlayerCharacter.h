@@ -10,6 +10,7 @@
 #include "Interface/PlayerInterface.h"
 #include "AdventurePlayerCharacter.generated.h"
 
+class AAdventureInventoryItem;
 DECLARE_DELEGATE_OneParam(FOnMovementModechanged, const ECharacterMovementType /* Movement Type */);
 
 class UGameplayEffect;
@@ -34,6 +35,8 @@ public:
 	virtual void ShowWeaponMesh_Implementation() override;
 	virtual void HideWeaponMesh_Implementation() override;
 	virtual void OnStaminaDepleted() override;
+	virtual void PickUpItemBeginOverlap(AAdventureInventoryItem* InOverlappedItem) override;
+	virtual void PickUpItemEndOverlap(AAdventureInventoryItem* InOverlappedItem) override;
 	/* End Player Interface */
 
 	/* Begin Combat Interface */
@@ -91,6 +94,7 @@ private:
 	void RemoveStaminaCostEffect();
 
 	FActiveGameplayEffectHandle StaminaCostEffectHandle;
+	TArray<TWeakObjectPtr<AAdventureInventoryItem>> OverlappedItems;
 	
 
 public:
@@ -153,7 +157,10 @@ protected:
 	virtual void Input_CharacterChange_One() override;
 	virtual void Input_CharacterChange_Two() override;
 	virtual void Input_CharacterChange_Three() override;
-	
+
+	/* Interaction */
+	virtual void Input_Interaction() override;
+
 	
 #pragma endregion
 	

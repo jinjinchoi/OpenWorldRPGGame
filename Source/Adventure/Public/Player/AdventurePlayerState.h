@@ -7,6 +7,7 @@
 #include "GameFramework/PlayerState.h"
 #include "AdventurePlayerState.generated.h"
 
+class UAdventureInventory;
 class UControllableCharacterManager;
 class ACharacter;
 /**
@@ -19,6 +20,7 @@ class ADVENTURE_API AAdventurePlayerState : public APlayerState
 
 public:
 	UControllableCharacterManager* GetControllableCharacterManager();
+	UAdventureInventory* GetPickupItemInventory();
 
 protected:
 	virtual void BeginPlay() override;
@@ -31,6 +33,14 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, Category="Character")
 	TMap<FGameplayTag /* ClassNameTag */, int32 /* PartyIndex */> InitialPartyMembers;
+
+	UPROPERTY(EditDefaultsOnly, Category="Inventory")
+	TSubclassOf<UAdventureInventory> PickupItemInventoryClass;
+
+	UPROPERTY(EditDefaultsOnly, Category="Inventory")
+	TObjectPtr<UAdventureInventory> PickupItemInventory;
+
+public:
 	
 	
 	

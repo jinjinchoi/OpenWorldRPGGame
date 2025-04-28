@@ -40,6 +40,7 @@ public:
 protected:
 	/* Begin APawn Class */
 	virtual void PossessedBy(AController* NewController) override;
+	virtual void Destroyed() override;
 	/* end APawn Class */
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="AbilitySystem")

@@ -72,6 +72,8 @@ private:
 	void Input_ChangeCharacter_One();
 	void Input_ChangeCharacter_Two();
 	void Input_ChangeCharacter_Three();
+
+	void Input_Interaction();
 	
 #pragma endregion
 	

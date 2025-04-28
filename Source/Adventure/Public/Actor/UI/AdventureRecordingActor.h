@@ -17,7 +17,8 @@ class ADVENTURE_API AAdventureRecordingActor : public AActor
 public:	
 	AAdventureRecordingActor();
 
-	void UpdateSkeletalMeshAndAnimation(const FGameplayTag& CharacterTag) const;
+	UFUNCTION(BlueprintCallable, meta = (DisplayName = "Set Character Tag"))
+	void BP_SetCharacterTag(const FGameplayTag& CharacterTag);
 
 protected:
 	virtual void BeginPlay() override;
@@ -31,6 +32,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Recording Data")
 	TSoftObjectPtr<UDataAsset_RecordingActorInfo> RecordingActorInfo;
 
-	
+private:
+	void UpdateSkeletalMeshAndAnimation(const FGameplayTag& CharacterTag);
+	FTimerHandle UnhideTimerHandle;
+	void ShowCharacter();
 	
 };

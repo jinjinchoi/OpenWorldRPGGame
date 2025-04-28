@@ -20,8 +20,16 @@ AAdventureRecordingActor::AAdventureRecordingActor()
 
 }
 
-void AAdventureRecordingActor::UpdateSkeletalMeshAndAnimation(const FGameplayTag& CharacterTag) const
+void AAdventureRecordingActor::BP_SetCharacterTag(const FGameplayTag& CharacterTag)
 {
+	UpdateSkeletalMeshAndAnimation(CharacterTag);
+}
+
+void AAdventureRecordingActor::UpdateSkeletalMeshAndAnimation(const FGameplayTag& CharacterTag)
+{
+	SetActorHiddenInGame(true);
+	GetWorldTimerManager().SetTimer(UnhideTimerHandle, this, &ThisClass::ShowCharacter, 0.1f, false);
+	
 	UAssetManager::GetStreamableManager().RequestAsyncLoad(
 		RecordingActorInfo.ToSoftObjectPath(),
 		FStreamableDelegate::CreateLambda([&CharacterTag, this]()
@@ -37,10 +45,17 @@ void AAdventureRecordingActor::UpdateSkeletalMeshAndAnimation(const FGameplayTag
 	);
 }
 
+void AAdventureRecordingActor::ShowCharacter()
+{
+	SetActorHiddenInGame(false);
+}
+
 
 void AAdventureRecordingActor::BeginPlay()
 {
 	Super::BeginPlay();
+
+	SceneCaptureComponent2D->ShowOnlyActorComponents(this);
 	
 }
 

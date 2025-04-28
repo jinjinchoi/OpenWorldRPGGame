@@ -87,6 +87,9 @@ void AAdventurePlayerController::SetupInputComponent()
 			(InputConfigDataAsset, this, AdventureGameplayTags::InputTag_ChangeCharacter_Two, ETriggerEvent::Started, &ThisClass::Input_ChangeCharacter_Two);
 		AdventureInputComponent->BindLocomotionInputAction
 			(InputConfigDataAsset, this, AdventureGameplayTags::InputTag_ChangeCharacter_Three, ETriggerEvent::Started, &ThisClass::Input_ChangeCharacter_Three);
+		AdventureInputComponent->BindLocomotionInputAction
+			(InputConfigDataAsset, this, AdventureGameplayTags::InputTag_Interaction, ETriggerEvent::Started, &ThisClass::Input_Interaction);
+
 
 		AdventureInputComponent->BindAbilityInputAction(InputConfigDataAsset, this, &ThisClass::Input_AbilityInputPressed, &ThisClass::Input_AbilityInputReleased);
 	}
@@ -258,5 +261,13 @@ void AAdventurePlayerController::Input_ChangeCharacter_Three()
 	if (IPlayerInterface* PlayerCharacterInterface = Cast<IPlayerInterface>(GetPawn()))
 	{
 		PlayerCharacterInterface->Input_CharacterChange_Three();
+	}
+}
+
+void AAdventurePlayerController::Input_Interaction()
+{
+	if (IPlayerInterface* PlayerCharacterInterface = Cast<IPlayerInterface>(GetPawn()))
+	{
+		PlayerCharacterInterface->Input_Interaction();
 	}
 }

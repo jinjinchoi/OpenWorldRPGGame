@@ -109,5 +109,17 @@ struct FPartyCharacterInfo
 	UPROPERTY()
 	float MaxStamina = 0;
 	
+};
+
+USTRUCT(BlueprintType)
+struct FItemSlot
+{
+	GENERATED_BODY()
+
+	UPROPERTY(BlueprintReadOnly)
+	FGameplayTag ItemTag;
+	
+	UPROPERTY(BlueprintReadOnly)
+	int32 Quantity = 0;
 	
 };

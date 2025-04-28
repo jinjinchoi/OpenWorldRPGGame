@@ -71,7 +71,7 @@ void UAdventureFunctionLibrary::InitializeAttributeFromCharacterInfo(const FPart
 }
 
 
-FPartyCharacterInfo UAdventureFunctionLibrary::MakePartyCharacterInfo(const UAttributeSet* InAttributeSet, UAdventureAbilitySystemComponent* ASC,
+FPartyCharacterInfo UAdventureFunctionLibrary::MakePartyCharacterInfo(const UAttributeSet* InAttributeSet, UAbilitySystemComponent* ASC,
 	const FGameplayTag& InCharacterTag, const bool InIsNotSpawned, const bool InIsPartyMember, int32 InPartyIndex)
 {
 	FPartyCharacterInfo CharacterInfo = FPartyCharacterInfo();
@@ -93,24 +93,28 @@ FPartyCharacterInfo UAdventureFunctionLibrary::MakePartyCharacterInfo(const UAtt
 		CharacterInfo.CurrentStamina = AdventureAttributeSet->GetCurrentStamina();
 		CharacterInfo.MaxStamina = AdventureAttributeSet->GetMaxStamina();
 	}
-
-	FForEachAbility EachAbilityDelegate;
-	EachAbilityDelegate.BindLambda([&CharacterInfo](const FGameplayAbilitySpec& AbilitySpec)
+	
+	if (UAdventureAbilitySystemComponent* AdventureASC = Cast<UAdventureAbilitySystemComponent>(ASC))
 	{
-		if (AbilitySpec.DynamicAbilityTags.HasTagExact(AdventureGameplayTags::InputTag_NormalAttack))
+		FForEachAbility EachAbilityDelegate;
+		EachAbilityDelegate.BindLambda([&CharacterInfo](const FGameplayAbilitySpec& AbilitySpec)
 		{
-			CharacterInfo.NormalAttackLevel = AbilitySpec.Level;
-		}
-		if (AbilitySpec.DynamicAbilityTags.HasTagExact(AdventureGameplayTags::InputTag_ESkill))
-		{
-			CharacterInfo.ESkillLevel = AbilitySpec.Level;
-		}
-		if (AbilitySpec.DynamicAbilityTags.HasTagExact(AdventureGameplayTags::InputTag_RSkill))
-		{
-			CharacterInfo.RSkillLevel = AbilitySpec.Level;
-		}
-	});
-	ASC->ForEachAbility(EachAbilityDelegate);
+			if (AbilitySpec.DynamicAbilityTags.HasTagExact(AdventureGameplayTags::InputTag_NormalAttack))
+			{
+				CharacterInfo.NormalAttackLevel = AbilitySpec.Level;
+			}
+			if (AbilitySpec.DynamicAbilityTags.HasTagExact(AdventureGameplayTags::InputTag_ESkill))
+			{
+				CharacterInfo.ESkillLevel = AbilitySpec.Level;
+			}
+			if (AbilitySpec.DynamicAbilityTags.HasTagExact(AdventureGameplayTags::InputTag_RSkill))
+			{
+				CharacterInfo.RSkillLevel = AbilitySpec.Level;
+			}
+		});
+		
+		AdventureASC->ForEachAbility(EachAbilityDelegate);
+	}
 
 	return CharacterInfo;
 }

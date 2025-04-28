@@ -73,6 +73,16 @@ void AAdventureBaseCharacter::PossessedBy(AController* NewController)
 	
 }
 
+void AAdventureBaseCharacter::Destroyed()
+{
+	Super::Destroyed();
+
+	if (OwningWeapon)
+	{
+		OwningWeapon->Destroy();
+	}
+}
+
 void AAdventureBaseCharacter::OnHitReactTagChanged(const FGameplayTag CallbackTag, int32 NewCount)
 {
 	bIsHitReacting = NewCount > 0;

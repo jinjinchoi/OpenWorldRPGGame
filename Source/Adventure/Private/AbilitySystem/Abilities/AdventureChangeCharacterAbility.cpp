@@ -58,10 +58,10 @@ void UAdventureChangeCharacterAbility::SpawnNewCharacterAndRemoveOldCharacter(co
 	CurrentControlCharacter->DisableInput(nullptr);
 
 	// 현재 사용중인 캐릭터 정보 저장
-	UAdventureAbilitySystemComponent* AdventureASC = Cast<UAdventureAbilitySystemComponent>(UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetAvatarActorFromActorInfo())); 
+	UAbilitySystemComponent* ASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetAvatarActorFromActorInfo());
 	
 	const int32 CurrentCharacterIndex = CurrentControlCharacter->CurrentCharacterIndex;
-	const FPartyCharacterInfo CurrentCharacterInfo = UAdventureFunctionLibrary::MakePartyCharacterInfo(CurrentControlCharacter->GetAttributeSet(), AdventureASC, CurrentControlCharacter->GetCharacterClassTag(), false, true, CurrentCharacterIndex);
+	const FPartyCharacterInfo CurrentCharacterInfo = UAdventureFunctionLibrary::MakePartyCharacterInfo(CurrentControlCharacter->GetAttributeSet(), ASC, CurrentControlCharacter->GetCharacterClassTag(), false, true, CurrentCharacterIndex);
 	CharacterManager->AddOrUpdatePartyCharactersInfo(CurrentCharacterIndex, CurrentCharacterInfo);
 
 	// Soft Object Load 후 작업 시작
