@@ -10,6 +10,7 @@
 #include "Camera/CameraComponent.h"
 #include "Character/AdventurePlayerCharacter.h"
 #include "DataAsset/StartUpData/DataAsset_StartUpDataBase.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameManager/ControllableCharacterManager.h"
 #include "Player/AdventurePlayerState.h"
@@ -38,17 +39,17 @@ void UAdventureChangeCharacterAbility::OnCharacterChangeAbilityActivated()
 
 void UAdventureChangeCharacterAbility::SpawnNewCharacterAndRemoveOldCharacter(const int32 InCharacterIndex)
 {
-	FTransform SpawnTransform;
-	SpawnTransform.SetLocation(GetAvatarActorFromActorInfo()->GetActorLocation());
-	SpawnTransform.SetRotation(GetAvatarActorFromActorInfo()->GetActorRotation().Quaternion());
-
 	// 파티 캐릭터 목록에서 캐릭터 인포를 가져옴
 	CachedCharacterIndex = InCharacterIndex;
-	CachedPartyInfo = *CharacterManager->FindCharacterInfoInPartyCharacterInfo(InCharacterIndex);
-	if (!CachedPartyInfo.ClassTag.IsValid())
+	if (const FPartyCharacterInfo* FoundCharacterInfo = CharacterManager->FindCharacterInfoInPartyCharacterInfo(InCharacterIndex))
+	{
+		CachedPartyInfo = *FoundCharacterInfo;
+	}
+	else
 	{
 		// 파티 목록에 캐릭터 정보 없으면 어빌리티 캔슬
 		CancelCharacterChangeAbility();
+		return;
 	}
 	
 	// 현재 사용중인 캐릭터 숨기기
@@ -65,8 +66,12 @@ void UAdventureChangeCharacterAbility::SpawnNewCharacterAndRemoveOldCharacter(co
 	CharacterManager->AddOrUpdatePartyCharactersInfo(CurrentCharacterIndex, CurrentCharacterInfo);
 
 	// Soft Object Load 후 작업 시작
-	CharacterManager->GetCharacterClassByTag(CachedPartyInfo.ClassTag, [this, SpawnTransform](TSubclassOf<ACharacter> LoadedClass)
+	CharacterManager->GetCharacterClassByTag(CachedPartyInfo.ClassTag, [this](TSubclassOf<ACharacter> LoadedClass)
 	{
+		FTransform SpawnTransform;
+		SpawnTransform.SetLocation(GetAvatarActorFromActorInfo()->GetActorLocation());
+		SpawnTransform.SetRotation(CurrentActorInfo->PlayerController->GetControlRotation().Quaternion());
+		
 		if (LoadedClass)
 		{
 			
@@ -78,7 +83,7 @@ void UAdventureChangeCharacterAbility::SpawnNewCharacterAndRemoveOldCharacter(co
 			// 소환 된 적 있으면 정보가 있기 때문에 복구 진행
 			if (!CachedPartyInfo.bIsNotSpawned)
 			{
-				check(CharacterLoadGameplayEffect);
+				check(CharacterLoadGameplayEffect && CharacterVitalGameplayEffect && CharacterRegenGameplayEffect);
 				
 				if (UAdventureAbilitySystemComponent* ASC = SpawnedCharacter->FindComponentByClass<UAdventureAbilitySystemComponent>())
 				{
@@ -87,13 +92,9 @@ void UAdventureChangeCharacterAbility::SpawnNewCharacterAndRemoveOldCharacter(co
 					ASC->InitAbilityActorInfo(SpawnedCharacter, SpawnedCharacter);
 
 					SpawnedCharacter->CharacterLoadGameplayEffect = CharacterLoadGameplayEffect;
+					SpawnedCharacter->CharacterVitalGameplayEffect = CharacterVitalGameplayEffect;
+					SpawnedCharacter->CharacterRegenGameplayEffect = CharacterRegenGameplayEffect;
 					SpawnedCharacter->PreviousCharacterInfo = CachedPartyInfo;
-					
-					// Effect 적용
-					// FGameplayEffectContextHandle ContextHandle = ASC->MakeEffectContext();
-					// ContextHandle.AddSourceObject(SpawnedCharacter);
-					// const FGameplayEffectSpecHandle SpecHandle = ASC->MakeOutgoingSpec(CharacterLoadGameplayEffect, 1.f, ContextHandle);
-					// UAdventureFunctionLibrary::InitializeAttributeFromCharacterInfo(CachedPartyInfo, SpecHandle, ASC);
 					
 					// 어빌리티 부여하고 레벨 설정
 					SpawnedCharacter->GetCharacterStartUpData()->GiveToAbilitySystemComponent(ASC);
@@ -103,6 +104,7 @@ void UAdventureChangeCharacterAbility::SpawnNewCharacterAndRemoveOldCharacter(co
 
 			// 소환할 캐릭터 인덱스 설정
 			SpawnedCharacter->CurrentCharacterIndex = CachedCharacterIndex;
+			SpawnedCharacter->SetActorRotation(GetAvatarActorFromActorInfo()->GetActorRotation());
 
 			// 기존 캐릭터 카메라 정보 저장
 			const FRotator OldControlRotation = GetAdventurePlayerCharacter()->GetControlRotation();
@@ -112,31 +114,44 @@ void UAdventureChangeCharacterAbility::SpawnNewCharacterAndRemoveOldCharacter(co
 			// 바뀔 캐릭터 카메라 정보 저장
 			USpringArmComponent* NewSpringArm = SpawnedCharacter->FindComponentByClass<USpringArmComponent>();
 			UCameraComponent* NewCamera = SpawnedCharacter->FindComponentByClass<UCameraComponent>();
+
+			// 기존 캐릭터 속도와 Movement Mode 저장
+			const FVector OldVelocity = GetAdventurePlayerCharacter()->GetVelocity();
+			const FVector OldInputVector = GetAdventurePlayerCharacter()->GetCharacterMovement()->GetLastInputVector();
 			
 			// 소환 후 Possess
 			SpawnedCharacter->FinishSpawning(SpawnTransform);
 			CurrentActorInfo->PlayerController->Possess(SpawnedCharacter);
+
+			// 속도 세팅
+			SpawnedCharacter->GetCharacterMovement()->Velocity = OldVelocity;
+			SpawnedCharacter->GetCharacterMovement()->AddInputVector(OldInputVector, true);
+			SpawnedCharacter->GetCharacterMovement()->SetMovementMode(GetAdventurePlayerCharacter()->GetCharacterMovement()->MovementMode);
+			if (GetAdventurePlayerCharacter()->IsSprinting())
+			{
+				SpawnedCharacter->StartSprint();
+			}
 
 			// 카메라 세팅
 			if (AController* NewController = SpawnedCharacter->GetController())
 			{
 				NewController->SetControlRotation(OldControlRotation);
 			}
-						
+
 			if (OldSpringArm && NewSpringArm)
 			{
 				NewSpringArm->TargetArmLength = OldSpringArm->TargetArmLength;
-				NewSpringArm->SetRelativeRotation(OldSpringArm->GetRelativeRotation());
-				NewSpringArm->SetRelativeLocation(OldSpringArm->GetRelativeLocation());
+				// NewSpringArm->SetRelativeRotation(OldSpringArm->GetRelativeRotation());
+				// NewSpringArm->SetRelativeLocation(OldSpringArm->GetRelativeLocation());
+				NewSpringArm->SetWorldLocation(OldSpringArm->GetComponentLocation());
+				NewSpringArm->SetWorldRotation(OldSpringArm->GetComponentRotation());
 			}
 
 			if (OldCamera && NewCamera)
 			{
 				NewCamera->FieldOfView = OldCamera->FieldOfView;
-				NewCamera->SetRelativeRotation(OldCamera->GetRelativeRotation());
-				NewCamera->SetRelativeLocation(OldCamera->GetRelativeLocation());
 			}
-						
+			
 			if (GetAvatarActorFromActorInfo())
 			{
 				GetAvatarActorFromActorInfo()->SetLifeSpan(0.1);

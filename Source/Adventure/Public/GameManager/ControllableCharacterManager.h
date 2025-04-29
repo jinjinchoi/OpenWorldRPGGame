@@ -27,6 +27,8 @@ public:
 	FPartyCharacterInfo* FindCharacterInfoInPartyCharacterInfo(const int32 InCharacterIndex);
 	void GetCharacterClassByTag(const FGameplayTag& InClassTag, const TFunction<void(TSubclassOf<ACharacter>)>& Callback);
 
+	void ForceBroadCastCharacterInfo();
+
 	FOnPartyCharacterChanged OnPartyCharacterChangedDelegate;
 
 protected:
@@ -41,6 +43,7 @@ protected:
 
 private:
 	void BroadcastPartyCharacterInfo();
+	bool bIsSuccessBoardCast = false;
 
 public:
 	FORCEINLINE TArray<FPartyCharacterInfo>& GetOwningCharactersInfo() { return OwningCharacters; }

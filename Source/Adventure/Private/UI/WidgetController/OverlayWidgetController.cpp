@@ -3,6 +3,7 @@
 
 #include "UI/WidgetController/OverlayWidgetController.h"
 
+#include "DebugHelper.h"
 #include "AbilitySystem/AdventureAttributeSet.h"
 #include "Character/AdventurePlayerCharacter.h"
 #include "GameManager/ControllableCharacterManager.h"

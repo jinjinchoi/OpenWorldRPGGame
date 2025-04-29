@@ -50,6 +50,8 @@ public:
 	FPartyCharacterInfo PreviousCharacterInfo;
 
 	TSubclassOf<UGameplayEffect> CharacterLoadGameplayEffect;
+	TSubclassOf<UGameplayEffect> CharacterVitalGameplayEffect;
+	TSubclassOf<UGameplayEffect> CharacterRegenGameplayEffect;
 	
 	FOnMovementModechanged OnMovementModeChangedDelegate;
 	
@@ -101,6 +103,8 @@ public:
 	FORCEINLINE UAdventureMovementComponent* GetAdventureMovementComponent() const { return AdventureMovementComponent; }
 	FORCEINLINE FGameplayTag GetCharacterClassTag() const { return CharacterTag; }
 	FORCEINLINE UDataAsset_StartUpDataBase* GetCharacterStartUpData() const { return CharacterStartUpData; }
+	FORCEINLINE bool IsSprinting() const { return bIsSprint; }
+	void StartSprint();
 
 protected:
 
@@ -132,7 +136,6 @@ protected:
 	virtual void Input_StopMove() override;
 	virtual void Input_Sprint_Started() override;
 	virtual void Input_Sprint_Completed() override;
-	void StartSprint();
 	void StopSprint();
 	bool bIsSprint = false;
 	bool bIsWalking = false;

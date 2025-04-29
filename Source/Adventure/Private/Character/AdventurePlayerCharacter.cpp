@@ -17,7 +17,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameManager/ControllableCharacterManager.h"
-#include "Item/Inventory/AdventureInventoryItem.h"
+#include "Item/Pickups/AdventureInventoryItem.h"
 #include "Player/AdventureInventory.h"
 #include "Player/AdventurePlayerState.h"
 #include "UI/HUD/AdventureInGameHUD.h"
@@ -122,7 +122,7 @@ void AAdventurePlayerCharacter::OnCharacterDied_Implementation()
 void AAdventurePlayerCharacter::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
-
+	
 	if (bIsFirstLoading)
 	{
 		InitPlayerStartUpData();
@@ -134,9 +134,18 @@ void AAdventurePlayerCharacter::PossessedBy(AController* NewController)
 		ContextHandle.AddSourceObject(this);
 	
 		// Effect 적용
-		const FGameplayEffectSpecHandle SpecHandle = AbilitySystemComponent->MakeOutgoingSpec(CharacterLoadGameplayEffect, 1.f, ContextHandle);
-		UAdventureFunctionLibrary::InitializeAttributeFromCharacterInfo(PreviousCharacterInfo, SpecHandle, AbilitySystemComponent);
+		const FGameplayEffectSpecHandle PrimarySpecHandle = AbilitySystemComponent->MakeOutgoingSpec(CharacterLoadGameplayEffect, 1.f, ContextHandle);
+		UAdventureFunctionLibrary::InitializeAttributeFromCharacterInfo(PreviousCharacterInfo, PrimarySpecHandle, AbilitySystemComponent);
+
+		const FGameplayEffectSpecHandle VitalSpecHandle = AbilitySystemComponent->MakeOutgoingSpec(CharacterVitalGameplayEffect, 1.f, ContextHandle);
+		UAdventureFunctionLibrary::InitializeAttributeFromCharacterInfo(PreviousCharacterInfo, VitalSpecHandle, AbilitySystemComponent);
+
+		const FGameplayEffectSpecHandle RegenSpecHandle = AbilitySystemComponent->MakeOutgoingSpec(CharacterRegenGameplayEffect, 1.f, ContextHandle);
+		AbilitySystemComponent->ApplyGameplayEffectSpecToSelf(*RegenSpecHandle.Data.Get());
+		
 		CharacterLoadGameplayEffect = nullptr;
+		CharacterVitalGameplayEffect = nullptr;
+		CharacterRegenGameplayEffect= nullptr;
 	}
 	
 	BindGameplayTagChanged();
@@ -147,8 +156,15 @@ void AAdventurePlayerCharacter::PossessedBy(AController* NewController)
 		if (AAdventureInGameHUD* AdventureInGameHUD = Cast<AAdventureInGameHUD>(PlayerController->GetHUD()))
 		{
 			AdventureInGameHUD->InitOverlay(PlayerController, GetPlayerState(), AbilitySystemComponent, AttributeSet, CharacterTag);
+			
 		}
 	}
+
+	if (AAdventurePlayerState* AdventurePlayerState = Cast<AAdventurePlayerState>(GetPlayerState()))
+	{
+		AdventurePlayerState->SetDefaultPartyMembers();
+	}
+	
 	
 }
 
@@ -360,8 +376,7 @@ void AAdventurePlayerCharacter::StartSprint()
 	GetCharacterMovement()->MaxWalkSpeed = SprintSpeed;
 	bIsSprint = true;
 	bIsWalking = false;
-
-
+	
 	UAdventureFunctionLibrary::AddGameplayTagToActorIfNone(this, AdventureGameplayTags::Status_Locomotion_Sprint);
 }
 
@@ -515,9 +530,9 @@ void AAdventurePlayerCharacter::Input_Interaction()
 	{
 		if (AAdventurePlayerState* AdventurePlayerState = Cast<AAdventurePlayerState>(GetPlayerState()))
 		{
-			FItemSlot ItemSlot = FItemSlot();
+			FItemSlot ItemSlot;
 			ItemSlot.ItemTag = OverlappedItems.Last().Get()->ItemTag;
-			ItemSlot.Quantity = 1;
+			ItemSlot.Quantity = OverlappedItems.Last().Get()->Quantity;
 			
 			AdventurePlayerState->GetPickupItemInventory()->AddPickupsToAllItems(ItemSlot);
 			OverlappedItems.Last()->Destroy();

@@ -21,6 +21,7 @@ class ADVENTURE_API AAdventurePlayerState : public APlayerState
 public:
 	UControllableCharacterManager* GetControllableCharacterManager();
 	UAdventureInventory* GetPickupItemInventory();
+	void SetDefaultPartyMembers();
 
 protected:
 	virtual void BeginPlay() override;
@@ -40,7 +41,8 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category="Inventory")
 	TObjectPtr<UAdventureInventory> PickupItemInventory;
 
-public:
+private:
+	bool bIsDefaultPartySet = false;
 	
 	
 	

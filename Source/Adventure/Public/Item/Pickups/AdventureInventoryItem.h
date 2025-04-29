@@ -21,9 +21,9 @@ public:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Item Info")
 	FGameplayTag ItemTag;
-	
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Item Info")
-	TObjectPtr<UDataAsset_ItemInfo> ItemInformation;
+	int32 Quantity = 1;
 
 protected:
 	virtual void BeginPlay() override;

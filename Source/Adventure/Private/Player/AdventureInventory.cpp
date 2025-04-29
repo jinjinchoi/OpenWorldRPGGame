@@ -13,7 +13,7 @@ void UAdventureInventory::AddPickupsToAllItems(const FItemSlot& NewItem)
 		for (FItemSlot& EatableItem : AllItems.Eatables)
 		{
 			// 인벤토리에 있는 아이템이랑 새로운 아이템 태그 확인
-			if (!EatableItem.ItemTag.MatchesTag(NewItem.ItemTag))
+			if (!EatableItem.ItemTag.MatchesTagExact(NewItem.ItemTag))
 			{
 				continue;
 			}

@@ -1,7 +1,7 @@
 // Copyright Choi JinWoo. All Rights Reserved.
 
 
-#include "Item/Inventory/AdventureInventoryItem.h"
+#include "Item/Pickups/AdventureInventoryItem.h"
 
 #include "Components/SphereComponent.h"
 #include "Components/WidgetComponent.h"

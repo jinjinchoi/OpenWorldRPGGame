@@ -26,17 +26,13 @@ UAdventureInventory* AAdventurePlayerState::GetPickupItemInventory()
 	return PickupItemInventory;
 }
 
-void AAdventurePlayerState::BeginPlay()
+void AAdventurePlayerState::SetDefaultPartyMembers()
 {
-	Super::BeginPlay();
-
-
-	ControllableCharacterManager = NewObject<UControllableCharacterManager>(this);
-	PickupItemInventory = NewObject<UAdventureInventory>(this);
+	if (bIsDefaultPartySet) return;
 	
 	for (const TPair<FGameplayTag, int>& InitialCharacterInfo : InitialPartyMembers)
 	{
-		if (ControllableCharacterManager->FindCharacterInfoInOwningCharacters(InitialCharacterInfo.Key))
+		if (GetControllableCharacterManager()->FindCharacterInfoInOwningCharacters(InitialCharacterInfo.Key))
 		{
 			continue;
 		}
@@ -48,8 +44,16 @@ void AAdventurePlayerState::BeginPlay()
 		CharacterInfo.PartyIndex = InitialCharacterInfo.Value;
 		
 		ControllableCharacterManager->AddOrUpdatePartyCharactersInfo(InitialCharacterInfo.Value, CharacterInfo);
-		
 	}
+
+	bIsDefaultPartySet = true;
+}
+
+void AAdventurePlayerState::BeginPlay()
+{
+	Super::BeginPlay();
 	
+	GetControllableCharacterManager();
+	GetPickupItemInventory();
 	
 }

@@ -43,6 +43,8 @@ void AAdventureMultiHitProjectile::ApplyDamageEffectToOverlappedActors()
 
 	for (AActor* TargetActor : OverlappingActors)
 	{
+		if (!IsValid(TargetActor)) continue;
+		
 		if (ICombatInterface::Execute_IsDead(TargetActor))
 		{
 			continue;

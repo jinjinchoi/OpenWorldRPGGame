@@ -74,11 +74,23 @@ void UControllableCharacterManager::GetCharacterClassByTag(const FGameplayTag& I
 	}
 }
 
+void UControllableCharacterManager::ForceBroadCastCharacterInfo()
+{
+	if (!bIsSuccessBoardCast)
+	{
+		for (const TPair<int, FPartyCharacterInfo>& CharacterInfo : PartyCharacterInfo)
+		{
+			bIsSuccessBoardCast = OnPartyCharacterChangedDelegate.ExecuteIfBound(CharacterInfo.Value.ClassTag, CharacterInfo.Key);
+		}
+	}
+}
+
 void UControllableCharacterManager::BroadcastPartyCharacterInfo()
 {
 	for (const TPair<int, FPartyCharacterInfo>& CharacterInfo : PartyCharacterInfo)
 	{
-		OnPartyCharacterChangedDelegate.ExecuteIfBound(CharacterInfo.Value.ClassTag, CharacterInfo.Key);
+		bIsSuccessBoardCast = OnPartyCharacterChangedDelegate.ExecuteIfBound(CharacterInfo.Value.ClassTag, CharacterInfo.Key);
+		
 	}
 }
 
