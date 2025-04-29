@@ -89,6 +89,8 @@ void AAdventurePlayerController::SetupInputComponent()
 			(InputConfigDataAsset, this, AdventureGameplayTags::InputTag_ChangeCharacter_Three, ETriggerEvent::Started, &ThisClass::Input_ChangeCharacter_Three);
 		AdventureInputComponent->BindLocomotionInputAction
 			(InputConfigDataAsset, this, AdventureGameplayTags::InputTag_Interaction, ETriggerEvent::Started, &ThisClass::Input_Interaction);
+		AdventureInputComponent->BindLocomotionInputAction
+			(InputConfigDataAsset, this, AdventureGameplayTags::InputTag_OpenMenu, ETriggerEvent::Started, &ThisClass::Input_OpenMenu);
 
 
 		AdventureInputComponent->BindAbilityInputAction(InputConfigDataAsset, this, &ThisClass::Input_AbilityInputPressed, &ThisClass::Input_AbilityInputReleased);
@@ -270,4 +272,19 @@ void AAdventurePlayerController::Input_Interaction()
 	{
 		PlayerCharacterInterface->Input_Interaction();
 	}
+}
+
+void AAdventurePlayerController::Input_OpenMenu()
+{
+	check(MenuWidgetClass);
+
+	if (!MenuWidget)
+	{
+		MenuWidget = CreateWidget(this, MenuWidgetClass);
+	}
+	
+	MenuWidget->AddToViewport();
+	bShowMouseCursor = true;
+	SetInputMode(FInputModeUIOnly());
+	
 }

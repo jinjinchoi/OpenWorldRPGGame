@@ -19,7 +19,7 @@ class ADVENTURE_API AAdventureInventoryItem : public AActor
 public:	
 	AAdventureInventoryItem();
 	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Item Info")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Item Info", meta=(Categories = "Item"))
 	FGameplayTag ItemTag;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Item Info")

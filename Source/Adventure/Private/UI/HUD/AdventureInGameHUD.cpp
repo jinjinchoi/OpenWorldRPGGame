@@ -5,6 +5,7 @@
 
 #include "UI/Widget/AdventureUserWidget.h"
 #include "UI/WidgetController/CharacterInfoWidgetController.h"
+#include "UI/WidgetController/InventoryWidgetController.h"
 #include "UI/WidgetController/OverlayWidgetController.h"
 
 void AAdventureInGameHUD::InitOverlay(APlayerController* PC, APlayerState* PS, UAbilitySystemComponent* ASC, UAttributeSet* AS, const FGameplayTag& CharacterTag)
@@ -51,4 +52,18 @@ UCharacterInfoWidgetController* AAdventureInGameHUD::GetCharacterInfoWidgetContr
 
 	return CharacterInfoWidgetController;
 	
+}
+
+UInventoryWidgetController* AAdventureInGameHUD::GetInventoryWidgetController(APlayerState* InPlayerState)
+{
+	check(InPlayerState && InventoryWidgetControllerClass);
+
+	if (!InventoryWidgetController)
+	{
+		InventoryWidgetController = NewObject<UInventoryWidgetController>(this, InventoryWidgetControllerClass);
+		InventoryWidgetController->SetPlayerState(InPlayerState);
+		InventoryWidgetController->BindCallbacksToDependencies();
+	}
+
+	return InventoryWidgetController;
 }

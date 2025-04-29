@@ -28,7 +28,7 @@ struct FAllItem
 /**
  * 
  */
-UCLASS()
+UCLASS(Blueprintable)
 class ADVENTURE_API UAdventureInventory : public UObject
 {
 	GENERATED_BODY()

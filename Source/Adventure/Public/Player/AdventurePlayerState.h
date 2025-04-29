@@ -38,7 +38,7 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category="Inventory")
 	TSubclassOf<UAdventureInventory> PickupItemInventoryClass;
 
-	UPROPERTY(EditDefaultsOnly, Category="Inventory")
+	UPROPERTY()
 	TObjectPtr<UAdventureInventory> PickupItemInventory;
 
 private:

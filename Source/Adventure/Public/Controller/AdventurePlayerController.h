@@ -39,6 +39,12 @@ protected:
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Input)
 	TObjectPtr<UDataAsset_InputConfig> InputConfigDataAsset;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="UI")
+	TSubclassOf<UUserWidget> MenuWidgetClass;
+	
+	UPROPERTY()
+	TObjectPtr<UUserWidget> MenuWidget;
 
 
 private:
@@ -74,6 +80,7 @@ private:
 	void Input_ChangeCharacter_Three();
 
 	void Input_Interaction();
+	void Input_OpenMenu();
 	
 #pragma endregion
 	

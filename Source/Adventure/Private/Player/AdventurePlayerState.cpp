@@ -8,6 +8,8 @@
 
 UControllableCharacterManager* AAdventurePlayerState::GetControllableCharacterManager()
 {
+	check(ControllableCharacterManagerClass);
+	
 	if (!ControllableCharacterManager)
 	{
 		ControllableCharacterManager = NewObject<UControllableCharacterManager>(this, ControllableCharacterManagerClass);
@@ -18,9 +20,11 @@ UControllableCharacterManager* AAdventurePlayerState::GetControllableCharacterMa
 
 UAdventureInventory* AAdventurePlayerState::GetPickupItemInventory()
 {
+	check(PickupItemInventoryClass);
+	
 	if (!PickupItemInventory)
 	{
-		PickupItemInventory = NewObject<UAdventureInventory>(this);
+		PickupItemInventory = NewObject<UAdventureInventory>(this, PickupItemInventoryClass);
 	}
 
 	return PickupItemInventory;

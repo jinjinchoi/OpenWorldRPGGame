@@ -8,6 +8,7 @@
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "AdventureFunctionLibrary.generated.h"
 
+class UInventoryWidgetController;
 class AAdventureInGameHUD;
 class UCharacterInfoWidgetController;
 class UAdventureAbilitySystemComponent;
@@ -65,7 +66,10 @@ public:
 
 
 	/* Widget Controller */
-	UFUNCTION(BlueprintPure, Category="CaveFunctionLibrary|WidgetController", meta = (DefaultToSelf = "WorldContextObject"))
+	UFUNCTION(BlueprintPure, Category="AdventureFunctionLibrary|WidgetController", meta = (DefaultToSelf = "WorldContextObject"))
 	static UCharacterInfoWidgetController* GetCharacterInfoWidgetController(const UObject* WorldContextObject);
+
+	UFUNCTION(BlueprintPure, Category="AdventureFunctionLibrary|WidgetController", meta = (DefaultToSelf = "WorldContextObject"))
+	static UInventoryWidgetController* GetInventoryWidgetController(const UObject* WorldContextObject);
 	
 };

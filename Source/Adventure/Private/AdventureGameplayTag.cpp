@@ -25,6 +25,7 @@ namespace AdventureGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(InputTag_ChangeCharacter_Two, "InputTag.ChangeCharacter.Two");
 	UE_DEFINE_GAMEPLAY_TAG(InputTag_ChangeCharacter_Three, "InputTag.ChangeCharacter.Three");
 	UE_DEFINE_GAMEPLAY_TAG(InputTag_Interaction, "InputTag.Interaction");
+	UE_DEFINE_GAMEPLAY_TAG(InputTag_OpenMenu, "InputTag.OpenMenu");
 	
 	UE_DEFINE_GAMEPLAY_TAG(InputTag_Toggleable, "InputTag.Toggleable");
 	UE_DEFINE_GAMEPLAY_TAG(InputTag_Toggleable_TargetLock, "InputTag.Toggleable.TargetLock");

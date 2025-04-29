@@ -328,3 +328,16 @@ UCharacterInfoWidgetController* UAdventureFunctionLibrary::GetCharacterInfoWidge
 
 	return nullptr;
 }
+
+UInventoryWidgetController* UAdventureFunctionLibrary::GetInventoryWidgetController(const UObject* WorldContextObject)
+{
+	if (const APlayerController* PlayerController = WorldContextObject->GetWorld()->GetFirstPlayerController())
+	{
+		if (AAdventureInGameHUD* AdventureInGameHUD = Cast<AAdventureInGameHUD>(PlayerController->GetHUD()))
+		{
+			return AdventureInGameHUD->GetInventoryWidgetController(PlayerController->GetPlayerState<APlayerState>());
+		}
+	}
+
+	return nullptr;
+}

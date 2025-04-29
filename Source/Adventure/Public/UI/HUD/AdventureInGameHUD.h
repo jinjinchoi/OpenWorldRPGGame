@@ -6,6 +6,7 @@
 #include "GameFramework/HUD.h"
 #include "AdventureInGameHUD.generated.h"
 
+class UInventoryWidgetController;
 class UCharacterInfoWidgetController;
 struct FGameplayTag;
 class UAbilitySystemComponent;
@@ -25,6 +26,7 @@ public:
 	void InitOverlay(APlayerController* PC, APlayerState* PS, UAbilitySystemComponent* ASC, UAttributeSet* AS, const FGameplayTag& CharacterTag);
 	UOverlayWidgetController* GetOverlayWidgetController(const FWidgetControllerParams& Params);
 	UCharacterInfoWidgetController* GetCharacterInfoWidgetController(APlayerState* InPlayerState);
+	UInventoryWidgetController* GetInventoryWidgetController(APlayerState* InPlayerState);
 	
 
 
@@ -41,13 +43,19 @@ private:
 
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<UOverlayWidgetController> OverlayWidgetControllerClass;
-
-
+	
 	/* CharacterInfo */
 	UPROPERTY()
 	TObjectPtr<UCharacterInfoWidgetController> CharacterInfoWidgetController;
 
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<UCharacterInfoWidgetController> CharacterInfoWidgetControllerClass;
+
+	/* Inventory */
+	UPROPERTY()
+	TObjectPtr<UInventoryWidgetController> InventoryWidgetController;
+
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<UInventoryWidgetController> InventoryWidgetControllerClass;
 	
 };
