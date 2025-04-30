@@ -13,7 +13,7 @@ struct FItemInfoParams
 {
 	GENERATED_BODY()
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (Categories = "Item"))
 	FGameplayTag ItemTag; 
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
@@ -48,7 +48,7 @@ class ADVENTURE_API UDataAsset_ItemInfo : public UDataAsset
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(TitleProperty = "ItemName"))
 	TArray<FItemInfoParams> ItemInformation;
 
 	FItemInfoParams FindItemInfo(const FGameplayTag& ItemTag);

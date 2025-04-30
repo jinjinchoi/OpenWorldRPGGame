@@ -8,24 +8,12 @@
 
 void UAdventureInventory::AddPickupsToAllItems(const FItemSlot& NewItem)
 {
+	check(PickupItemInfo);
+	
 	if (NewItem.ItemTag.MatchesTag(AdventureGameplayTags::Item_Eatable))
 	{
-		for (FItemSlot& EatableItem : AllItems.Eatables)
-		{
-			// 인벤토리에 있는 아이템이랑 새로운 아이템 태그 확인
-			if (!EatableItem.ItemTag.MatchesTagExact(NewItem.ItemTag))
-			{
-				continue;
-			}
-
-			// 스택 확인해서 스택 채우기
-			if (PickupItemInfo->FindItemInfo(NewItem.ItemTag).StackSize > EatableItem.Quantity)
-			{
-				EatableItem.Quantity += EatableItem.Quantity + NewItem.Quantity;
-				return;
-			}
-		}
-		AllItems.Eatables.Add(NewItem);
+		StackItemIntoInventory(NewItem);
+		return;
 	}
 	
 	if (NewItem.ItemTag.MatchesTag(AdventureGameplayTags::Item_Shield))
@@ -37,5 +25,46 @@ void UAdventureInventory::AddPickupsToAllItems(const FItemSlot& NewItem)
 	if (NewItem.ItemTag.MatchesTag(AdventureGameplayTags::Item_Sword))
 	{
 		AllItems.Swords.Add(NewItem);
+	}
+}
+
+void UAdventureInventory::StackItemIntoInventory(const FItemSlot& NewItem)
+{
+	const int32 MaxStack = PickupItemInfo->FindItemInfo(NewItem.ItemTag).StackSize;
+	int32 RemainingQuantity = NewItem.Quantity;
+	
+	// 기존 슬롯에 스택 채우기
+	for (FItemSlot& EatableItem : AllItems.Eatables)
+	{
+		if (!EatableItem.ItemTag.MatchesTagExact(NewItem.ItemTag))
+		{
+			continue;
+		}
+
+		const int32 AvailableSpace = MaxStack - EatableItem.Quantity;
+		if (AvailableSpace <= 0)
+		{
+			continue;
+		}
+
+		const int32 ToAdd = FMath::Min(RemainingQuantity, AvailableSpace);
+		EatableItem.Quantity += ToAdd;
+		RemainingQuantity -= ToAdd;
+
+		if (RemainingQuantity <= 0)
+		{
+			return;
+		}
+	}
+
+	// 남은 수량이 있다면 새 슬롯에 나눠서 추가
+	while (RemainingQuantity > 0)
+	{
+		const int32 ToAdd = FMath::Min(RemainingQuantity, MaxStack);
+		FItemSlot NewSlot;
+		NewSlot.ItemTag = NewItem.ItemTag;
+		NewSlot.Quantity = ToAdd;
+		AllItems.Eatables.Add(NewSlot);
+		RemainingQuantity -= ToAdd;
 	}
 }

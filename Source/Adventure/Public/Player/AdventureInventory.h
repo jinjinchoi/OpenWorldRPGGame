@@ -36,12 +36,14 @@ class ADVENTURE_API UAdventureInventory : public UObject
 public:
 	void AddPickupsToAllItems(const FItemSlot& NewItem);
 	
+	UPROPERTY(BlueprintReadOnly)
+	FAllItem AllItems;
 
 protected:
 	UPROPERTY(EditDefaultsOnly)
 	TObjectPtr<UDataAsset_ItemInfo> PickupItemInfo;
-	
-	UPROPERTY(BlueprintReadOnly)
-	FAllItem AllItems;
+
+private:
+	void StackItemIntoInventory(const FItemSlot& NewItem);
 	
 };
