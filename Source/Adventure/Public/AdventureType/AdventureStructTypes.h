@@ -108,6 +108,13 @@ struct FPartyCharacterInfo
 
 	UPROPERTY()
 	float MaxStamina = 0;
+
+	UPROPERTY(BlueprintReadOnly)
+	FGameplayTag WeaponTag = FGameplayTag();
+
+	UPROPERTY(BlueprintReadOnly)
+	FGameplayTag ShieldTag = FGameplayTag();
+	
 	
 };
 

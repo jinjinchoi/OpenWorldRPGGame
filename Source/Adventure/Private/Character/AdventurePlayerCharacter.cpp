@@ -13,6 +13,7 @@
 #include "Component/Input/AdventureInputComponent.h"
 #include "Component/Movement/AdventureMovementComponent.h"
 #include "Controller/AdventurePlayerController.h"
+#include "DataAsset/Item/DataAsset_ItemInfo.h"
 #include "DataAsset/StartUpData/DataAsset_StartUpDataBase.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
@@ -93,6 +94,7 @@ void AAdventurePlayerCharacter::OnStaminaDepleted()
 void AAdventurePlayerCharacter::PickUpItemBeginOverlap(AAdventureInventoryItem* InOverlappedItem)
 {
 	OverlappedItems.AddUnique(InOverlappedItem);
+	OnOverlappedItemChangedDelegate.ExecuteIfBound(OverlappedItems);
 
 }
 
@@ -107,6 +109,7 @@ void AAdventurePlayerCharacter::PickUpItemEndOverlap(AAdventureInventoryItem* In
 	}
 
 	OverlappedItems.Remove(InOverlappedItem);
+	OnOverlappedItemChangedDelegate.ExecuteIfBound(OverlappedItems);
 	
 }
 
@@ -146,6 +149,10 @@ void AAdventurePlayerCharacter::PossessedBy(AController* NewController)
 		CharacterLoadGameplayEffect = nullptr;
 		CharacterVitalGameplayEffect = nullptr;
 		CharacterRegenGameplayEffect= nullptr;
+
+		// 무기 Effect 적용
+		ApplyEquipmentEffect(EquippedSwordTag);
+		ApplyEquipmentEffect(EquippedShieldTag);
 	}
 	
 	BindGameplayTagChanged();
@@ -198,8 +205,7 @@ void AAdventurePlayerCharacter::BindGameplayTagChanged()
 
 void AAdventurePlayerCharacter::AddCharacterInfoToManager() const
 {
-	const FPartyCharacterInfo CharacterInfo = UAdventureFunctionLibrary::MakePartyCharacterInfo(
-		AttributeSet, AbilitySystemComponent, CharacterTag, false, true, CurrentCharacterIndex);
+	const FPartyCharacterInfo CharacterInfo = UAdventureFunctionLibrary::MakePartyCharacterInfo(this, false, true);
 	
 	if (AAdventurePlayerState* AdventurePlayerState = Cast<AAdventurePlayerState>(GetPlayerState()))
 	{
@@ -269,6 +275,58 @@ void AAdventurePlayerCharacter::RemoveStaminaCostEffect()
 	}
 	
 }
+
+
+void AAdventurePlayerCharacter::ApplyEquipmentEffect(const FGameplayTag& EquipmentTag)
+{
+	check(AbilitySystemComponent);
+	
+	if (!EquipmentTag.IsValid()) return;
+
+	bool bIsSwordItem = true;
+
+	if (EquipmentTag.MatchesTag(AdventureGameplayTags::Item_Shield))
+	{
+		bIsSwordItem = false;
+	}
+	
+	RemoveEquipmentEffect(bIsSwordItem);
+	
+	const FItemInfoParams ItemData = EquipmentDataAsset->FindItemInfo(EquipmentTag);
+	FGameplayEffectContextHandle ContextHandle = AbilitySystemComponent->MakeEffectContext();
+	ContextHandle.AddSourceObject(this);
+	
+	const FGameplayEffectSpecHandle SpecHandle = AbilitySystemComponent->MakeOutgoingSpec(
+		bIsSwordItem ? SwordGameplayEffect : ShieldGameplayEffect,
+		1.f,
+		ContextHandle);
+	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, AdventureGameplayTags::Attribute_Player_SwordAttackPower, ItemData.AttackPower);
+	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, AdventureGameplayTags::Attribute_Player_DefensePower, ItemData.DefensePower);
+
+	if (bIsSwordItem)
+	{
+		SwordActiveGameplayEffectHandle = AbilitySystemComponent->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get());
+	}
+	else
+	{
+		ShieldActiveGameplayEffectHandle = AbilitySystemComponent->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get());
+	}
+}
+
+void AAdventurePlayerCharacter::RemoveEquipmentEffect(const bool bIsSwordEffect) const
+{
+	check(AbilitySystemComponent);
+	
+	if (bIsSwordEffect && SwordActiveGameplayEffectHandle.IsValid())
+	{
+		AbilitySystemComponent->RemoveActiveGameplayEffect(SwordActiveGameplayEffectHandle);
+	}
+	else if (ShieldActiveGameplayEffectHandle.IsValid())
+	{
+		AbilitySystemComponent->RemoveActiveGameplayEffect(ShieldActiveGameplayEffectHandle);
+	}
+}
+
 
 #pragma region Input
 
@@ -468,11 +526,7 @@ void AAdventurePlayerCharacter::Input_ClimbActionCompleted()
 
 void AAdventurePlayerCharacter::Input_ClimbHopActionStarted(const FInputActionValue& InputActionValue)
 {
-	// if (!ApplyStaminaCostEffect(ClimbHotCostEffectClass))
-	// {
-	// 	return;
-	// }
-	//
+
 	if (AdventureMovementComponent)
 	{
 		AdventureMovementComponent->RequestHopping();
@@ -537,7 +591,6 @@ void AAdventurePlayerCharacter::Input_Interaction()
 			AdventurePlayerState->GetPickupItemInventory()->AddPickupsToAllItems(ItemSlot);
 			OverlappedItems.Last()->Destroy();
 		}
-		
 	}
 
 	for (int32 i = OverlappedItems.Num() - 1; i >= 0; --i)
@@ -547,6 +600,9 @@ void AAdventurePlayerCharacter::Input_Interaction()
 			OverlappedItems.RemoveAt(i);
 		}
 	}
+
+	OnOverlappedItemChangedDelegate.ExecuteIfBound(OverlappedItems);
+	
 }
 
 #pragma endregion 

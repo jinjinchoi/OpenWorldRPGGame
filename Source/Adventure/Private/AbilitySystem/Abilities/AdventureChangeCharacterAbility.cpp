@@ -52,17 +52,16 @@ void UAdventureChangeCharacterAbility::SpawnNewCharacterAndRemoveOldCharacter(co
 		return;
 	}
 	
-	// 현재 사용중인 캐릭터 숨기기
 	AAdventurePlayerCharacter* CurrentControlCharacter = GetAdventurePlayerCharacter();
+	
+	// 현재 사용중인 캐릭터 숨기기
 	CurrentControlCharacter->SetActorHiddenInGame(true);
 	CurrentControlCharacter->SetActorEnableCollision(false);
 	CurrentControlCharacter->DisableInput(nullptr);
 
 	// 현재 사용중인 캐릭터 정보 저장
-	UAbilitySystemComponent* ASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetAvatarActorFromActorInfo());
-	
 	const int32 CurrentCharacterIndex = CurrentControlCharacter->CurrentCharacterIndex;
-	const FPartyCharacterInfo CurrentCharacterInfo = UAdventureFunctionLibrary::MakePartyCharacterInfo(CurrentControlCharacter->GetAttributeSet(), ASC, CurrentControlCharacter->GetCharacterClassTag(), false, true, CurrentCharacterIndex);
+	const FPartyCharacterInfo CurrentCharacterInfo = UAdventureFunctionLibrary::MakePartyCharacterInfo(CurrentControlCharacter,false, true);
 	CharacterManager->AddOrUpdatePartyCharactersInfo(CurrentCharacterIndex, CurrentCharacterInfo);
 
 	// Soft Object Load 후 작업 시작

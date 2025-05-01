@@ -10,8 +10,10 @@
 #include "Interface/PlayerInterface.h"
 #include "AdventurePlayerCharacter.generated.h"
 
+class UDataAsset_ItemInfo;
 class AAdventureInventoryItem;
 DECLARE_DELEGATE_OneParam(FOnMovementModechanged, const ECharacterMovementType /* Movement Type */);
+DECLARE_DELEGATE_OneParam(FOnOverlappedItemChanged, TArray<TWeakObjectPtr<AAdventureInventoryItem>> /* Overlap Item Array */);
 
 class UGameplayEffect;
 class UAdventureMovementComponent;
@@ -43,8 +45,14 @@ public:
 	virtual void OnCharacterDied_Implementation() override;
 	/* End Combat Interface */
 
+	void ApplyEquipmentEffect(const FGameplayTag& EquipmentTag);
+	void RemoveEquipmentEffect(const bool bIsSwordEffect) const;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Character Data")
 	int32 CurrentCharacterIndex = 1;
+	
+	FGameplayTag EquippedSwordTag;
+	FGameplayTag EquippedShieldTag;
 
 	bool bIsFirstLoading = true;
 	FPartyCharacterInfo PreviousCharacterInfo;
@@ -52,8 +60,17 @@ public:
 	TSubclassOf<UGameplayEffect> CharacterLoadGameplayEffect;
 	TSubclassOf<UGameplayEffect> CharacterVitalGameplayEffect;
 	TSubclassOf<UGameplayEffect> CharacterRegenGameplayEffect;
+
+	UPROPERTY(EditDefaultsOnly, Category="Gameplay Effect")
+	TSubclassOf<UGameplayEffect> SwordGameplayEffect;
+	FActiveGameplayEffectHandle SwordActiveGameplayEffectHandle;
+
+	UPROPERTY(EditDefaultsOnly, Category="Gameplay Effect")
+	TSubclassOf<UGameplayEffect> ShieldGameplayEffect;
+	FActiveGameplayEffectHandle ShieldActiveGameplayEffectHandle;
 	
 	FOnMovementModechanged OnMovementModeChangedDelegate;
+	FOnOverlappedItemChanged OnOverlappedItemChangedDelegate;
 	
 
 protected:
@@ -90,6 +107,9 @@ protected:
 	
 	UFUNCTION(BlueprintImplementableEvent)
 	void SetWeaponMeshVisibility(bool bIsVisible);
+	
+	UPROPERTY(EditDefaultsOnly)
+	TObjectPtr<UDataAsset_ItemInfo> EquipmentDataAsset;
 
 private:
 	bool ApplyStaminaCostEffect(const TSubclassOf<UGameplayEffect>& InEffect);

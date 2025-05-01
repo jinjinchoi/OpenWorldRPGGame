@@ -3,8 +3,41 @@
 
 #include "UI/WidgetController/InventoryWidgetController.h"
 
+#include "Character/AdventurePlayerCharacter.h"
+#include "Item/Pickups/AdventureInventoryItem.h"
 #include "Player/AdventureInventory.h"
 #include "Player/AdventurePlayerState.h"
+
+void UInventoryWidgetController::BindCallbacksToDependencies()
+{
+	check(PlayerController);
+	
+	if (AAdventurePlayerCharacter* PlayerCharacter = Cast<AAdventurePlayerCharacter>(PlayerController->GetPawn()))
+	{
+		PlayerCharacter->OnOverlappedItemChangedDelegate.Unbind();
+		
+		PlayerCharacter->OnOverlappedItemChangedDelegate.BindWeakLambda(
+			PlayerCharacter, [this](const TArray<TWeakObjectPtr<AAdventureInventoryItem>>& OverlappedItems)
+			{
+				if (OverlappedItems.IsEmpty())
+				{
+					OnItemToPickUpChangedDelegate.Broadcast(FItemInfoParams());
+					return;
+				}
+
+				OnItemToPickUpChangedDelegate.Broadcast(FItemInfoParams());
+				
+				for (const TWeakObjectPtr<AAdventureInventoryItem>& WeakItem : OverlappedItems)
+				{
+					if (!WeakItem.IsValid()) continue;
+
+					const FItemInfoParams FoundInfo = ItemInfo->FindItemInfo(WeakItem->ItemTag);
+					OnItemToPickUpChangedDelegate.Broadcast(FoundInfo);
+				}
+			}
+		);
+	}
+}
 
 FItemInfoParams UInventoryWidgetController::GetItemInfoParams(const FGameplayTag& ItemTag) const
 {

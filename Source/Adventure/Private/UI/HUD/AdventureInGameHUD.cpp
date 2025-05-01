@@ -54,7 +54,7 @@ UCharacterInfoWidgetController* AAdventureInGameHUD::GetCharacterInfoWidgetContr
 	
 }
 
-UInventoryWidgetController* AAdventureInGameHUD::GetInventoryWidgetController(APlayerState* InPlayerState)
+UInventoryWidgetController* AAdventureInGameHUD::GetInventoryWidgetController(APlayerState* InPlayerState, APlayerController* InPlayerController)
 {
 	check(InPlayerState && InventoryWidgetControllerClass);
 
@@ -62,8 +62,9 @@ UInventoryWidgetController* AAdventureInGameHUD::GetInventoryWidgetController(AP
 	{
 		InventoryWidgetController = NewObject<UInventoryWidgetController>(this, InventoryWidgetControllerClass);
 		InventoryWidgetController->SetPlayerState(InPlayerState);
-		InventoryWidgetController->BindCallbacksToDependencies();
+		InventoryWidgetController->SetPlayerController(InPlayerController);
 	}
+	InventoryWidgetController->BindCallbacksToDependencies();
 
 	return InventoryWidgetController;
 }

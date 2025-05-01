@@ -8,6 +8,7 @@
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "AdventureFunctionLibrary.generated.h"
 
+class AAdventurePlayerCharacter;
 class UInventoryWidgetController;
 class AAdventureInGameHUD;
 class UCharacterInfoWidgetController;
@@ -38,7 +39,7 @@ public:
 	
 	/* Gameplay Ability System Setup */
 	static void InitializeAttributeFromCharacterInfo(const FPartyCharacterInfo& InCharacterInfo, const FGameplayEffectSpecHandle& SpecHandle, UAbilitySystemComponent* ASC);
-	static FPartyCharacterInfo MakePartyCharacterInfo(const UAttributeSet* InAttributeSet, UAbilitySystemComponent* ASC, const FGameplayTag& InCharacterTag, const bool InIsNotSpawned, const bool InIsPartyMember, int32 InPartyIndex = INT_MAX);
+	static FPartyCharacterInfo MakePartyCharacterInfo(const AAdventurePlayerCharacter* PlayerCharacter, const bool InIsNotSpawned, const bool InIsPartyMember);
 
 	/** Effect Context **/
 	static bool IsCriticalHit(const FGameplayEffectContextHandle& EffectContextHandle);

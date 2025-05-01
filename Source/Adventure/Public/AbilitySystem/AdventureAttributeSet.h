@@ -100,6 +100,15 @@ public:
 	FGameplayAttributeData MaxStamina; /* 최대 기력 */
 	ATTRIBUTE_ACCESSORS(UAdventureAttributeSet, MaxStamina);
 
+	/** 무기 공격력 **/
+	UPROPERTY(BlueprintReadOnly, Category="Equipment Attribute")
+	FGameplayAttributeData SwordAttackPower; /* 무기 공격력 */
+	ATTRIBUTE_ACCESSORS(UAdventureAttributeSet, SwordAttackPower);
+	
+	UPROPERTY(BlueprintReadOnly, Category="Equipment Attribute")
+	FGameplayAttributeData ShieldDefensePower; /* 무기 공격력 */
+	ATTRIBUTE_ACCESSORS(UAdventureAttributeSet, ShieldDefensePower);
+
 	
 	/** 메타 데이터 속성  **/
 	UPROPERTY(BlueprintReadOnly, Category="Meta Attribute")

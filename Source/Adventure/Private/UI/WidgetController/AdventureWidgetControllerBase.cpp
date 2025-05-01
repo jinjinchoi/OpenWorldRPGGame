@@ -20,6 +20,11 @@ void UAdventureWidgetControllerBase::SetPlayerState(APlayerState* InPlayerState)
 	PlayerState = InPlayerState;
 }
 
+void UAdventureWidgetControllerBase::SetPlayerController(APlayerController* InPlayerController)
+{
+	PlayerController = InPlayerController;
+}
+
 void UAdventureWidgetControllerBase::BroadCastInitialValue()
 {
 	

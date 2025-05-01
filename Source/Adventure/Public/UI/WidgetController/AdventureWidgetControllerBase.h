@@ -50,6 +50,7 @@ class ADVENTURE_API UAdventureWidgetControllerBase : public UObject
 public:
 	void SetWidgetControllerParams(const FWidgetControllerParams& WCParams);
 	void SetPlayerState(APlayerState* InPlayerState);
+	void SetPlayerController(APlayerController* InPlayerController);
 
 	UFUNCTION(BlueprintCallable)
 	virtual void BroadCastInitialValue();

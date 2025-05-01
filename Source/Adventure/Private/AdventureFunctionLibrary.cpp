@@ -10,6 +10,7 @@
 #include "AbilitySystem/AdventureAttributeSet.h"
 #include "AdventureType/AdventureAbilityTypes.h"
 #include "AdventureType/AdventureStructTypes.h"
+#include "Character/AdventurePlayerCharacter.h"
 #include "Interface/CombatInterface.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Player/AdventurePlayerState.h"
@@ -71,16 +72,19 @@ void UAdventureFunctionLibrary::InitializeAttributeFromCharacterInfo(const FPart
 }
 
 
-FPartyCharacterInfo UAdventureFunctionLibrary::MakePartyCharacterInfo(const UAttributeSet* InAttributeSet, UAbilitySystemComponent* ASC,
-	const FGameplayTag& InCharacterTag, const bool InIsNotSpawned, const bool InIsPartyMember, int32 InPartyIndex)
+FPartyCharacterInfo UAdventureFunctionLibrary::MakePartyCharacterInfo(const AAdventurePlayerCharacter* PlayerCharacter, const bool InIsNotSpawned, const bool InIsPartyMember)
 {
+	check(PlayerCharacter);
+	
 	FPartyCharacterInfo CharacterInfo = FPartyCharacterInfo();
 	CharacterInfo.bIsNotSpawned = InIsNotSpawned;
 	CharacterInfo.bIsPartyMember = InIsPartyMember;
-	CharacterInfo.ClassTag = InCharacterTag;
-	CharacterInfo.PartyIndex = InPartyIndex;
+	CharacterInfo.ClassTag = PlayerCharacter->GetCharacterClassTag();
+	CharacterInfo.PartyIndex = PlayerCharacter->CurrentCharacterIndex;
+	CharacterInfo.WeaponTag = PlayerCharacter->EquippedSwordTag;
+	CharacterInfo.ShieldTag = PlayerCharacter->EquippedShieldTag;
 	
-	if (const UAdventureAttributeSet* AdventureAttributeSet = Cast<UAdventureAttributeSet>(InAttributeSet))
+	if (const UAdventureAttributeSet* AdventureAttributeSet = Cast<UAdventureAttributeSet>(PlayerCharacter->GetAttributeSet()))
 	{
 		CharacterInfo.CharacterLevel = 1.f; // TODO: Level System 구현하면 수정해야함.
 		CharacterInfo.CharacterXP = 0.f; // TODO: Level System 구현하면 수정해야함.
@@ -94,7 +98,7 @@ FPartyCharacterInfo UAdventureFunctionLibrary::MakePartyCharacterInfo(const UAtt
 		CharacterInfo.MaxStamina = AdventureAttributeSet->GetMaxStamina();
 	}
 	
-	if (UAdventureAbilitySystemComponent* AdventureASC = Cast<UAdventureAbilitySystemComponent>(ASC))
+	if (UAdventureAbilitySystemComponent* AdventureASC = Cast<UAdventureAbilitySystemComponent>(PlayerCharacter->GetAbilitySystemComponent()))
 	{
 		FForEachAbility EachAbilityDelegate;
 		EachAbilityDelegate.BindLambda([&CharacterInfo](const FGameplayAbilitySpec& AbilitySpec)
@@ -331,11 +335,11 @@ UCharacterInfoWidgetController* UAdventureFunctionLibrary::GetCharacterInfoWidge
 
 UInventoryWidgetController* UAdventureFunctionLibrary::GetInventoryWidgetController(const UObject* WorldContextObject)
 {
-	if (const APlayerController* PlayerController = WorldContextObject->GetWorld()->GetFirstPlayerController())
+	if (APlayerController* PlayerController = WorldContextObject->GetWorld()->GetFirstPlayerController())
 	{
 		if (AAdventureInGameHUD* AdventureInGameHUD = Cast<AAdventureInGameHUD>(PlayerController->GetHUD()))
 		{
-			return AdventureInGameHUD->GetInventoryWidgetController(PlayerController->GetPlayerState<APlayerState>());
+			return AdventureInGameHUD->GetInventoryWidgetController(PlayerController->GetPlayerState<APlayerState>(), PlayerController);
 		}
 	}
 

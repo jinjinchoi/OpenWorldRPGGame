@@ -9,6 +9,8 @@
 #include "InventoryWidgetController.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnSlotButtonClicked, FItemSlot, ItemInSlot, int32, SlotIndex);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnItemToPickUpChanged, FItemInfoParams, OverlappedItemInfo);
+
 
 class UDataAsset_ItemInfo;
 /**
@@ -20,6 +22,8 @@ class ADVENTURE_API UInventoryWidgetController : public UAdventureWidgetControll
 	GENERATED_BODY()
 
 public:
+	virtual void BindCallbacksToDependencies() override;
+	
 	UFUNCTION(BlueprintCallable)
 	FItemInfoParams GetItemInfoParams(const FGameplayTag& ItemTag) const;
 
@@ -34,6 +38,9 @@ public:
 
 	UPROPERTY(BlueprintAssignable, BlueprintCallable)
 	FOnSlotButtonClicked SlotButtonClickedDelegate;
+
+	UPROPERTY(BlueprintAssignable)
+	FOnItemToPickUpChanged OnItemToPickUpChangedDelegate;
 
 protected:
 	UPROPERTY(EditDefaultsOnly)
