@@ -124,9 +124,12 @@ struct FItemSlot
 	GENERATED_BODY()
 
 	UPROPERTY(BlueprintReadOnly)
-	FGameplayTag ItemTag;
+	FGameplayTag ItemTag = FGameplayTag();
 	
 	UPROPERTY(BlueprintReadOnly)
 	int32 Quantity = 0;
+
+	UPROPERTY(BlueprintReadOnly)
+	FGameplayTag EquippedCharacterTag = FGameplayTag();
 	
 };

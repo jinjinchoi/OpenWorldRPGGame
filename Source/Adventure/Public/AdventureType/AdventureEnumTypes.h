@@ -25,3 +25,10 @@ enum class ECharacterMovementType : uint8
 	Normal,
 	Climb
 };
+
+UENUM(BlueprintType)
+enum class EEquipmentItemType : uint8
+{
+	Sword,
+	Shield
+};
