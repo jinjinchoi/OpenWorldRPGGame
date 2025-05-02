@@ -82,8 +82,20 @@ void UInventoryWidgetController::UpdateSlotStatus(const FItemSlot& InSlotToEquip
 		UAdventureInventory* Inventory = AdventurePlayerState->GetPickupItemInventory();
 		check(Inventory);
 
+		// 무기
 		if (InSlotToEquip.ItemTag.MatchesTag(AdventureGameplayTags::Item_Sword))
 		{
+			// 기존 아이템에 있던 태그 초기화
+			for (FItemSlot& Sword : Inventory->AllItems.Swords)
+			{
+				if (Sword.EquippedCharacterTag == InCharacterTag)
+				{
+					Sword.EquippedCharacterTag = FGameplayTag();
+					break;
+				}
+			}
+
+			// 태그 새로 생성
 			for (FItemSlot& Sword : Inventory->AllItems.Swords)
 			{
 				if (Sword.SlotID == InSlotToEquip.SlotID)
@@ -94,8 +106,20 @@ void UInventoryWidgetController::UpdateSlotStatus(const FItemSlot& InSlotToEquip
 			}
 		}
 
+		// 방어구
 		if (InSlotToEquip.ItemTag.MatchesTag(AdventureGameplayTags::Item_Shield))
 		{
+			// 기존 아이템에 있던 태그 초기화
+			for (FItemSlot& Shield : Inventory->AllItems.Shields)
+			{
+				if (Shield.EquippedCharacterTag == InCharacterTag)
+				{
+					Shield.EquippedCharacterTag = FGameplayTag();
+					break;
+				}
+			}
+
+			// 태그 새로 생성
 			for (FItemSlot& Shield : Inventory->AllItems.Shields)
 			{
 				if (Shield.SlotID == InSlotToEquip.SlotID)
@@ -116,6 +140,28 @@ FItemInfoParams UInventoryWidgetController::GetItemInfoParams(const FGameplayTag
 	check(ItemInfo);
 
 	return ItemInfo->FindItemInfo(ItemTag);
+	
+}
+
+FString UInventoryWidgetController::GetStatDisplayText(const FGameplayTag& ItemTag) const
+{
+	if (!ItemTag.IsValid()) return FString();
+	
+	const FItemInfoParams ItemInfoParams = ItemInfo->FindItemInfo(ItemTag);
+	if (ItemTag.MatchesTag(AdventureGameplayTags::Item_Sword))
+	{
+		const int32 ItemAttackPower = FMath::RoundToInt(ItemInfoParams.AttackPower);
+		return FString::Printf(TEXT("(+%d)"), ItemAttackPower);
+	}
+
+	if (ItemTag.MatchesTag(AdventureGameplayTags::Item_Shield))
+	{
+		const int32 ItemDefensePower =  FMath::RoundToInt(ItemInfoParams.DefensePower);
+		return FString::Printf(TEXT("(+%d)"), ItemDefensePower);
+
+	}
+
+	return FString();
 	
 }
 

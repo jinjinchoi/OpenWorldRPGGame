@@ -31,6 +31,9 @@ public:
 	FItemInfoParams GetItemInfoParams(const FGameplayTag& ItemTag) const;
 
 	UFUNCTION(BlueprintCallable)
+	FString GetStatDisplayText(const FGameplayTag& ItemTag) const;
+
+	UFUNCTION(BlueprintCallable)
 	TArray<FItemSlot> GetSwordItemSlot() const;
 	
 	UFUNCTION(BlueprintCallable)

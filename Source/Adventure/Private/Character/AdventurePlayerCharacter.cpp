@@ -149,10 +149,10 @@ void AAdventurePlayerCharacter::PossessedBy(AController* NewController)
 		CharacterLoadGameplayEffect = nullptr;
 		CharacterVitalGameplayEffect = nullptr;
 		CharacterRegenGameplayEffect= nullptr;
-
+		
 		// 무기 Effect 적용
-		ApplyEquipmentEffect(EquippedSwordTag);
-		ApplyEquipmentEffect(EquippedShieldTag);
+		ApplyEquipmentEffect(PreviousCharacterInfo.WeaponTag);
+		ApplyEquipmentEffect(PreviousCharacterInfo.ShieldTag);
 	}
 	
 	BindGameplayTagChanged();
@@ -304,10 +304,12 @@ void AAdventurePlayerCharacter::ApplyEquipmentEffect(const FGameplayTag& Equipme
 
 	if (bIsSwordItem)
 	{
+		EquippedSwordTag = EquipmentTag;
 		SwordActiveGameplayEffectHandle = AbilitySystemComponent->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get());
 	}
 	else
 	{
+		EquippedShieldTag = EquipmentTag;
 		ShieldActiveGameplayEffectHandle = AbilitySystemComponent->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get());
 	}
 	
