@@ -47,6 +47,7 @@ public:
 
 	void ApplyEquipmentEffect(const FGameplayTag& EquipmentTag);
 	void RemoveEquipmentEffect(const bool bIsSwordEffect) const;
+	void AddCharacterInfoToManager() const;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Character Data")
 	int32 CurrentCharacterIndex = 1;
@@ -78,7 +79,6 @@ protected:
 	virtual void PossessedBy(AController* NewController) override;
 	void InitPlayerStartUpData() const;
 	void BindGameplayTagChanged();
-	void AddCharacterInfoToManager() const;
 
 	/* Begin Adventure Base Character */
 	virtual void OnHitReactTagChanged(const FGameplayTag CallbackTag, int32 NewCount) override;
@@ -108,7 +108,7 @@ protected:
 	UFUNCTION(BlueprintImplementableEvent)
 	void SetWeaponMeshVisibility(bool bIsVisible);
 	
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly, Category="Equipment")
 	TObjectPtr<UDataAsset_ItemInfo> EquipmentDataAsset;
 
 private:

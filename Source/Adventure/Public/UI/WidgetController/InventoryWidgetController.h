@@ -23,6 +23,9 @@ class ADVENTURE_API UInventoryWidgetController : public UAdventureWidgetControll
 
 public:
 	virtual void BindCallbacksToDependencies() override;
+
+	UFUNCTION(BlueprintCallable)
+	void EquipItemToCharacter(const FItemSlot& SlotToEquip, const FGameplayTag& CharacterTag);
 	
 	UFUNCTION(BlueprintCallable)
 	FItemInfoParams GetItemInfoParams(const FGameplayTag& ItemTag) const;
@@ -45,5 +48,7 @@ public:
 protected:
 	UPROPERTY(EditDefaultsOnly)
 	TObjectPtr<UDataAsset_ItemInfo> ItemInfo;
-	
+
+private:
+	void UpdateSlotStatus(const FItemSlot& InSlotToEquip, const FGameplayTag& InCharacterTag) const;
 };

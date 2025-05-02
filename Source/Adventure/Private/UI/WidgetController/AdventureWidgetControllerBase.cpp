@@ -25,6 +25,11 @@ void UAdventureWidgetControllerBase::SetPlayerController(APlayerController* InPl
 	PlayerController = InPlayerController;
 }
 
+void UAdventureWidgetControllerBase::SetCurrentCharacterTag(const FGameplayTag& InCharacterTag)
+{
+	CurrentCharacterTag = InCharacterTag;
+}
+
 void UAdventureWidgetControllerBase::BroadCastInitialValue()
 {
 	

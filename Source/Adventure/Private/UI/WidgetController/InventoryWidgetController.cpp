@@ -3,7 +3,9 @@
 
 #include "UI/WidgetController/InventoryWidgetController.h"
 
+#include "AdventureGameplayTag.h"
 #include "Character/AdventurePlayerCharacter.h"
+#include "GameManager/ControllableCharacterManager.h"
 #include "Item/Pickups/AdventureInventoryItem.h"
 #include "Player/AdventureInventory.h"
 #include "Player/AdventurePlayerState.h"
@@ -38,6 +40,76 @@ void UInventoryWidgetController::BindCallbacksToDependencies()
 		);
 	}
 }
+
+void UInventoryWidgetController::EquipItemToCharacter(const FItemSlot& SlotToEquip, const FGameplayTag& CharacterTag)
+{
+	check(PlayerController);
+	
+	if (AAdventurePlayerCharacter* PlayerCharacter = Cast<AAdventurePlayerCharacter>(PlayerController->GetPawn()))
+	{
+		if (PlayerCharacter->GetCharacterClassTag() == CharacterTag)
+		{
+			PlayerCharacter->ApplyEquipmentEffect(SlotToEquip.ItemTag);
+			PlayerCharacter->AddCharacterInfoToManager();
+		}
+		else
+		{
+			AAdventurePlayerState* AdventurePlayerState = CastChecked<AAdventurePlayerState>(PlayerState);
+
+			FPartyCharacterInfo* CharacterInfo = AdventurePlayerState->GetControllableCharacterManager()->FindCharacterInfoInOwningCharacters(CharacterTag);
+			check(CharacterInfo);
+
+			if (SlotToEquip.ItemTag.MatchesTag(AdventureGameplayTags::Item_Sword))
+			{
+				CharacterInfo->WeaponTag = SlotToEquip.ItemTag;
+			}
+			else if (SlotToEquip.ItemTag.MatchesTag(AdventureGameplayTags::Item_Shield))
+			{
+				CharacterInfo->ShieldTag = SlotToEquip.ItemTag;
+			}
+			
+		}
+
+		UpdateSlotStatus(SlotToEquip, CharacterTag);
+	}
+	
+}
+
+void UInventoryWidgetController::UpdateSlotStatus(const FItemSlot& InSlotToEquip, const FGameplayTag& InCharacterTag) const
+{
+	if (AAdventurePlayerState* AdventurePlayerState = Cast<AAdventurePlayerState>(PlayerState))
+	{
+		UAdventureInventory* Inventory = AdventurePlayerState->GetPickupItemInventory();
+		check(Inventory);
+
+		if (InSlotToEquip.ItemTag.MatchesTag(AdventureGameplayTags::Item_Sword))
+		{
+			for (FItemSlot& Sword : Inventory->AllItems.Swords)
+			{
+				if (Sword.SlotID == InSlotToEquip.SlotID)
+				{
+					Sword.EquippedCharacterTag = InCharacterTag;
+					return;
+				}
+			}
+		}
+
+		if (InSlotToEquip.ItemTag.MatchesTag(AdventureGameplayTags::Item_Shield))
+		{
+			for (FItemSlot& Shield : Inventory->AllItems.Shields)
+			{
+				if (Shield.SlotID == InSlotToEquip.SlotID)
+				{
+					Shield.EquippedCharacterTag = InCharacterTag;
+					return;
+				}
+			}
+		}
+
+	}
+}
+
+
 
 FItemInfoParams UInventoryWidgetController::GetItemInfoParams(const FGameplayTag& ItemTag) const
 {
@@ -85,3 +157,4 @@ TArray<FItemSlot> UInventoryWidgetController::GetEatableItemSlot() const
 
 	return TArray<FItemSlot>();
 }
+

@@ -131,5 +131,8 @@ struct FItemSlot
 
 	UPROPERTY(BlueprintReadOnly)
 	FGameplayTag EquippedCharacterTag = FGameplayTag();
+
+	UPROPERTY(BlueprintReadOnly)
+	FGuid SlotID;
 	
 };

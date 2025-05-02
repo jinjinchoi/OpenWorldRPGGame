@@ -163,7 +163,6 @@ void AAdventurePlayerCharacter::PossessedBy(AController* NewController)
 		if (AAdventureInGameHUD* AdventureInGameHUD = Cast<AAdventureInGameHUD>(PlayerController->GetHUD()))
 		{
 			AdventureInGameHUD->InitOverlay(PlayerController, GetPlayerState(), AbilitySystemComponent, AttributeSet, CharacterTag);
-			
 		}
 	}
 
@@ -279,7 +278,7 @@ void AAdventurePlayerCharacter::RemoveStaminaCostEffect()
 
 void AAdventurePlayerCharacter::ApplyEquipmentEffect(const FGameplayTag& EquipmentTag)
 {
-	check(AbilitySystemComponent);
+	check(AbilitySystemComponent && EquipmentDataAsset && SwordGameplayEffect && ShieldGameplayEffect);
 	
 	if (!EquipmentTag.IsValid()) return;
 
@@ -311,6 +310,8 @@ void AAdventurePlayerCharacter::ApplyEquipmentEffect(const FGameplayTag& Equipme
 	{
 		ShieldActiveGameplayEffectHandle = AbilitySystemComponent->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get());
 	}
+	
+	
 }
 
 void AAdventurePlayerCharacter::RemoveEquipmentEffect(const bool bIsSwordEffect) const
@@ -587,6 +588,7 @@ void AAdventurePlayerCharacter::Input_Interaction()
 			FItemSlot ItemSlot;
 			ItemSlot.ItemTag = OverlappedItems.Last().Get()->ItemTag;
 			ItemSlot.Quantity = OverlappedItems.Last().Get()->Quantity;
+			ItemSlot.SlotID = FGuid::NewGuid();
 			
 			AdventurePlayerState->GetPickupItemInventory()->AddPickupsToAllItems(ItemSlot);
 			OverlappedItems.Last()->Destroy();

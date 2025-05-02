@@ -51,6 +51,7 @@ public:
 	void SetWidgetControllerParams(const FWidgetControllerParams& WCParams);
 	void SetPlayerState(APlayerState* InPlayerState);
 	void SetPlayerController(APlayerController* InPlayerController);
+	void SetCurrentCharacterTag(const FGameplayTag& InCharacterTag);
 
 	UFUNCTION(BlueprintCallable)
 	virtual void BroadCastInitialValue();
