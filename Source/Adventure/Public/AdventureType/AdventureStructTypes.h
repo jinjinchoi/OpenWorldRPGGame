@@ -114,7 +114,8 @@ struct FPartyCharacterInfo
 
 	UPROPERTY(BlueprintReadOnly)
 	FGameplayTag ShieldTag = FGameplayTag();
-	
+
+	bool IsValid() const;
 	
 };
 

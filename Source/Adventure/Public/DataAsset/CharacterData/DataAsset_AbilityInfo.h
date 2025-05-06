@@ -19,7 +19,13 @@ struct FAbilityInfoForWidget
 	TSoftObjectPtr<UTexture2D> PortraitImg = nullptr;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TSoftObjectPtr<UTexture2D> FullPortraitImg = nullptr;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	FName CharacterName = FName();
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	FText CharacterDescription = FText();
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TSoftObjectPtr<UTexture2D> ESkillIcon = nullptr;

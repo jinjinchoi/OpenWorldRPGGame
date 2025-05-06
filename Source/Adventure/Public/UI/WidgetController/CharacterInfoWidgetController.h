@@ -26,6 +26,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	TArray<FPartyCharacterInfo> GetOwningCharactersInfo();
+
+	UFUNCTION(BlueprintCallable)
+	TMap<int32, FPartyCharacterInfo> GetPartyMemberInfo();
 	
 	UPROPERTY(BlueprintAssignable)
 	FOnGetOwningCharacterInfoDelegate GetOwningCharacterInfoDelegate;

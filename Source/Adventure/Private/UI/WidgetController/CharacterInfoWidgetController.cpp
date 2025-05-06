@@ -49,6 +49,11 @@ TArray<FPartyCharacterInfo> UCharacterInfoWidgetController::GetOwningCharactersI
 	return PartyCharacterInfos;
 }
 
+TMap<int32, FPartyCharacterInfo> UCharacterInfoWidgetController::GetPartyMemberInfo()
+{
+	return GetAdventurePlayerState()->GetControllableCharacterManager()->GetPartyMemberInfo();
+}
+
 
 FPartyCharacterInfo UCharacterInfoWidgetController::GetOwningCharacterInfoByClassTag(const FGameplayTag& ClassTag)
 {

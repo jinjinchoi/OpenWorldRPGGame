@@ -21,12 +21,24 @@ void UControllableCharacterManager::AddOrUpdateOwningCharactersInfo(const FParty
 	
 }
 
-void UControllableCharacterManager::AddOrUpdatePartyCharactersInfo(int32 PartyIndex, const FPartyCharacterInfo& NewCharacterInfo)
+void UControllableCharacterManager::AddOrUpdatePartyCharactersInfo(const int32 PartyIndex, const FPartyCharacterInfo& NewCharacterInfo)
 {
 	PartyCharacterInfo.Add(PartyIndex, NewCharacterInfo);
 
 	AddOrUpdateOwningCharactersInfo(NewCharacterInfo);
 	BroadcastPartyCharacterInfo();
+}
+
+void UControllableCharacterManager::RemovePartyCharactersInfoByPartyIndex(const int32 PartyIndex)
+{
+	FPartyCharacterInfo ExistingPartyCharacterInfo = GetPartyMemberIfInParty(PartyIndex);
+	if (ExistingPartyCharacterInfo.IsValid())
+	{
+		ExistingPartyCharacterInfo.bIsPartyMember = false;
+		AddOrUpdateOwningCharactersInfo(ExistingPartyCharacterInfo);
+		
+		PartyCharacterInfo.Remove(PartyIndex);
+	}
 }
 
 FPartyCharacterInfo* UControllableCharacterManager::FindCharacterInfoInOwningCharacters(const FGameplayTag& InClassTag)
@@ -81,5 +93,18 @@ void UControllableCharacterManager::BroadcastPartyCharacterInfo()
 	{
 		bIsSuccessBoardCast = OnPartyCharacterChangedDelegate.ExecuteIfBound(CharacterInfo.Value.ClassTag, CharacterInfo.Key);
 	}
+}
+
+FPartyCharacterInfo UControllableCharacterManager::GetPartyMemberIfInParty(const int32 PartyIndex)
+{
+	for (const FPartyCharacterInfo& ExistingPartyCharacterInfo : OwningCharacters)
+	{
+		if (ExistingPartyCharacterInfo.PartyIndex == PartyIndex)
+		{
+			return ExistingPartyCharacterInfo;
+		}
+	}
+
+	return FPartyCharacterInfo();
 }
 

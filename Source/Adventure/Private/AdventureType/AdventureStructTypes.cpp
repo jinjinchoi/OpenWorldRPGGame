@@ -3,3 +3,7 @@
 
 #include "AdventureType/AdventureStructTypes.h"
 
+bool FPartyCharacterInfo::IsValid() const
+{
+	return ClassTag.IsValid();
+}
