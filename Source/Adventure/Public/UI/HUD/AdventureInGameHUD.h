@@ -25,7 +25,7 @@ class ADVENTURE_API AAdventureInGameHUD : public AHUD
 public:
 	void InitOverlay(APlayerController* PC, APlayerState* PS, UAbilitySystemComponent* ASC, UAttributeSet* AS, const FGameplayTag& CharacterTag);
 	UOverlayWidgetController* GetOverlayWidgetController(const FWidgetControllerParams& Params);
-	UCharacterInfoWidgetController* GetCharacterInfoWidgetController(APlayerState* InPlayerState);
+	UCharacterInfoWidgetController* GetCharacterInfoWidgetController(APlayerState* InPlayerState, APlayerController* InPlayerController);
 	UInventoryWidgetController* GetInventoryWidgetController(APlayerState* InPlayerState, APlayerController* InPlayerController);
 	
 

@@ -39,6 +39,9 @@ public:
 	virtual void OnStaminaDepleted() override;
 	virtual void PickUpItemBeginOverlap(AAdventureInventoryItem* InOverlappedItem) override;
 	virtual void PickUpItemEndOverlap(AAdventureInventoryItem* InOverlappedItem) override;
+	virtual void ForceCharacterChange(const int32 IndexToChange) override;
+	virtual void ChangeCharacterPartyIndex(const int32 IndexToChange) override;
+	virtual FGameplayTag GetOwningCharacterTag() override;
 	/* End Player Interface */
 
 	/* Begin Combat Interface */

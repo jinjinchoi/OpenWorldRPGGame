@@ -581,6 +581,35 @@ void AAdventurePlayerCharacter::Input_CharacterChange_Three()
 
 }
 
+void AAdventurePlayerCharacter::ForceCharacterChange(const int32 IndexToChange)
+{
+	switch (IndexToChange)
+	{
+		case 1:
+			UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(this, AdventureGameplayTags::Event_CharacterChange_One, FGameplayEventData());
+			break;
+		case 2:
+			UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(this, AdventureGameplayTags::Event_CharacterChange_Two, FGameplayEventData());
+			break;
+		case 3:
+			UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(this, AdventureGameplayTags::Event_CharacterChange_Three, FGameplayEventData());
+			break;
+		default:
+			break;
+	}
+}
+
+void AAdventurePlayerCharacter::ChangeCharacterPartyIndex(const int32 IndexToChange)
+{
+	CurrentCharacterIndex = IndexToChange;
+}
+
+FGameplayTag AAdventurePlayerCharacter::GetOwningCharacterTag()
+{
+	return CharacterTag;
+}
+
+
 void AAdventurePlayerCharacter::Input_Interaction()
 {
 	if (OverlappedItems.Num() > 0 && OverlappedItems.Last().IsValid())

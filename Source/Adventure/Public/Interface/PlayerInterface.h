@@ -36,6 +36,9 @@ public:
 	virtual void PickUpItemBeginOverlap(AAdventureInventoryItem* InOverlappedItem) = 0;
 	virtual void PickUpItemEndOverlap(AAdventureInventoryItem* InOverlappedItem) = 0;
 
+	virtual void ForceCharacterChange(const int32 IndexToChange) = 0;
+	virtual void ChangeCharacterPartyIndex(const int32 IndexToChange) = 0;
+	virtual FGameplayTag GetOwningCharacterTag() = 0;
 	
 
 #pragma region Input

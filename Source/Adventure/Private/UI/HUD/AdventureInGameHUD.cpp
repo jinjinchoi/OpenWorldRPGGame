@@ -39,7 +39,7 @@ UOverlayWidgetController* AAdventureInGameHUD::GetOverlayWidgetController(const 
 	return OverlayWidgetController;
 }
 
-UCharacterInfoWidgetController* AAdventureInGameHUD::GetCharacterInfoWidgetController(APlayerState* InPlayerState)
+UCharacterInfoWidgetController* AAdventureInGameHUD::GetCharacterInfoWidgetController(APlayerState* InPlayerState, APlayerController* InPlayerController)
 {
 	check(InPlayerState && CharacterInfoWidgetControllerClass);
 
@@ -47,6 +47,7 @@ UCharacterInfoWidgetController* AAdventureInGameHUD::GetCharacterInfoWidgetContr
 	{
 		CharacterInfoWidgetController = NewObject<UCharacterInfoWidgetController>(this, CharacterInfoWidgetControllerClass);
 		CharacterInfoWidgetController->SetPlayerState(InPlayerState);
+		CharacterInfoWidgetController->SetPlayerController(InPlayerController);
 		CharacterInfoWidgetController->BindCallbacksToDependencies();
 	}
 

@@ -23,23 +23,99 @@ void UControllableCharacterManager::AddOrUpdateOwningCharactersInfo(const FParty
 
 void UControllableCharacterManager::AddOrUpdatePartyCharactersInfo(const int32 PartyIndex, const FPartyCharacterInfo& NewCharacterInfo)
 {
-	PartyCharacterInfo.Add(PartyIndex, NewCharacterInfo);
+	FPartyCharacterInfo* ExistingInfoAtIndex = PartyCharacterInfo.Find(PartyIndex);
+	FPartyCharacterInfo* ExistingInfoOfNewCharacter = FindCharacterInfoInOwningCharacters(NewCharacterInfo.ClassTag);
 
+	const bool bHasCharacterAtIndex = (ExistingInfoAtIndex != nullptr);
+	const bool bNewCharacterIsPartyMember = ExistingInfoOfNewCharacter && ExistingInfoOfNewCharacter->bIsPartyMember;
+
+	if (bHasCharacterAtIndex)
+	{
+		if (bNewCharacterIsPartyMember)
+		{
+			// 기존 인덱스 캐릭터 복사
+			FPartyCharacterInfo OldCharacterInfo = *ExistingInfoAtIndex;
+			int32 IndexOfNewCharacter = ExistingInfoOfNewCharacter->PartyIndex;
+
+			// 기존 캐릭터를 새 캐릭터가 있던 인덱스로 이동
+			OldCharacterInfo.PartyIndex = IndexOfNewCharacter;
+			PartyCharacterInfo.Add(IndexOfNewCharacter, OldCharacterInfo);
+
+			// 기존 위치에서 새 캐릭터 제거
+			RemovePartyCharactersInfoByCharacterTag(NewCharacterInfo.ClassTag);
+
+			// 새 캐릭터 복사본 생성 후 인덱스 설정해서 추가
+			FPartyCharacterInfo NewCharacterCopy = NewCharacterInfo;
+			NewCharacterCopy.PartyIndex = PartyIndex;
+			PartyCharacterInfo.Add(PartyIndex, NewCharacterCopy);
+			AddOrUpdateOwningCharactersInfo(OldCharacterInfo);
+
+		}
+		else
+		{
+			// 기존 캐릭터 제거
+			RemovePartyCharactersInfoByCharacterTag(ExistingInfoAtIndex->ClassTag);
+			
+			// 새 캐릭터 복사본 생성 후 인덱스 설정해서 추가
+			FPartyCharacterInfo NewCharacterCopy = NewCharacterInfo;
+			NewCharacterCopy.PartyIndex = PartyIndex;
+			PartyCharacterInfo.Add(PartyIndex, NewCharacterCopy);
+			AddOrUpdateOwningCharactersInfo(*ExistingInfoAtIndex);
+
+		}
+	}
+	else
+	{
+		if (bNewCharacterIsPartyMember)
+		{
+			RemovePartyCharactersInfoByCharacterTag(NewCharacterInfo.ClassTag);
+		}
+
+		FPartyCharacterInfo NewCharacterCopy = NewCharacterInfo;
+		NewCharacterCopy.PartyIndex = PartyIndex;
+		PartyCharacterInfo.Add(PartyIndex, NewCharacterCopy);
+
+	}
 	AddOrUpdateOwningCharactersInfo(NewCharacterInfo);
 	BroadcastPartyCharacterInfo();
+
 }
 
 void UControllableCharacterManager::RemovePartyCharactersInfoByPartyIndex(const int32 PartyIndex)
 {
 	FPartyCharacterInfo ExistingPartyCharacterInfo = GetPartyMemberIfInParty(PartyIndex);
-	if (ExistingPartyCharacterInfo.IsValid())
+	RemovePartyMember(ExistingPartyCharacterInfo);
+}
+
+void UControllableCharacterManager::RemovePartyCharactersInfoByCharacterTag(const FGameplayTag& InCharacterTag)
+{
+	for (TPair<int, FPartyCharacterInfo>& PartyInfo : PartyCharacterInfo)
 	{
-		ExistingPartyCharacterInfo.bIsPartyMember = false;
-		AddOrUpdateOwningCharactersInfo(ExistingPartyCharacterInfo);
-		
-		PartyCharacterInfo.Remove(PartyIndex);
+		if (!PartyInfo.Value.bIsPartyMember) continue;
+
+		if (PartyInfo.Value.ClassTag.MatchesTagExact(InCharacterTag))
+		{
+			RemovePartyMember(PartyInfo.Value);
+			return;
+		}
 	}
 }
+
+
+void UControllableCharacterManager::RemovePartyMember(FPartyCharacterInfo& CharacterInfoToRemove)
+{
+	if (CharacterInfoToRemove.IsValid())
+	{
+		PartyCharacterInfo.Remove(CharacterInfoToRemove.PartyIndex);
+		
+		CharacterInfoToRemove.bIsPartyMember = false;
+		CharacterInfoToRemove.PartyIndex = INT_MAX;
+		AddOrUpdateOwningCharactersInfo(CharacterInfoToRemove);
+		
+		BroadcastPartyCharacterInfo();
+	}
+}
+
 
 FPartyCharacterInfo* UControllableCharacterManager::FindCharacterInfoInOwningCharacters(const FGameplayTag& InClassTag)
 {

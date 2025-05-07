@@ -25,6 +25,7 @@ public:
 
     /* 파티 멤버에서 제외하는 함수 */
 	void RemovePartyCharactersInfoByPartyIndex(const int32 PartyIndex);
+	void RemovePartyCharactersInfoByCharacterTag(const FGameplayTag& InCharacterTag);
 
 	FPartyCharacterInfo* FindCharacterInfoInOwningCharacters(const FGameplayTag& InClassTag);
 	FPartyCharacterInfo* FindCharacterInfoInPartyCharacterInfo(const int32 InCharacterIndex);
@@ -45,6 +46,7 @@ protected:
 private:
 	void BroadcastPartyCharacterInfo();
 	FPartyCharacterInfo GetPartyMemberIfInParty(const int32 PartyIndex);
+	void RemovePartyMember(FPartyCharacterInfo& CharacterInfoToRemove);
 	
 	bool bIsSuccessBoardCast = false;
 

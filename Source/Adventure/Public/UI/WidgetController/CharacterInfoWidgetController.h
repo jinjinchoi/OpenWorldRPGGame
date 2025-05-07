@@ -30,8 +30,19 @@ public:
 	UFUNCTION(BlueprintCallable)
 	TMap<int32, FPartyCharacterInfo> GetPartyMemberInfo();
 	
+	UFUNCTION(BlueprintCallable)
+	bool AddToPartyMember (const FGameplayTag& CharacterTagToAdd, const int32 PartyIndexToAdd);
+	
+	UFUNCTION(BlueprintCallable)
+	bool RemoveFromPartyMemberByPartyIndex(const int32 PartyIndexToRemove);
+
+	UFUNCTION(BlueprintCallable)
+	bool RemoveFromPartyMemberByClassTag(const FGameplayTag& CharacterTagToRemove);
+	
 	UPROPERTY(BlueprintAssignable)
 	FOnGetOwningCharacterInfoDelegate GetOwningCharacterInfoDelegate;
+
+	
 
 	
 protected:
@@ -41,6 +52,8 @@ protected:
 private:
 	UPROPERTY()
 	TObjectPtr<AAdventurePlayerState> AdventurePlayerState;
+
+	bool ChangePlayCharacterIfPossible();
 
 
 public:

@@ -322,11 +322,11 @@ void UAdventureFunctionLibrary::GetLiveActorWithinRadius(const UObject* WorldCon
 
 UCharacterInfoWidgetController* UAdventureFunctionLibrary::GetCharacterInfoWidgetController(const UObject* WorldContextObject)
 {
-	if (const APlayerController* PlayerController = WorldContextObject->GetWorld()->GetFirstPlayerController())
+	if (APlayerController* PlayerController = WorldContextObject->GetWorld()->GetFirstPlayerController())
 	{
 		if (AAdventureInGameHUD* AdventureInGameHUD = Cast<AAdventureInGameHUD>(PlayerController->GetHUD()))
 		{
-			return AdventureInGameHUD->GetCharacterInfoWidgetController(PlayerController->GetPlayerState<APlayerState>());
+			return AdventureInGameHUD->GetCharacterInfoWidgetController(PlayerController->GetPlayerState<APlayerState>(), PlayerController);
 		}
 	}
 
