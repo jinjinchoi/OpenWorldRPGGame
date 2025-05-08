@@ -44,7 +44,12 @@ TArray<FPartyCharacterInfo> UCharacterInfoWidgetController::GetOwningCharactersI
 		{
 			return DataA.PartyIndex < DataB.PartyIndex;
 		}
-
+		
+		if (DataA.bIsPartyMember != DataB.bIsPartyMember)
+		{
+			return DataA.bIsPartyMember;
+		}
+		
 		return DataA.CharacterLevel > DataB.CharacterLevel;
 	});
 

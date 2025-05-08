@@ -3,6 +3,7 @@
 
 #include "GameManager/ControllableCharacterManager.h"
 
+#include "DebugHelper.h"
 #include "Engine/AssetManager.h"
 #include "GameFramework/Character.h"
 
@@ -167,6 +168,7 @@ void UControllableCharacterManager::BroadcastPartyCharacterInfo()
 {
 	for (const TPair<int, FPartyCharacterInfo>& CharacterInfo : PartyCharacterInfo)
 	{
+
 		bIsSuccessBoardCast = OnPartyCharacterChangedDelegate.ExecuteIfBound(CharacterInfo.Value.ClassTag, CharacterInfo.Key);
 	}
 }
