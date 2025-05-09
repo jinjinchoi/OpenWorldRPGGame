@@ -100,6 +100,17 @@ public:
 	FGameplayAttributeData MaxStamina; /* 최대 기력 */
 	ATTRIBUTE_ACCESSORS(UAdventureAttributeSet, MaxStamina);
 
+	
+	/** 레벨 시스템 **/
+	UPROPERTY(BlueprintReadOnly, Category="Experience")
+	FGameplayAttributeData CharacterLevel;
+	ATTRIBUTE_ACCESSORS(UAdventureAttributeSet, CharacterLevel);
+
+	UPROPERTY(BlueprintReadOnly, Category="Experience")
+	FGameplayAttributeData XP;
+	ATTRIBUTE_ACCESSORS(UAdventureAttributeSet, XP);
+	
+
 	/** 무기 공격력 **/
 	UPROPERTY(BlueprintReadOnly, Category="Equipment Attribute")
 	FGameplayAttributeData SwordAttackPower; /* 무기 공격력 */

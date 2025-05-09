@@ -93,6 +93,7 @@ void UAdventureChangeCharacterAbility::SpawnNewCharacterAndRemoveOldCharacter(co
 					SpawnedCharacter->CharacterLoadGameplayEffect = CharacterLoadGameplayEffect;
 					SpawnedCharacter->CharacterVitalGameplayEffect = CharacterVitalGameplayEffect;
 					SpawnedCharacter->CharacterRegenGameplayEffect = CharacterRegenGameplayEffect;
+					SpawnedCharacter->ExperienceGameplayEffect = ExperienceGameplayEffect;
 					SpawnedCharacter->PreviousCharacterInfo = CachedPartyInfo;
 					
 					// 어빌리티 부여하고 레벨 설정

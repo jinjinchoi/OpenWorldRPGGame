@@ -64,6 +64,7 @@ public:
 	TSubclassOf<UGameplayEffect> CharacterLoadGameplayEffect;
 	TSubclassOf<UGameplayEffect> CharacterVitalGameplayEffect;
 	TSubclassOf<UGameplayEffect> CharacterRegenGameplayEffect;
+	TSubclassOf<UGameplayEffect> ExperienceGameplayEffect;
 
 	UPROPERTY(EditDefaultsOnly, Category="Gameplay Effect")
 	TSubclassOf<UGameplayEffect> SwordGameplayEffect;

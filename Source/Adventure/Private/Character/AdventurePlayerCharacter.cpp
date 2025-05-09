@@ -143,12 +143,16 @@ void AAdventurePlayerCharacter::PossessedBy(AController* NewController)
 		const FGameplayEffectSpecHandle VitalSpecHandle = AbilitySystemComponent->MakeOutgoingSpec(CharacterVitalGameplayEffect, 1.f, ContextHandle);
 		UAdventureFunctionLibrary::InitializeAttributeFromCharacterInfo(PreviousCharacterInfo, VitalSpecHandle, AbilitySystemComponent);
 
+		const FGameplayEffectSpecHandle ExperienceHandle = AbilitySystemComponent->MakeOutgoingSpec(ExperienceGameplayEffect, 1.f, ContextHandle);
+		UAdventureFunctionLibrary::InitializeAttributeFromCharacterInfo(PreviousCharacterInfo, ExperienceHandle, AbilitySystemComponent);
+
 		const FGameplayEffectSpecHandle RegenSpecHandle = AbilitySystemComponent->MakeOutgoingSpec(CharacterRegenGameplayEffect, 1.f, ContextHandle);
 		AbilitySystemComponent->ApplyGameplayEffectSpecToSelf(*RegenSpecHandle.Data.Get());
 		
 		CharacterLoadGameplayEffect = nullptr;
 		CharacterVitalGameplayEffect = nullptr;
-		CharacterRegenGameplayEffect= nullptr;
+		CharacterRegenGameplayEffect = nullptr;
+		ExperienceGameplayEffect = nullptr;
 		
 		// 무기 Effect 적용
 		ApplyEquipmentEffect(PreviousCharacterInfo.WeaponTag);

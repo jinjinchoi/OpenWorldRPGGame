@@ -62,8 +62,6 @@ void UOverlayWidgetController::BindCallbacksToDependencies()
 	Cast<AAdventurePlayerState>(PlayerState)->GetControllableCharacterManager()->OnPartyCharacterChangedDelegate.
 	BindLambda([this](const FGameplayTag& ClassTag , int32 PartyIndex)
 	{
-		// TODO: 어떤 정보가 브로드 캐스트 되는지 확인 필요
-		
 		OnPartyCharacterChangedDelegate.Broadcast(ClassTag, PartyIndex);
 	});
 	

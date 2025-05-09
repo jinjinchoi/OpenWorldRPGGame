@@ -67,6 +67,8 @@ void UAdventureFunctionLibrary::InitializeAttributeFromCharacterInfo(const FPart
 	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, AdventureGameplayTags::Attribute_Player_MaxHealth, InCharacterInfo.MaxHealth);
 	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, AdventureGameplayTags::Attribute_Player_CurrentStamina, InCharacterInfo.CurrentStamina);
 	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, AdventureGameplayTags::Attribute_Player_MaxStamina, InCharacterInfo.MaxStamina);
+	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, AdventureGameplayTags::Attribute_Player_CharacterLevel, InCharacterInfo.CharacterLevel);
+	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, AdventureGameplayTags::Attribute_Player_XP, InCharacterInfo.CharacterXP);
 	
 	ASC->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get());
 }
@@ -86,8 +88,8 @@ FPartyCharacterInfo UAdventureFunctionLibrary::MakePartyCharacterInfo(const AAdv
 	
 	if (const UAdventureAttributeSet* AdventureAttributeSet = Cast<UAdventureAttributeSet>(PlayerCharacter->GetAttributeSet()))
 	{
-		CharacterInfo.CharacterLevel = 1.f; // TODO: Level System 구현하면 수정해야함.
-		CharacterInfo.CharacterXP = 0.f; // TODO: Level System 구현하면 수정해야함.
+		CharacterInfo.CharacterLevel = AdventureAttributeSet->GetCharacterLevel();
+		CharacterInfo.CharacterXP = AdventureAttributeSet->GetXP();
 		CharacterInfo.AttackPower = AdventureAttributeSet->GetAttackPower();
 		CharacterInfo.CriticalChance = AdventureAttributeSet->GetCriticalChance();
 		CharacterInfo.CriticalMagnitude = AdventureAttributeSet->GetCriticalMagnitude();

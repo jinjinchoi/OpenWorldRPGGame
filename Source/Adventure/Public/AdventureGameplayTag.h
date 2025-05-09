@@ -84,6 +84,8 @@ namespace AdventureGameplayTags
 	ADVENTURE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Attribute_Player_MaxStamina);
 	ADVENTURE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Attribute_Player_SwordAttackPower);
 	ADVENTURE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Attribute_Player_ShieldDefensePower);
+	ADVENTURE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Attribute_Player_CharacterLevel);
+	ADVENTURE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Attribute_Player_XP);
 	
 	
 	/** Damage Type Tag **/

@@ -81,6 +81,8 @@ namespace AdventureGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(Attribute_Player_MaxStamina, "Attribute.Player.MaxStamina")
 	UE_DEFINE_GAMEPLAY_TAG(Attribute_Player_SwordAttackPower, "Attribute.Player.SwordAttackPower")
 	UE_DEFINE_GAMEPLAY_TAG(Attribute_Player_ShieldDefensePower, "Attribute.Player.ShieldDefensePower")
+	UE_DEFINE_GAMEPLAY_TAG(Attribute_Player_CharacterLevel, "Attribute.Player.CharacterLevel")
+	UE_DEFINE_GAMEPLAY_TAG(Attribute_Player_XP, "Attribute.Player.XP")
 	
 	
 	/** Damage Type Tag **/

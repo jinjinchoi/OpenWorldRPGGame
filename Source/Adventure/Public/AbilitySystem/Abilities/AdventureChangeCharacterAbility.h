@@ -32,6 +32,9 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, Category="LoadData")
 	TSubclassOf<UGameplayEffect> CharacterRegenGameplayEffect;
+
+	UPROPERTY(EditDefaultsOnly, Category="LoadData")
+	TSubclassOf<UGameplayEffect> ExperienceGameplayEffect;
 	
 	UFUNCTION(BlueprintCallable, Category="Character Management")
 	void OnCharacterChangeAbilityActivated();
