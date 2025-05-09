@@ -204,3 +204,42 @@ TArray<FItemSlot> UInventoryWidgetController::GetEatableItemSlot() const
 	return TArray<FItemSlot>();
 }
 
+void UInventoryWidgetController::ApplyEatableItem(const FGameplayTag& ItemTag, const FGameplayTag& CharacterTagToApply)
+{
+	const FItemInfoParams EatableItemIParams = ItemInfo->FindItemInfo(ItemTag);
+	
+	if (CharacterTagToApply.MatchesTagExact(GetCurrentCharacterTag()))
+	{
+		const AAdventurePlayerCharacter* PlayerCharacter = Cast<AAdventurePlayerCharacter>(PlayerController->GetPawn());
+		check(PlayerCharacter);
+		PlayerCharacter->ApplyRecoveryEffect(EatableItemIParams.RecoveryAmount);
+	}
+	else
+	{
+		// TODO : 플레이 중이 아닌 캐릭터도 효과 적용해야함.
+	}
+
+	
+}
+
+void UInventoryWidgetController::ConsumeEatableItem(const int32 SlotIndex)
+{
+	if (AAdventurePlayerState* AdventurePlayerState = Cast<AAdventurePlayerState>(PlayerState))
+	{
+		UAdventureInventory* Inventory = AdventurePlayerState->GetPickupItemInventory();
+		check(Inventory);
+
+		TArray<FItemSlot>& Eatables = Inventory->AllItems.Eatables;
+		if (!Eatables.IsValidIndex(SlotIndex)) return;
+
+		FItemSlot& EatableItem = Eatables[SlotIndex];
+		EatableItem.Quantity -= 1;
+
+		if (EatableItem.Quantity <= 0)
+		{
+			Eatables.RemoveAt(SlotIndex);
+		}
+		
+	}
+}
+

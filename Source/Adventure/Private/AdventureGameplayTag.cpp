@@ -83,6 +83,7 @@ namespace AdventureGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(Attribute_Player_ShieldDefensePower, "Attribute.Player.ShieldDefensePower")
 	UE_DEFINE_GAMEPLAY_TAG(Attribute_Player_CharacterLevel, "Attribute.Player.CharacterLevel")
 	UE_DEFINE_GAMEPLAY_TAG(Attribute_Player_XP, "Attribute.Player.XP")
+	UE_DEFINE_GAMEPLAY_TAG(Attribute_Player_Recovery, "Attribute.Player.Recovery")
 	
 	
 	/** Damage Type Tag **/

@@ -42,6 +42,12 @@ public:
 	UFUNCTION(BlueprintCallable)
 	TArray<FItemSlot> GetEatableItemSlot() const;
 
+	UFUNCTION(BlueprintCallable)
+	void ApplyEatableItem(const FGameplayTag& ItemTag, const FGameplayTag& CharacterTagToApply);
+	
+	UFUNCTION(BlueprintCallable)
+	void ConsumeEatableItem(const int32 SlotIndex);
+
 	UPROPERTY(BlueprintAssignable, BlueprintCallable)
 	FOnSlotButtonClicked SlotButtonClickedDelegate;
 
@@ -51,6 +57,7 @@ public:
 protected:
 	UPROPERTY(EditDefaultsOnly)
 	TObjectPtr<UDataAsset_ItemInfo> ItemInfo;
+
 
 private:
 	void UpdateSlotStatus(const FItemSlot& InSlotToEquip, const FGameplayTag& InCharacterTag) const;

@@ -216,6 +216,22 @@ void AAdventurePlayerCharacter::AddCharacterInfoToManager() const
 	}
 }
 
+void AAdventurePlayerCharacter::ApplyRecoveryEffect(const float RecoveryAmount) const
+{
+	check(RecoveryEffect);
+
+	if (RecoveryAmount <= 0) return;
+
+	FGameplayEffectContextHandle ContextHandle = AbilitySystemComponent->MakeEffectContext();
+	ContextHandle.AddSourceObject(this);
+
+	const FGameplayEffectSpecHandle SpecHandle = AbilitySystemComponent->MakeOutgoingSpec(RecoveryEffect, 1.f, ContextHandle);
+	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, AdventureGameplayTags::Attribute_Player_Recovery, RecoveryAmount);
+
+	AbilitySystemComponent->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get());
+	
+}
+
 void AAdventurePlayerCharacter::OnHitReactTagChanged(const FGameplayTag CallbackTag, int32 NewCount)
 {
 	Super::OnHitReactTagChanged(CallbackTag, NewCount);

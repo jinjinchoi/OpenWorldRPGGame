@@ -51,6 +51,7 @@ public:
 	void ApplyEquipmentEffect(const FGameplayTag& EquipmentTag);
 	void RemoveEquipmentEffect(const bool bIsSwordEffect) const;
 	void AddCharacterInfoToManager() const;
+	void ApplyRecoveryEffect(const float RecoveryAmount) const;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Character Data")
 	int32 CurrentCharacterIndex = 1;
@@ -65,6 +66,9 @@ public:
 	TSubclassOf<UGameplayEffect> CharacterVitalGameplayEffect;
 	TSubclassOf<UGameplayEffect> CharacterRegenGameplayEffect;
 	TSubclassOf<UGameplayEffect> ExperienceGameplayEffect;
+	
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<UGameplayEffect> RecoveryEffect;
 
 	UPROPERTY(EditDefaultsOnly, Category="Gameplay Effect")
 	TSubclassOf<UGameplayEffect> SwordGameplayEffect;

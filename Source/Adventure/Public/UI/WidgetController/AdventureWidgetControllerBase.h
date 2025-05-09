@@ -53,6 +53,9 @@ public:
 	void SetPlayerController(APlayerController* InPlayerController);
 	void SetCurrentCharacterTag(const FGameplayTag& InCharacterTag);
 
+	UFUNCTION(BlueprintPure)
+	FGameplayTag GetCurrentCharacterTag();
+
 	UFUNCTION(BlueprintCallable)
 	virtual void BroadCastInitialValue();
 	

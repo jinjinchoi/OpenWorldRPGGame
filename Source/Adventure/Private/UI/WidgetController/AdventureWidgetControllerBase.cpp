@@ -3,6 +3,7 @@
 
 #include "UI/WidgetController/AdventureWidgetControllerBase.h"
 
+#include "Character/AdventurePlayerCharacter.h"
 #include "Controller/AdventurePlayerController.h"
 #include "Player/AdventurePlayerState.h"
 
@@ -28,6 +29,20 @@ void UAdventureWidgetControllerBase::SetPlayerController(APlayerController* InPl
 void UAdventureWidgetControllerBase::SetCurrentCharacterTag(const FGameplayTag& InCharacterTag)
 {
 	CurrentCharacterTag = InCharacterTag;
+}
+
+FGameplayTag UAdventureWidgetControllerBase::GetCurrentCharacterTag()
+{
+	check(PlayerController);
+
+	if (!CurrentCharacterTag.IsValid())
+	{
+		const AAdventurePlayerCharacter* AdventurePlayerCharacter = Cast<AAdventurePlayerCharacter>(PlayerController->GetPawn());
+		check(AdventurePlayerCharacter);
+		CurrentCharacterTag = AdventurePlayerCharacter->GetCharacterClassTag();
+	}
+
+	return CurrentCharacterTag;
 }
 
 void UAdventureWidgetControllerBase::BroadCastInitialValue()
