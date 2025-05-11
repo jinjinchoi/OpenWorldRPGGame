@@ -217,11 +217,11 @@ void AAdventurePlayerCharacter::BindGameplayTagChanged()
 
 void AAdventurePlayerCharacter::AddCharacterInfoToManager() const
 {
-	const FPartyCharacterInfo CharacterInfo = UAdventureFunctionLibrary::MakePartyCharacterInfo(this, false, true);
+	const FPartyCharacterInfo CharacterInfo = UAdventureFunctionLibrary::MakePartyCharacterInfo(this);
 	
 	if (AAdventurePlayerState* AdventurePlayerState = Cast<AAdventurePlayerState>(GetPlayerState()))
 	{
-		AdventurePlayerState->GetControllableCharacterManager()->AddOrUpdatePartyCharactersInfo(CurrentCharacterIndex, CharacterInfo);
+		AdventurePlayerState->GetControllableCharacterManager()->AddOrUpdateOwningCharactersInfo(CharacterInfo);
 	}
 }
 

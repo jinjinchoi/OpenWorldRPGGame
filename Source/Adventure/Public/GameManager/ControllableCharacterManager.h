@@ -19,18 +19,15 @@ class ADVENTURE_API UControllableCharacterManager : public UObject
 
 public:
 	void InitializeCharacterManager();
-	
 	void AddOrUpdateOwningCharactersInfo(const FPartyCharacterInfo& NewCharacterInfo);
-	
-	/* 파티 멤버에 추가하는 함수. OwingCharacters 배열도 업데이트 진행하므로 따로 업데이트 할 필요 없음. */
-	void AddOrUpdatePartyCharactersInfo(const int32 PartyIndex, const FPartyCharacterInfo& NewCharacterInfo);
+	void AddOrUpdatePartyCharactersInfo(const int32 IndexToAdd, const FPartyCharacterInfo& NewCharacterInfo);
 
     /* 파티 멤버에서 제외하는 함수 */
 	void RemovePartyCharactersInfoByPartyIndex(const int32 PartyIndex);
 	void RemovePartyCharactersInfoByCharacterTag(const FGameplayTag& InCharacterTag);
 
 	FPartyCharacterInfo* FindCharacterInfoInOwningCharacters(const FGameplayTag& InClassTag);
-	FPartyCharacterInfo* FindCharacterInfoInPartyCharacterInfo(const int32 InCharacterIndex);
+	FPartyCharacterInfo* FindCharacterInfoByPartyIndex(const int32 InCharacterIndex);
 	void GetCharacterClassByTag(const FGameplayTag& InClassTag, const TFunction<void(TSubclassOf<ACharacter>)>& Callback);
 
 	FOnPartyCharacterChanged OnPartyCharacterChangedDelegate;
@@ -46,18 +43,16 @@ protected:
 	TArray<FPartyCharacterInfo> OwningCharacters;
 
 	UPROPERTY()
-	TMap<int32, FPartyCharacterInfo> PartyCharacterInfo; // TODO:: 클린코드 진행때 TMap<int32, FGameplayTag> 구조 바꿔서 클래스 태그로 관리하게 바꿔야함
+	TMap<int32 /* Party index */, FGameplayTag /* Character Tag */> PartyCharacterInfo;
 
 
 private:
 	void BroadcastPartyCharacterInfo();
 	FPartyCharacterInfo GetPartyMemberIfInParty(const int32 PartyIndex);
 	void RemovePartyMember(FPartyCharacterInfo& CharacterInfoToRemove);
-	
-	bool bIsSuccessBoardCast = false;
 
 public:
 	FORCEINLINE TArray<FPartyCharacterInfo> GetOwningCharactersInfo() { return OwningCharacters; }
-	FORCEINLINE TMap<int32, FPartyCharacterInfo> GetPartyMemberInfo() const { return PartyCharacterInfo; }
+	FORCEINLINE TMap<int32, FGameplayTag> GetPartyMemberInfo() const { return PartyCharacterInfo; }
 	
 };

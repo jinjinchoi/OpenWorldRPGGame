@@ -11,6 +11,7 @@
 #include "AdventureType/AdventureAbilityTypes.h"
 #include "AdventureType/AdventureStructTypes.h"
 #include "Character/AdventurePlayerCharacter.h"
+#include "GameManager/ControllableCharacterManager.h"
 #include "Interface/CombatInterface.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Player/AdventurePlayerState.h"
@@ -56,14 +57,15 @@ void UAdventureFunctionLibrary::RemoveGameplayTagToActorIfFound(AActor* InActor,
 
 
 
-FPartyCharacterInfo UAdventureFunctionLibrary::MakePartyCharacterInfo(const AAdventurePlayerCharacter* PlayerCharacter, const bool InIsNotSpawned, const bool InIsPartyMember)
+FPartyCharacterInfo UAdventureFunctionLibrary::MakePartyCharacterInfo(const AAdventurePlayerCharacter* PlayerCharacter)
 {
 	check(PlayerCharacter);
 	
-	FPartyCharacterInfo CharacterInfo = FPartyCharacterInfo();
-	CharacterInfo.bIsPartyMember = InIsPartyMember;
-	CharacterInfo.ClassTag = PlayerCharacter->GetCharacterClassTag();
-	CharacterInfo.PartyIndex = PlayerCharacter->CurrentCharacterIndex;
+	AAdventurePlayerState* InPlayerState = PlayerCharacter->GetPlayerState<AAdventurePlayerState>();
+	check(InPlayerState);
+
+	FPartyCharacterInfo CharacterInfo = *InPlayerState->GetControllableCharacterManager()->FindCharacterInfoInOwningCharacters(PlayerCharacter->GetCharacterClassTag());
+	
 	CharacterInfo.WeaponTag = PlayerCharacter->EquippedSwordTag;
 	CharacterInfo.ShieldTag = PlayerCharacter->EquippedShieldTag;
 	

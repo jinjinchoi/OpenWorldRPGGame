@@ -3,8 +3,8 @@
 
 #include "UI/WidgetController/CharacterInfoWidgetController.h"
 
+#include "DebugHelper.h"
 #include "Character/AdventurePlayerCharacter.h"
-#include "Controller/AdventurePlayerController.h"
 #include "GameManager/ControllableCharacterManager.h"
 #include "Player/AdventurePlayerState.h"
 
@@ -56,9 +56,10 @@ TArray<FPartyCharacterInfo> UCharacterInfoWidgetController::GetOwningCharactersI
 	return PartyCharacterInfos;
 }
 
-TMap<int32, FPartyCharacterInfo> UCharacterInfoWidgetController::GetPartyMemberInfo()
+TMap<int32, FGameplayTag> UCharacterInfoWidgetController::GetPartyMemberInfo()
 {
 	return GetAdventurePlayerState()->GetControllableCharacterManager()->GetPartyMemberInfo();
+	
 }
 
 bool UCharacterInfoWidgetController::AddToPartyMember(const FGameplayTag& CharacterTagToAdd, const int32 PartyIndexToAdd)
@@ -76,43 +77,35 @@ bool UCharacterInfoWidgetController::AddToPartyMember(const FGameplayTag& Charac
 	
 	GetAdventurePlayerState()->GetControllableCharacterManager()->AddOrUpdatePartyCharactersInfo(PartyIndexToAdd, PartyCharacterInfoToAdd);
 
-	TMap<int32, FPartyCharacterInfo> CurrentPartyMember = GetPartyMemberInfo();
+	TMap<int32, FGameplayTag> CurrentPartyMember = GetPartyMemberInfo();
 	IPlayerInterface* PlayerCharacterInterface = CastChecked<IPlayerInterface>(PlayerController->GetPawn());
-	if (CurrentPartyMember.Num() == 1)
-	{
-		PlayerCharacterInterface->ForceCharacterChange(PartyIndexToAdd);
-	}
-	else if (PlayerCharacterInterface->GetOwningCharacterTag().MatchesTagExact(CharacterTagToAdd))
+	
+	if (PlayerCharacterInterface->GetOwningCharacterTag().MatchesTagExact(CharacterTagToAdd))
 	{
 		PlayerCharacterInterface->ChangeCharacterPartyIndex(PartyIndexToAdd);
-		// TODO: 블루프린트에서 위젯 수정해야함
+	}
+	else if (CurrentPartyMember.Num() == 1)
+	{
+		PlayerCharacterInterface->ForceCharacterChange(PartyIndexToAdd);
 	}
 
 	return true;
 }
 
-bool UCharacterInfoWidgetController::RemoveFromPartyMemberByPartyIndex(const int32 PartyIndexToRemove)
-{
-	if (ChangePlayCharacterIfPossible())
-	{
-		GetAdventurePlayerState()->GetControllableCharacterManager()->RemovePartyCharactersInfoByPartyIndex(PartyIndexToRemove);
-		return true;
-	}
-	
-	return false;
-	
-	
-}
 
 bool UCharacterInfoWidgetController::RemoveFromPartyMemberByClassTag(const FGameplayTag& CharacterTagToRemove)
 {
-	if (ChangePlayCharacterIfPossible())
-	{
-		GetAdventurePlayerState()->GetControllableCharacterManager()->RemovePartyCharactersInfoByCharacterTag(CharacterTagToRemove);
-		return true;
-	}
+	if (!CanChangeCharacter()) return false;
+	
+	GetAdventurePlayerState()->GetControllableCharacterManager()->RemovePartyCharactersInfoByCharacterTag(CharacterTagToRemove);
 
-	return false;
+	if (CharacterTagToRemove == GetCurrentCharacterTag())
+	{
+		ChangeCharacterIfCurrentPlayCharacterChanged();
+	}
+	
+	return true;
+	
 }
 
 FPartyCharacterInfo UCharacterInfoWidgetController::GetOwningCharacterInfoByClassTag(const FGameplayTag& ClassTag)
@@ -120,14 +113,21 @@ FPartyCharacterInfo UCharacterInfoWidgetController::GetOwningCharacterInfoByClas
 	return *GetAdventurePlayerState()->GetControllableCharacterManager()->FindCharacterInfoInOwningCharacters(ClassTag);
 }
 
-bool UCharacterInfoWidgetController::ChangePlayCharacterIfPossible()
+bool UCharacterInfoWidgetController::CanChangeCharacter()
 {
-	TMap<int32, FPartyCharacterInfo> CurrentPartyMember = GetPartyMemberInfo();
+	TMap<int32, FGameplayTag> CurrentPartyMember = GetPartyMemberInfo();
 	if (CurrentPartyMember.Num() <= 1)
 	{
 		return false;
 	}
-	
+
+	return true;
+}
+
+void UCharacterInfoWidgetController::ChangeCharacterIfCurrentPlayCharacterChanged()
+{
+	TMap<int32, FGameplayTag> CurrentPartyMember = GetPartyMemberInfo();
+		
 	IPlayerInterface* PlayerCharacterInterface = CastChecked<IPlayerInterface>(PlayerController->GetPawn());
 
 	TArray<int32> IndexCandidates = {1, 2, 3};
@@ -153,8 +153,6 @@ bool UCharacterInfoWidgetController::ChangePlayCharacterIfPossible()
 			break;
 		}
 	}
-
-	return true;
 }
 
 AAdventurePlayerState* UCharacterInfoWidgetController::GetAdventurePlayerState()

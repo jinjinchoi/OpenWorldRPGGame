@@ -41,7 +41,7 @@ void UAdventureChangeCharacterAbility::SpawnNewCharacterAndRemoveOldCharacter(co
 {
 	// 파티 캐릭터 목록에서 캐릭터 인포를 가져옴
 	CachedCharacterIndex = InCharacterIndex;
-	if (const FPartyCharacterInfo* FoundCharacterInfo = CharacterManager->FindCharacterInfoInPartyCharacterInfo(InCharacterIndex))
+	if (const FPartyCharacterInfo* FoundCharacterInfo = CharacterManager->FindCharacterInfoByPartyIndex(InCharacterIndex))
 	{
 		CachedPartyInfo = *FoundCharacterInfo;
 	}
@@ -60,9 +60,10 @@ void UAdventureChangeCharacterAbility::SpawnNewCharacterAndRemoveOldCharacter(co
 	CurrentControlCharacter->DisableInput(nullptr);
 
 	// 현재 사용중인 캐릭터 정보 저장
-	const int32 CurrentCharacterIndex = CurrentControlCharacter->CurrentCharacterIndex;
-	const FPartyCharacterInfo CurrentCharacterInfo = UAdventureFunctionLibrary::MakePartyCharacterInfo(CurrentControlCharacter,false, true);
-	CharacterManager->AddOrUpdatePartyCharactersInfo(CurrentCharacterIndex, CurrentCharacterInfo);
+	const FPartyCharacterInfo CurrentCharacterInfo = UAdventureFunctionLibrary::MakePartyCharacterInfo(CurrentControlCharacter);
+	CharacterManager->AddOrUpdateOwningCharactersInfo(CurrentCharacterInfo);
+	// TODO :: 파티 정보에도 업데이트 해야하는지 확인할 필요 있음
+
 
 	// Soft Object Load 후 작업 시작
 	CharacterManager->GetCharacterClassByTag(CachedPartyInfo.ClassTag, [this](TSubclassOf<ACharacter> LoadedClass)

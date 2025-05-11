@@ -12,6 +12,10 @@ void UControllableCharacterManager::InitializeCharacterManager()
 	for (const FPartyCharacterInfo& DefaultCharacterInfo : DefaultCharacterInfos)
 	{
 		AddOrUpdateOwningCharactersInfo(DefaultCharacterInfo);
+		if (DefaultCharacterInfo.bIsPartyMember)
+		{
+			AddOrUpdatePartyCharactersInfo(DefaultCharacterInfo.PartyIndex, DefaultCharacterInfo);
+		}
 	}
 }
 
@@ -30,9 +34,9 @@ void UControllableCharacterManager::AddOrUpdateOwningCharactersInfo(const FParty
 	
 }
 
-void UControllableCharacterManager::AddOrUpdatePartyCharactersInfo(const int32 PartyIndex, const FPartyCharacterInfo& NewCharacterInfo)
+void UControllableCharacterManager::AddOrUpdatePartyCharactersInfo(const int32 IndexToAdd, const FPartyCharacterInfo& NewCharacterInfo)
 {
-	FPartyCharacterInfo* ExistingInfoAtIndex = PartyCharacterInfo.Find(PartyIndex);
+	FPartyCharacterInfo* ExistingInfoAtIndex = FindCharacterInfoByPartyIndex(IndexToAdd);
 	FPartyCharacterInfo* ExistingInfoOfNewCharacter = FindCharacterInfoInOwningCharacters(NewCharacterInfo.ClassTag);
 
 	const bool bHasCharacterAtIndex = (ExistingInfoAtIndex != nullptr);
@@ -48,15 +52,15 @@ void UControllableCharacterManager::AddOrUpdatePartyCharactersInfo(const int32 P
 
 			// 기존 캐릭터를 새 캐릭터가 있던 인덱스로 이동
 			OldCharacterInfo.PartyIndex = IndexOfNewCharacter;
-			PartyCharacterInfo.Add(IndexOfNewCharacter, OldCharacterInfo);
+			PartyCharacterInfo.Add(IndexOfNewCharacter, OldCharacterInfo.ClassTag);
 
 			// 기존 위치에서 새 캐릭터 제거
 			RemovePartyCharactersInfoByCharacterTag(NewCharacterInfo.ClassTag);
 
 			// 새 캐릭터 복사본 생성 후 인덱스 설정해서 추가
 			FPartyCharacterInfo NewCharacterCopy = NewCharacterInfo;
-			NewCharacterCopy.PartyIndex = PartyIndex;
-			PartyCharacterInfo.Add(PartyIndex, NewCharacterCopy);
+			NewCharacterCopy.PartyIndex = IndexToAdd;
+			PartyCharacterInfo.Add(IndexToAdd, NewCharacterCopy.ClassTag);
 			AddOrUpdateOwningCharactersInfo(OldCharacterInfo);
 
 		}
@@ -67,8 +71,8 @@ void UControllableCharacterManager::AddOrUpdatePartyCharactersInfo(const int32 P
 			
 			// 새 캐릭터 복사본 생성 후 인덱스 설정해서 추가
 			FPartyCharacterInfo NewCharacterCopy = NewCharacterInfo;
-			NewCharacterCopy.PartyIndex = PartyIndex;
-			PartyCharacterInfo.Add(PartyIndex, NewCharacterCopy);
+			NewCharacterCopy.PartyIndex = IndexToAdd;
+			PartyCharacterInfo.Add(IndexToAdd, NewCharacterCopy.ClassTag);
 			AddOrUpdateOwningCharactersInfo(*ExistingInfoAtIndex);
 
 		}
@@ -79,10 +83,8 @@ void UControllableCharacterManager::AddOrUpdatePartyCharactersInfo(const int32 P
 		{
 			RemovePartyCharactersInfoByCharacterTag(NewCharacterInfo.ClassTag);
 		}
-
-		FPartyCharacterInfo NewCharacterCopy = NewCharacterInfo;
-		NewCharacterCopy.PartyIndex = PartyIndex;
-		PartyCharacterInfo.Add(PartyIndex, NewCharacterCopy);
+		
+		PartyCharacterInfo.Add(IndexToAdd, NewCharacterInfo.ClassTag);
 
 	}
 	AddOrUpdateOwningCharactersInfo(NewCharacterInfo);
@@ -98,13 +100,11 @@ void UControllableCharacterManager::RemovePartyCharactersInfoByPartyIndex(const 
 
 void UControllableCharacterManager::RemovePartyCharactersInfoByCharacterTag(const FGameplayTag& InCharacterTag)
 {
-	for (TPair<int, FPartyCharacterInfo>& PartyInfo : PartyCharacterInfo)
+	for (TPair<int, FGameplayTag>& PartyInfo : PartyCharacterInfo)
 	{
-		if (!PartyInfo.Value.bIsPartyMember) continue;
-
-		if (PartyInfo.Value.ClassTag.MatchesTagExact(InCharacterTag))
+		if (PartyInfo.Value.MatchesTagExact(InCharacterTag))
 		{
-			RemovePartyMember(PartyInfo.Value);
+			RemovePartyMember(*FindCharacterInfoInOwningCharacters(InCharacterTag));
 			return;
 		}
 	}
@@ -139,9 +139,15 @@ FPartyCharacterInfo* UControllableCharacterManager::FindCharacterInfoInOwningCha
 	return nullptr;
 }
 
-FPartyCharacterInfo* UControllableCharacterManager::FindCharacterInfoInPartyCharacterInfo(const int32 InCharacterIndex)
+FPartyCharacterInfo* UControllableCharacterManager::FindCharacterInfoByPartyIndex(const int32 InCharacterIndex)
 {
-	return PartyCharacterInfo.Find(InCharacterIndex);
+	FGameplayTag* FoundCharacterTag = PartyCharacterInfo.Find(InCharacterIndex);
+	if (FoundCharacterTag)
+	{
+		return FindCharacterInfoInOwningCharacters(*FoundCharacterTag);
+	}
+	
+	return nullptr;
 }
 
 void UControllableCharacterManager::GetCharacterClassByTag(const FGameplayTag& InClassTag, const TFunction<void(TSubclassOf<ACharacter>)>& Callback)
@@ -174,10 +180,9 @@ void UControllableCharacterManager::GetCharacterClassByTag(const FGameplayTag& I
 
 void UControllableCharacterManager::BroadcastPartyCharacterInfo()
 {
-	for (const TPair<int, FPartyCharacterInfo>& CharacterInfo : PartyCharacterInfo)
+	for (const TPair<int, FGameplayTag>& CharacterInfo : PartyCharacterInfo)
 	{
-
-		bIsSuccessBoardCast = OnPartyCharacterChangedDelegate.ExecuteIfBound(CharacterInfo.Value.ClassTag, CharacterInfo.Key);
+		OnPartyCharacterChangedDelegate.ExecuteIfBound(CharacterInfo.Value, CharacterInfo.Key);
 	}
 }
 

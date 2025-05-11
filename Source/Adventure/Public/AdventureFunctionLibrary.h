@@ -8,6 +8,7 @@
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "AdventureFunctionLibrary.generated.h"
 
+class AAdventurePlayerState;
 struct FScalableFloat;
 class AAdventurePlayerCharacter;
 class UInventoryWidgetController;
@@ -39,7 +40,7 @@ public:
 	static void RemoveGameplayTagToActorIfFound(AActor* InActor, const FGameplayTag TagToRemove);
 	
 	/* Gameplay Ability System Setup */
-	static FPartyCharacterInfo MakePartyCharacterInfo(const AAdventurePlayerCharacter* PlayerCharacter, const bool InIsNotSpawned, const bool InIsPartyMember);
+	static FPartyCharacterInfo MakePartyCharacterInfo(const AAdventurePlayerCharacter* PlayerCharacter);
 
 	/** Effect Context **/
 	static bool IsCriticalHit(const FGameplayEffectContextHandle& EffectContextHandle);
