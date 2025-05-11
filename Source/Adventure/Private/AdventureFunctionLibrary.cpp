@@ -54,24 +54,6 @@ void UAdventureFunctionLibrary::RemoveGameplayTagToActorIfFound(AActor* InActor,
 	}
 }
 
-void UAdventureFunctionLibrary::InitializeAttributeFromCharacterInfo(const FPartyCharacterInfo& InCharacterInfo, const FGameplayEffectSpecHandle& SpecHandle, UAbilitySystemComponent* ASC)
-{
-	if (!ASC) return;
-	
-	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, AdventureGameplayTags::Attribute_Player_AttackPower, InCharacterInfo.AttackPower);
-	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, AdventureGameplayTags::Attribute_Player_DefensePower, InCharacterInfo.DefensePower);
-	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, AdventureGameplayTags::Attribute_Player_CriticalChance, InCharacterInfo.CriticalChance);
-	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, AdventureGameplayTags::Attribute_Player_CriticalMagnitude, InCharacterInfo.CriticalMagnitude);
-	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, AdventureGameplayTags::Attribute_Player_CriticalMagnitude, InCharacterInfo.CurrentHealth);
-	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, AdventureGameplayTags::Attribute_Player_CurrentHealth, InCharacterInfo.CurrentHealth);
-	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, AdventureGameplayTags::Attribute_Player_MaxHealth, InCharacterInfo.MaxHealth);
-	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, AdventureGameplayTags::Attribute_Player_CurrentStamina, InCharacterInfo.CurrentStamina);
-	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, AdventureGameplayTags::Attribute_Player_MaxStamina, InCharacterInfo.MaxStamina);
-	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, AdventureGameplayTags::Attribute_Player_CharacterLevel, InCharacterInfo.CharacterLevel);
-	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, AdventureGameplayTags::Attribute_Player_XP, InCharacterInfo.CharacterXP);
-	
-	ASC->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get());
-}
 
 
 FPartyCharacterInfo UAdventureFunctionLibrary::MakePartyCharacterInfo(const AAdventurePlayerCharacter* PlayerCharacter, const bool InIsNotSpawned, const bool InIsPartyMember)
@@ -79,7 +61,6 @@ FPartyCharacterInfo UAdventureFunctionLibrary::MakePartyCharacterInfo(const AAdv
 	check(PlayerCharacter);
 	
 	FPartyCharacterInfo CharacterInfo = FPartyCharacterInfo();
-	CharacterInfo.bIsNotSpawned = InIsNotSpawned;
 	CharacterInfo.bIsPartyMember = InIsPartyMember;
 	CharacterInfo.ClassTag = PlayerCharacter->GetCharacterClassTag();
 	CharacterInfo.PartyIndex = PlayerCharacter->CurrentCharacterIndex;
@@ -90,14 +71,8 @@ FPartyCharacterInfo UAdventureFunctionLibrary::MakePartyCharacterInfo(const AAdv
 	{
 		CharacterInfo.CharacterLevel = AdventureAttributeSet->GetCharacterLevel();
 		CharacterInfo.CharacterXP = AdventureAttributeSet->GetXP();
-		CharacterInfo.AttackPower = AdventureAttributeSet->GetAttackPower();
-		CharacterInfo.CriticalChance = AdventureAttributeSet->GetCriticalChance();
-		CharacterInfo.CriticalMagnitude = AdventureAttributeSet->GetCriticalMagnitude();
-		CharacterInfo.DefensePower = AdventureAttributeSet->GetDefensePower();
 		CharacterInfo.CurrentHealth = AdventureAttributeSet->GetCurrentHealth();
-		CharacterInfo.MaxHealth = AdventureAttributeSet->GetMaxHealth();
 		CharacterInfo.CurrentStamina = AdventureAttributeSet->GetCurrentStamina();
-		CharacterInfo.MaxStamina = AdventureAttributeSet->GetMaxStamina();
 	}
 	
 	if (UAdventureAbilitySystemComponent* AdventureASC = Cast<UAdventureAbilitySystemComponent>(PlayerCharacter->GetAbilitySystemComponent()))
@@ -319,6 +294,11 @@ void UAdventureFunctionLibrary::GetLiveActorWithinRadius(const UObject* WorldCon
 		}
 		
 	}
+}
+
+float UAdventureFunctionLibrary::EvaluateScalableFloatAtLevel(const FScalableFloat& Scalable, const float Level)
+{
+	return Scalable.GetValueAtLevel(Level);
 }
 
 

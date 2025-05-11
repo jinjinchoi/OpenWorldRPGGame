@@ -23,19 +23,6 @@ public:
 	/* End UGameplayAbility Interface */
 
 protected:
-	/* 로드시 사용할 게임플레이 이펙트 */
-	UPROPERTY(EditDefaultsOnly, Category="LoadData")
-	TSubclassOf<UGameplayEffect> CharacterLoadGameplayEffect;
-
-	UPROPERTY(EditDefaultsOnly, Category="LoadData")
-	TSubclassOf<UGameplayEffect> CharacterVitalGameplayEffect;
-
-	UPROPERTY(EditDefaultsOnly, Category="LoadData")
-	TSubclassOf<UGameplayEffect> CharacterRegenGameplayEffect;
-
-	UPROPERTY(EditDefaultsOnly, Category="LoadData")
-	TSubclassOf<UGameplayEffect> ExperienceGameplayEffect;
-	
 	UFUNCTION(BlueprintCallable, Category="Character Management")
 	void OnCharacterChangeAbilityActivated();
 	

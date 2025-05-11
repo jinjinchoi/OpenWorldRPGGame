@@ -37,7 +37,7 @@ public:
 	void GiveToAbilitySystemComponent(UAdventureAbilitySystemComponent* InASC);
 	void GrantStartUpGameplayEffect(UAdventureAbilitySystemComponent* InASC);
 
-	
+
 protected:
 	/* Ability가 주어지면(Given) 실행할 Ability */
 	UPROPERTY(EditDefaultsOnly, Category="StartUpData")
@@ -57,9 +57,6 @@ protected:
 	/* 제일 처음 적용할 게임플레이 이펙트 */
 	UPROPERTY(EditDefaultsOnly, Category="StartUpData")
 	TArray<TSubclassOf<UGameplayEffect>> StartUpGameplayEffects;
-
-	UPROPERTY(EditDefaultsOnly, Category="Loaded")
-	TArray<TSubclassOf<UGameplayEffect>> SetByCallerGameplayEffects;
 
 
 private:

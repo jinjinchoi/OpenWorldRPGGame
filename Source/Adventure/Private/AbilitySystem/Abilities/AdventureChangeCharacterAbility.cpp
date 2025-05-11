@@ -73,35 +73,11 @@ void UAdventureChangeCharacterAbility::SpawnNewCharacterAndRemoveOldCharacter(co
 		
 		if (LoadedClass)
 		{
-			
 			AAdventurePlayerCharacter* SpawnedCharacter = GetWorld()->SpawnActorDeferred<AAdventurePlayerCharacter>(
 				LoadedClass,
 				SpawnTransform
 			);
 			
-			// 소환 된 적 있으면 정보가 있기 때문에 복구 진행
-			if (!CachedPartyInfo.bIsNotSpawned)
-			{
-				check(CharacterLoadGameplayEffect && CharacterVitalGameplayEffect && CharacterRegenGameplayEffect);
-				
-				if (UAdventureAbilitySystemComponent* ASC = SpawnedCharacter->FindComponentByClass<UAdventureAbilitySystemComponent>())
-				{
-					SpawnedCharacter->bIsFirstLoading = false;
-					
-					ASC->InitAbilityActorInfo(SpawnedCharacter, SpawnedCharacter);
-
-					SpawnedCharacter->CharacterLoadGameplayEffect = CharacterLoadGameplayEffect;
-					SpawnedCharacter->CharacterVitalGameplayEffect = CharacterVitalGameplayEffect;
-					SpawnedCharacter->CharacterRegenGameplayEffect = CharacterRegenGameplayEffect;
-					SpawnedCharacter->ExperienceGameplayEffect = ExperienceGameplayEffect;
-					SpawnedCharacter->PreviousCharacterInfo = CachedPartyInfo;
-					
-					// 어빌리티 부여하고 레벨 설정
-					SpawnedCharacter->GetCharacterStartUpData()->GiveToAbilitySystemComponent(ASC);
-					ASC->InitializeAbilityFromCharacterInfo(CachedPartyInfo);
-				}
-			}
-
 			// 소환할 캐릭터 인덱스 설정
 			SpawnedCharacter->CurrentCharacterIndex = CachedCharacterIndex;
 			SpawnedCharacter->SetActorRotation(GetAvatarActorFromActorInfo()->GetActorRotation());

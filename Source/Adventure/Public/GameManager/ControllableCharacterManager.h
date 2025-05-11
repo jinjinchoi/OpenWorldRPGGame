@@ -36,9 +36,11 @@ public:
 	FOnPartyCharacterChanged OnPartyCharacterChangedDelegate;
 
 protected:
-	
 	UPROPERTY(EditDefaultsOnly)
 	TMap<FGameplayTag, TSoftClassPtr<ACharacter>> CharacterClassInfoMap;
+	
+	UPROPERTY(EditDefaultsOnly)
+	TArray<FPartyCharacterInfo> DefaultCharacterInfos;
 	
 	UPROPERTY()
 	TArray<FPartyCharacterInfo> OwningCharacters;
@@ -46,8 +48,6 @@ protected:
 	UPROPERTY()
 	TMap<int32, FPartyCharacterInfo> PartyCharacterInfo; // TODO:: 클린코드 진행때 TMap<int32, FGameplayTag> 구조 바꿔서 클래스 태그로 관리하게 바꿔야함
 
-	UPROPERTY(EditDefaultsOnly)
-	TArray<FPartyCharacterInfo> DefaultCharacterInfos;
 
 private:
 	void BroadcastPartyCharacterInfo();

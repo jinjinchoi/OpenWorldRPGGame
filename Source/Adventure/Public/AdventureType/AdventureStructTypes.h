@@ -4,6 +4,7 @@
 
 
 #include "GameplayTagContainer.h"
+#include "ScalableFloat.h"
 #include "AdventureStructTypes.generated.h"
 
 /**
@@ -57,10 +58,7 @@ USTRUCT(BlueprintType)
 struct FPartyCharacterInfo
 {
 	GENERATED_BODY()
-
-	UPROPERTY()
-	bool bIsNotSpawned = true;
-
+	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	bool bIsPartyMember = false;
 
@@ -86,28 +84,28 @@ struct FPartyCharacterInfo
 	int32 RSkillLevel = 1;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	float AttackPower = 0;
+	FScalableFloat AttackPower;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	float DefensePower = 0;
+	FScalableFloat DefensePower;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	float CriticalChance = 0;
+	FScalableFloat CriticalChance;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	float CriticalMagnitude = 0;
+	FScalableFloat CriticalMagnitude;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	float CurrentHealth = 0;
+	float CurrentHealth = INT_MAX;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	float MaxHealth = 0;
+	FScalableFloat MaxHealth;
 
 	UPROPERTY(EditDefaultsOnly)
-	float CurrentStamina = 0;
+	float CurrentStamina = INT_MAX;
 
 	UPROPERTY(EditDefaultsOnly)
-	float MaxStamina = 0;
+	FScalableFloat MaxStamina;
 
 	UPROPERTY(BlueprintReadOnly)
 	FGameplayTag WeaponTag = FGameplayTag();

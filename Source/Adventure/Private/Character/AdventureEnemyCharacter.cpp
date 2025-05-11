@@ -13,7 +13,7 @@
 #include "Components/BoxComponent.h"
 #include "Components/WidgetComponent.h"
 #include "Controller/AdventureAIController.h"
-#include "DataAsset/StartUpData/DataAsset_StartUpDataBase.h"
+#include "DataAsset/StartUpData/DataAsset_StartUpData_Enemy.h"
 #include "Engine/AssetManager.h"
 #include "GameFramework/CharacterMovementComponent.h" 
 #include "UI/Widget/AdventureUserWidget.h"
@@ -200,6 +200,7 @@ void AAdventureEnemyCharacter::InitEnemyStartUpData() const
 		{
 			if (UDataAsset_StartUpDataBase* LoadedData = CharacterStartUpData.Get())
 			{
+				LoadedData->GrantCharacterLevelEffect(Cast<UAdventureAbilitySystemComponent>(AbilitySystemComponent), EnemyLevel);
 				LoadedData->GiveToAbilitySystemComponent(Cast<UAdventureAbilitySystemComponent>(AbilitySystemComponent));
 				LoadedData->GrantStartUpGameplayEffect(Cast<UAdventureAbilitySystemComponent>(AbilitySystemComponent));
 			}

@@ -23,7 +23,6 @@ class ADVENTURE_API AAdventurePlayerState : public APlayerState
 public:
 	UControllableCharacterManager* GetControllableCharacterManager();
 	UAdventureInventory* GetPickupItemInventory();
-	void SetDefaultPartyMembers();
 
 	bool bIsPlayerStateSet = false;
 	FOnPlayerStateSet OnPlayerStateSetDelegate;
@@ -36,10 +35,7 @@ protected:
 	
 	UPROPERTY()
 	TObjectPtr<UControllableCharacterManager> ControllableCharacterManager;
-
-	UPROPERTY(EditDefaultsOnly, Category="Character")
-	TMap<FGameplayTag /* ClassNameTag */, int32 /* PartyIndex */> InitialPartyMembers;
-
+	
 	UPROPERTY(EditDefaultsOnly, Category="Inventory")
 	TSubclassOf<UAdventureInventory> PickupItemInventoryClass;
 

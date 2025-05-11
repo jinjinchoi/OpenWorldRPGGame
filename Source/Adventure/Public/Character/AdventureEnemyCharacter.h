@@ -8,6 +8,7 @@
 #include "UI/WidgetController/OverlayWidgetController.h"
 #include "AdventureEnemyCharacter.generated.h"
 
+class UDataAsset_StartUpData_Enemy;
 class UBoxComponent;
 class AAdventureAIController;
 class UWidgetComponent;
@@ -47,7 +48,10 @@ protected:
 	void BindGameplayTagChanged();
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CharacterData")
-	TSoftObjectPtr<UDataAsset_StartUpDataBase> CharacterStartUpData;
+	TSoftObjectPtr<UDataAsset_StartUpData_Enemy> CharacterStartUpData;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CharacterData")
+	int32 EnemyLevel = 1;
 
 	UFUNCTION()
 	virtual void OnBodyCollisionBoxBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);

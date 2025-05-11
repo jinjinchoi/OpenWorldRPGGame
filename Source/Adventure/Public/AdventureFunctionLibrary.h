@@ -8,6 +8,7 @@
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "AdventureFunctionLibrary.generated.h"
 
+struct FScalableFloat;
 class AAdventurePlayerCharacter;
 class UInventoryWidgetController;
 class AAdventureInGameHUD;
@@ -38,7 +39,6 @@ public:
 	static void RemoveGameplayTagToActorIfFound(AActor* InActor, const FGameplayTag TagToRemove);
 	
 	/* Gameplay Ability System Setup */
-	static void InitializeAttributeFromCharacterInfo(const FPartyCharacterInfo& InCharacterInfo, const FGameplayEffectSpecHandle& SpecHandle, UAbilitySystemComponent* ASC);
 	static FPartyCharacterInfo MakePartyCharacterInfo(const AAdventurePlayerCharacter* PlayerCharacter, const bool InIsNotSpawned, const bool InIsPartyMember);
 
 	/** Effect Context **/
@@ -64,6 +64,9 @@ public:
 	
 	UFUNCTION(BlueprintCallable, Category="AdventureFunctionLibrary|Gameplay Mechanics")
 	static void GetLiveActorWithinRadius(const UObject* WorldContextObject, TArray<AActor*>& OutOverlappingActors, const TArray<AActor*>& ActorsToIgnore, float Radius, const FVector& SphereOrigin);
+
+	UFUNCTION(BlueprintPure, Category="AdventureFunctionLibrary|Gameplay Mechanics")
+	static float EvaluateScalableFloatAtLevel(const FScalableFloat& Scalable, const float Level);
 
 
 	/* Widget Controller */

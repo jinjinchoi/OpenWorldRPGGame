@@ -14,7 +14,7 @@
 #include "Component/Movement/AdventureMovementComponent.h"
 #include "Controller/AdventurePlayerController.h"
 #include "DataAsset/Item/DataAsset_ItemInfo.h"
-#include "DataAsset/StartUpData/DataAsset_StartUpDataBase.h"
+#include "DataAsset/StartUpData/DataAsset_StartUpData_Player.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameManager/ControllableCharacterManager.h"
@@ -140,46 +140,6 @@ void AAdventurePlayerCharacter::PossessedBy(AController* NewController)
 	
 	BindGameplayTagChanged();
 	
-	
-	// if (bIsFirstLoading)
-	// {
-	// 	InitPlayerStartUpData();
-	// 	bIsFirstLoading = false;
-	// }
-	// else
-	// {
-	// 	FGameplayEffectContextHandle ContextHandle = AbilitySystemComponent->MakeEffectContext();
-	// 	ContextHandle.AddSourceObject(this);
-	//
-	// 	// Effect 적용
-	// 	const FGameplayEffectSpecHandle PrimarySpecHandle = AbilitySystemComponent->MakeOutgoingSpec(CharacterLoadGameplayEffect, 1.f, ContextHandle);
-	// 	UAdventureFunctionLibrary::InitializeAttributeFromCharacterInfo(PreviousCharacterInfo, PrimarySpecHandle, AbilitySystemComponent);
-	//
-	// 	const FGameplayEffectSpecHandle VitalSpecHandle = AbilitySystemComponent->MakeOutgoingSpec(CharacterVitalGameplayEffect, 1.f, ContextHandle);
-	// 	UAdventureFunctionLibrary::InitializeAttributeFromCharacterInfo(PreviousCharacterInfo, VitalSpecHandle, AbilitySystemComponent);
-	//
-	// 	const FGameplayEffectSpecHandle ExperienceHandle = AbilitySystemComponent->MakeOutgoingSpec(ExperienceGameplayEffect, 1.f, ContextHandle);
-	// 	UAdventureFunctionLibrary::InitializeAttributeFromCharacterInfo(PreviousCharacterInfo, ExperienceHandle, AbilitySystemComponent);
-	//
-	// 	const FGameplayEffectSpecHandle RegenSpecHandle = AbilitySystemComponent->MakeOutgoingSpec(CharacterRegenGameplayEffect, 1.f, ContextHandle);
-	// 	AbilitySystemComponent->ApplyGameplayEffectSpecToSelf(*RegenSpecHandle.Data.Get());
-	// 	
-	// 	CharacterLoadGameplayEffect = nullptr;
-	// 	CharacterVitalGameplayEffect = nullptr;
-	// 	CharacterRegenGameplayEffect = nullptr;
-	// 	ExperienceGameplayEffect = nullptr;
-	// 	
-	// 	// 무기 Effect 적용
-	//
-	// }
-
-	// AddCharacterInfoToManager();
-
-	// if (AAdventurePlayerState* AdventurePlayerState = Cast<AAdventurePlayerState>(GetPlayerState()))
-	// {
-	// 	AdventurePlayerState->SetDefaultPartyMembers();
-	// }
-	
 }
 
 
@@ -205,14 +165,15 @@ void AAdventurePlayerCharacter::InitPlayerCharacterData()
 	// Attribute 부여
 	CharacterStartUpData->GrantCharacterLevelEffect(AdventureAbilitySystemComponent, CurrentCharacterInfo.CharacterLevel);
 	CharacterStartUpData->GrantStartUpGameplayEffect(AdventureAbilitySystemComponent);
+	CharacterStartUpData->ApplySetByCallerEffectByCharacterInfo(AdventureAbilitySystemComponent, CurrentCharacterInfo);
 
 	// Ability 부여
 	CharacterStartUpData->GiveToAbilitySystemComponent(AdventureAbilitySystemComponent);
 	AdventureAbilitySystemComponent->InitializeAbilityFromCharacterInfo(CurrentCharacterInfo);
 
 	// 무기 능력치 부여
-	ApplyEquipmentEffect(PreviousCharacterInfo.WeaponTag);
-	ApplyEquipmentEffect(PreviousCharacterInfo.ShieldTag);
+	ApplyEquipmentEffect(CurrentCharacterInfo.WeaponTag);
+	ApplyEquipmentEffect(CurrentCharacterInfo.ShieldTag);
 
 	// 오버레이 초기화
 	if (AAdventurePlayerController* PlayerController = Cast<AAdventurePlayerController>(GetController()))

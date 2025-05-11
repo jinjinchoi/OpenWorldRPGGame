@@ -73,7 +73,6 @@ void UDataAsset_StartUpDataBase::GrantStartUpGameplayEffect(UAdventureAbilitySys
 	const UAdventureAttributeSet* AdventureAttributeSet = Cast<UAdventureAttributeSet>(InASC->GetAttributeSet(UAdventureAttributeSet::StaticClass()));
 	check(AdventureAttributeSet);
 	const int32 CharacterLevel = AdventureAttributeSet->GetCharacterLevel();
-	check(CharacterLevel > 0);
 	
 	if (!StartUpGameplayEffects.IsEmpty())
 	{

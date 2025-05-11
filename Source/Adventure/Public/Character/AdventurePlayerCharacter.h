@@ -10,6 +10,7 @@
 #include "Interface/PlayerInterface.h"
 #include "AdventurePlayerCharacter.generated.h"
 
+class UDataAsset_StartUpData_Player;
 class UDataAsset_ItemInfo;
 class AAdventureInventoryItem;
 DECLARE_DELEGATE_OneParam(FOnMovementModechanged, const ECharacterMovementType /* Movement Type */);
@@ -58,14 +59,6 @@ public:
 	
 	FGameplayTag EquippedSwordTag;
 	FGameplayTag EquippedShieldTag;
-
-	bool bIsFirstLoading = true;
-	FPartyCharacterInfo PreviousCharacterInfo;
-
-	TSubclassOf<UGameplayEffect> CharacterLoadGameplayEffect;
-	TSubclassOf<UGameplayEffect> CharacterVitalGameplayEffect;
-	TSubclassOf<UGameplayEffect> CharacterRegenGameplayEffect;
-	TSubclassOf<UGameplayEffect> ExperienceGameplayEffect;
 	
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<UGameplayEffect> RecoveryEffect;
@@ -108,7 +101,7 @@ protected:
 	TSubclassOf<UGameplayEffect> RunAndClimbCostEffectClass;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CharacterData")
-	TObjectPtr<UDataAsset_StartUpDataBase> CharacterStartUpData;
+	TObjectPtr<UDataAsset_StartUpData_Player> CharacterStartUpData;
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CharacterData", meta=(Categories ="CharacterClass.Player"))
 	FGameplayTag CharacterTag;
@@ -123,8 +116,6 @@ private:
 	bool ApplyStaminaCostEffect(const TSubclassOf<UGameplayEffect>& InEffect);
 	void RemoveStaminaCostEffect();
 	void InitPlayerCharacterData();
-	void InitCharacterAttribute();
-	void InitCharacterAbility();
 
 	FActiveGameplayEffectHandle StaminaCostEffectHandle;
 	TArray<TWeakObjectPtr<AAdventureInventoryItem>> OverlappedItems;
@@ -133,7 +124,6 @@ private:
 public:
 	FORCEINLINE UAdventureMovementComponent* GetAdventureMovementComponent() const { return AdventureMovementComponent; }
 	FORCEINLINE FGameplayTag GetCharacterClassTag() const { return CharacterTag; }
-	FORCEINLINE UDataAsset_StartUpDataBase* GetCharacterStartUpData() const { return CharacterStartUpData; }
 	FORCEINLINE bool IsSprinting() const { return bIsSprint; }
 	void StartSprint();
 
