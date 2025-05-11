@@ -2,9 +2,23 @@
 
 
 #include "DataAsset/StartUpData/DataAsset_StartUpDataBase.h"
+
+#include "AbilitySystemBlueprintLibrary.h"
+#include "AdventureGameplayTag.h"
 #include "AbilitySystem/AdventureAbilitySystemComponent.h"
+#include "AbilitySystem/AdventureAttributeSet.h"
 #include "AbilitySystem/Abilities/AdventureGameplayAbility.h"
 
+
+void UDataAsset_StartUpDataBase::GrantCharacterLevelEffect(UAdventureAbilitySystemComponent* InASC, const int32 LevelToApply) const
+{
+	check(LevelGameplayEffect);
+	
+	FGameplayEffectContextHandle EffectContextHandle = InASC->MakeEffectContext();
+	FGameplayEffectSpecHandle EffectSpecHandle = InASC->MakeOutgoingSpec(LevelGameplayEffect, 1.f, EffectContextHandle);
+	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(EffectSpecHandle, AdventureGameplayTags::Attribute_Player_CharacterLevel, LevelToApply);
+	InASC->ApplyGameplayEffectSpecToSelf(*EffectSpecHandle.Data.Get());
+}
 
 void UDataAsset_StartUpDataBase::GiveToAbilitySystemComponent(UAdventureAbilitySystemComponent* InASC)
 {
@@ -55,6 +69,11 @@ void UDataAsset_StartUpDataBase::GrantAbilities(const TArray<TSubclassOf<UAdvent
 void UDataAsset_StartUpDataBase::GrantStartUpGameplayEffect(UAdventureAbilitySystemComponent* InASC)
 {
 	check(InASC);
+
+	const UAdventureAttributeSet* AdventureAttributeSet = Cast<UAdventureAttributeSet>(InASC->GetAttributeSet(UAdventureAttributeSet::StaticClass()));
+	check(AdventureAttributeSet);
+	const int32 CharacterLevel = AdventureAttributeSet->GetCharacterLevel();
+	check(CharacterLevel > 0);
 	
 	if (!StartUpGameplayEffects.IsEmpty())
 	{
@@ -63,7 +82,7 @@ void UDataAsset_StartUpDataBase::GrantStartUpGameplayEffect(UAdventureAbilitySys
 			if (!EffectClass) continue;
 
 			FGameplayEffectContextHandle EffectContextHandle = InASC->MakeEffectContext();
-			FGameplayEffectSpecHandle EffectSpecHandle = InASC->MakeOutgoingSpec(EffectClass, 1.f, EffectContextHandle);
+			FGameplayEffectSpecHandle EffectSpecHandle = InASC->MakeOutgoingSpec(EffectClass, CharacterLevel, EffectContextHandle);
 			InASC->ApplyGameplayEffectSpecToSelf(*EffectSpecHandle.Data.Get());
 			
 		}

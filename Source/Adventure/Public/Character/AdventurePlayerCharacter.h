@@ -110,7 +110,7 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CharacterData")
 	TObjectPtr<UDataAsset_StartUpDataBase> CharacterStartUpData;
 	
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(Categories ="CharacterClass.Player"))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CharacterData", meta=(Categories ="CharacterClass.Player"))
 	FGameplayTag CharacterTag;
 	
 	UFUNCTION(BlueprintImplementableEvent)
@@ -122,6 +122,9 @@ protected:
 private:
 	bool ApplyStaminaCostEffect(const TSubclassOf<UGameplayEffect>& InEffect);
 	void RemoveStaminaCostEffect();
+	void InitPlayerCharacterData();
+	void InitCharacterAttribute();
+	void InitCharacterAbility();
 
 	FActiveGameplayEffectHandle StaminaCostEffectHandle;
 	TArray<TWeakObjectPtr<AAdventureInventoryItem>> OverlappedItems;

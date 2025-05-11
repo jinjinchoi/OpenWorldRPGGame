@@ -125,43 +125,96 @@ void AAdventurePlayerCharacter::OnCharacterDied_Implementation()
 void AAdventurePlayerCharacter::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
-	
-	if (bIsFirstLoading)
+
+	AAdventurePlayerState* AdventurePlayerState = Cast<AAdventurePlayerState>(GetPlayerState());
+	check(AdventurePlayerState);
+
+	if (AdventurePlayerState->bIsPlayerStateSet)
 	{
-		InitPlayerStartUpData();
-		bIsFirstLoading = false;
+		InitPlayerCharacterData();
 	}
 	else
 	{
-		FGameplayEffectContextHandle ContextHandle = AbilitySystemComponent->MakeEffectContext();
-		ContextHandle.AddSourceObject(this);
-	
-		// Effect 적용
-		const FGameplayEffectSpecHandle PrimarySpecHandle = AbilitySystemComponent->MakeOutgoingSpec(CharacterLoadGameplayEffect, 1.f, ContextHandle);
-		UAdventureFunctionLibrary::InitializeAttributeFromCharacterInfo(PreviousCharacterInfo, PrimarySpecHandle, AbilitySystemComponent);
-
-		const FGameplayEffectSpecHandle VitalSpecHandle = AbilitySystemComponent->MakeOutgoingSpec(CharacterVitalGameplayEffect, 1.f, ContextHandle);
-		UAdventureFunctionLibrary::InitializeAttributeFromCharacterInfo(PreviousCharacterInfo, VitalSpecHandle, AbilitySystemComponent);
-
-		const FGameplayEffectSpecHandle ExperienceHandle = AbilitySystemComponent->MakeOutgoingSpec(ExperienceGameplayEffect, 1.f, ContextHandle);
-		UAdventureFunctionLibrary::InitializeAttributeFromCharacterInfo(PreviousCharacterInfo, ExperienceHandle, AbilitySystemComponent);
-
-		const FGameplayEffectSpecHandle RegenSpecHandle = AbilitySystemComponent->MakeOutgoingSpec(CharacterRegenGameplayEffect, 1.f, ContextHandle);
-		AbilitySystemComponent->ApplyGameplayEffectSpecToSelf(*RegenSpecHandle.Data.Get());
-		
-		CharacterLoadGameplayEffect = nullptr;
-		CharacterVitalGameplayEffect = nullptr;
-		CharacterRegenGameplayEffect = nullptr;
-		ExperienceGameplayEffect = nullptr;
-		
-		// 무기 Effect 적용
-		ApplyEquipmentEffect(PreviousCharacterInfo.WeaponTag);
-		ApplyEquipmentEffect(PreviousCharacterInfo.ShieldTag);
+		AdventurePlayerState->OnPlayerStateSetDelegate.AddUObject(this, &ThisClass::InitPlayerCharacterData);
 	}
 	
 	BindGameplayTagChanged();
-	AddCharacterInfoToManager();
+	
+	
+	// if (bIsFirstLoading)
+	// {
+	// 	InitPlayerStartUpData();
+	// 	bIsFirstLoading = false;
+	// }
+	// else
+	// {
+	// 	FGameplayEffectContextHandle ContextHandle = AbilitySystemComponent->MakeEffectContext();
+	// 	ContextHandle.AddSourceObject(this);
+	//
+	// 	// Effect 적용
+	// 	const FGameplayEffectSpecHandle PrimarySpecHandle = AbilitySystemComponent->MakeOutgoingSpec(CharacterLoadGameplayEffect, 1.f, ContextHandle);
+	// 	UAdventureFunctionLibrary::InitializeAttributeFromCharacterInfo(PreviousCharacterInfo, PrimarySpecHandle, AbilitySystemComponent);
+	//
+	// 	const FGameplayEffectSpecHandle VitalSpecHandle = AbilitySystemComponent->MakeOutgoingSpec(CharacterVitalGameplayEffect, 1.f, ContextHandle);
+	// 	UAdventureFunctionLibrary::InitializeAttributeFromCharacterInfo(PreviousCharacterInfo, VitalSpecHandle, AbilitySystemComponent);
+	//
+	// 	const FGameplayEffectSpecHandle ExperienceHandle = AbilitySystemComponent->MakeOutgoingSpec(ExperienceGameplayEffect, 1.f, ContextHandle);
+	// 	UAdventureFunctionLibrary::InitializeAttributeFromCharacterInfo(PreviousCharacterInfo, ExperienceHandle, AbilitySystemComponent);
+	//
+	// 	const FGameplayEffectSpecHandle RegenSpecHandle = AbilitySystemComponent->MakeOutgoingSpec(CharacterRegenGameplayEffect, 1.f, ContextHandle);
+	// 	AbilitySystemComponent->ApplyGameplayEffectSpecToSelf(*RegenSpecHandle.Data.Get());
+	// 	
+	// 	CharacterLoadGameplayEffect = nullptr;
+	// 	CharacterVitalGameplayEffect = nullptr;
+	// 	CharacterRegenGameplayEffect = nullptr;
+	// 	ExperienceGameplayEffect = nullptr;
+	// 	
+	// 	// 무기 Effect 적용
+	//
+	// }
 
+	// AddCharacterInfoToManager();
+
+	// if (AAdventurePlayerState* AdventurePlayerState = Cast<AAdventurePlayerState>(GetPlayerState()))
+	// {
+	// 	AdventurePlayerState->SetDefaultPartyMembers();
+	// }
+	
+}
+
+
+void AAdventurePlayerCharacter::InitPlayerCharacterData()
+{
+	if (!CharacterStartUpData)
+	{
+		DebugHelper::Print(FString::Printf(TEXT("You need to assign startup data to %s"), *GetName()), FColor::Red);
+		return;
+	}
+	if (!CharacterTag.IsValid())
+	{
+		DebugHelper::Print(FString::Printf(TEXT("You need to assign Character Tag to %s"), *GetName()), FColor::Yellow);
+	}
+	
+	UAdventureAbilitySystemComponent* AdventureAbilitySystemComponent = Cast<UAdventureAbilitySystemComponent>(AbilitySystemComponent);
+	check(AdventureAbilitySystemComponent);
+
+	AAdventurePlayerState* AdventurePlayerState = Cast<AAdventurePlayerState>(GetPlayerState());
+	const FPartyCharacterInfo CurrentCharacterInfo = *AdventurePlayerState->GetControllableCharacterManager()->FindCharacterInfoInOwningCharacters(CharacterTag);
+	check(CurrentCharacterInfo.IsValid());
+
+	// Attribute 부여
+	CharacterStartUpData->GrantCharacterLevelEffect(AdventureAbilitySystemComponent, CurrentCharacterInfo.CharacterLevel);
+	CharacterStartUpData->GrantStartUpGameplayEffect(AdventureAbilitySystemComponent);
+
+	// Ability 부여
+	CharacterStartUpData->GiveToAbilitySystemComponent(AdventureAbilitySystemComponent);
+	AdventureAbilitySystemComponent->InitializeAbilityFromCharacterInfo(CurrentCharacterInfo);
+
+	// 무기 능력치 부여
+	ApplyEquipmentEffect(PreviousCharacterInfo.WeaponTag);
+	ApplyEquipmentEffect(PreviousCharacterInfo.ShieldTag);
+
+	// 오버레이 초기화
 	if (AAdventurePlayerController* PlayerController = Cast<AAdventurePlayerController>(GetController()))
 	{
 		if (AAdventureInGameHUD* AdventureInGameHUD = Cast<AAdventureInGameHUD>(PlayerController->GetHUD()))
@@ -169,14 +222,9 @@ void AAdventurePlayerCharacter::PossessedBy(AController* NewController)
 			AdventureInGameHUD->InitOverlay(PlayerController, GetPlayerState(), AbilitySystemComponent, AttributeSet, CharacterTag);
 		}
 	}
-
-	if (AAdventurePlayerState* AdventurePlayerState = Cast<AAdventurePlayerState>(GetPlayerState()))
-	{
-		AdventurePlayerState->SetDefaultPartyMembers();
-	}
-	
 	
 }
+
 
 void AAdventurePlayerCharacter::InitPlayerStartUpData() const
 {

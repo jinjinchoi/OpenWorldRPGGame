@@ -33,6 +33,7 @@ class ADVENTURE_API UDataAsset_StartUpDataBase : public UDataAsset
 	GENERATED_BODY()
 
 public:
+	void GrantCharacterLevelEffect(UAdventureAbilitySystemComponent* InASC, const int32 LevelToApply) const;
 	void GiveToAbilitySystemComponent(UAdventureAbilitySystemComponent* InASC);
 	void GrantStartUpGameplayEffect(UAdventureAbilitySystemComponent* InASC);
 
@@ -49,9 +50,16 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category="StartUpData", meta = (TitleProperty = "InputTag"))
 	TArray<FAdventureAbilityInfo> StartUpAbilityInfo;
 
+	/* 레벨 이펙트 */
+	UPROPERTY(EditDefaultsOnly, Category="StartUpData")
+	TSubclassOf<UGameplayEffect> LevelGameplayEffect;
+
 	/* 제일 처음 적용할 게임플레이 이펙트 */
 	UPROPERTY(EditDefaultsOnly, Category="StartUpData")
 	TArray<TSubclassOf<UGameplayEffect>> StartUpGameplayEffects;
+
+	UPROPERTY(EditDefaultsOnly, Category="Loaded")
+	TArray<TSubclassOf<UGameplayEffect>> SetByCallerGameplayEffects;
 
 
 private:
