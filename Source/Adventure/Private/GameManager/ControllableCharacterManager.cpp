@@ -7,6 +7,14 @@
 #include "Engine/AssetManager.h"
 #include "GameFramework/Character.h"
 
+void UControllableCharacterManager::InitializeCharacterManager()
+{
+	for (const FPartyCharacterInfo& DefaultCharacterInfo : DefaultCharacterInfos)
+	{
+		AddOrUpdateOwningCharactersInfo(DefaultCharacterInfo);
+	}
+}
+
 void UControllableCharacterManager::AddOrUpdateOwningCharactersInfo(const FPartyCharacterInfo& NewCharacterInfo)
 {
 	for (FPartyCharacterInfo& ExistingPartyCharacterInfo : OwningCharacters)

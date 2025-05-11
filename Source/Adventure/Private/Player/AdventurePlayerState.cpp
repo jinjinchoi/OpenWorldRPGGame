@@ -57,7 +57,9 @@ void AAdventurePlayerState::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	GetControllableCharacterManager();
+	GetControllableCharacterManager()->InitializeCharacterManager();
 	GetPickupItemInventory();
+
+	bIsPlayerStateSet= true;
 	
 }

@@ -7,6 +7,8 @@
 #include "GameFramework/PlayerState.h"
 #include "AdventurePlayerState.generated.h"
 
+DECLARE_MULTICAST_DELEGATE(FOnPlayerStateSet);
+
 class UAdventureInventory;
 class UControllableCharacterManager;
 class ACharacter;
@@ -22,6 +24,9 @@ public:
 	UControllableCharacterManager* GetControllableCharacterManager();
 	UAdventureInventory* GetPickupItemInventory();
 	void SetDefaultPartyMembers();
+
+	bool bIsPlayerStateSet = false;
+	FOnPlayerStateSet OnPlayerStateSetDelegate;
 
 protected:
 	virtual void BeginPlay() override;

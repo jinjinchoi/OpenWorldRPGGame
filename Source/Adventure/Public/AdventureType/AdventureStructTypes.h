@@ -61,13 +61,13 @@ struct FPartyCharacterInfo
 	UPROPERTY()
 	bool bIsNotSpawned = true;
 
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	bool bIsPartyMember = false;
 
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(EditCondition="bIsPartyMember"))
 	int32 PartyIndex = INT_MAX;
 
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(Categories = "CharacterClass.Player"))
 	FGameplayTag ClassTag;
 
 	UPROPERTY(BlueprintReadOnly)
@@ -85,28 +85,28 @@ struct FPartyCharacterInfo
 	UPROPERTY(BlueprintReadOnly)
 	int32 RSkillLevel = 1;
 
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	float AttackPower = 0;
 
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	float DefensePower = 0;
 
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	float CriticalChance = 0;
 
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	float CriticalMagnitude = 0;
 
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	float CurrentHealth = 0;
 
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	float MaxHealth = 0;
 
-	UPROPERTY()
+	UPROPERTY(EditDefaultsOnly)
 	float CurrentStamina = 0;
 
-	UPROPERTY()
+	UPROPERTY(EditDefaultsOnly)
 	float MaxStamina = 0;
 
 	UPROPERTY(BlueprintReadOnly)
