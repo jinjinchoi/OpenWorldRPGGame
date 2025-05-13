@@ -39,6 +39,9 @@ public:
 	UPROPERTY(BlueprintReadOnly)
 	FAllItem AllItems;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	int32 Money = 0;
+
 protected:
 	UPROPERTY(EditDefaultsOnly)
 	TObjectPtr<UDataAsset_ItemInfo> PickupItemInfo;

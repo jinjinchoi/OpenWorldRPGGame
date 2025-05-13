@@ -17,6 +17,12 @@ void UOverlayWidgetController::BroadCastInitialValue()
 	OnMaxHealthChangedDelegate.Broadcast(AdventureAttributeSet->GetMaxHealth());
 	OnStaminaChangeDelegate.Broadcast(AdventureAttributeSet->GetCurrentStamina());
 	OnMaxStaminaChangeDelegate.Broadcast(AdventureAttributeSet->GetMaxStamina());
+
+	if (bIsFirstSet)
+	{
+		Cast<AAdventurePlayerState>(PlayerState)->GetControllableCharacterManager()->BroadcastPartyCharacterInfo();
+		bIsFirstSet = false;	
+	}
 	
 }
 

@@ -41,5 +41,8 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "Character Info")
 	FOnPartyCharacterChangedDelegate OnPartyCharacterChangedDelegate;
 
+private:
+	bool bIsFirstSet = true;
+
 	
 };

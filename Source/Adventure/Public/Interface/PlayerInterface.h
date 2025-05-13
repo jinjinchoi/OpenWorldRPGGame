@@ -39,6 +39,9 @@ public:
 	virtual void ForceCharacterChange(const int32 IndexToChange) = 0;
 	virtual void ChangeCharacterPartyIndex(const int32 IndexToChange) = 0;
 	virtual FGameplayTag GetOwningCharacterTag() = 0;
+
+	virtual void AddMoney(int32 MoneyToAdd) = 0;
+	virtual void LevelUp(const int32 LevelUpAmount = 1) = 0;
 	
 
 #pragma region Input

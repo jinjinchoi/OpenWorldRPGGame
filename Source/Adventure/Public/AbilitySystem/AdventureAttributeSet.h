@@ -136,5 +136,6 @@ private:
 	void HandleIncomingDamage(const FEffectProperties& Props);
 	void ShowDamageText(const FEffectProperties& Props, const float Damage);
 	void HandleInComingStaminaCost(const FEffectProperties& Props);
+	void HandleRewardSystem(const FEffectProperties& Props);
 	
 };

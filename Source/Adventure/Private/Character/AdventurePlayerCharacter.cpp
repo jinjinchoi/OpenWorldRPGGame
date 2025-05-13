@@ -145,14 +145,10 @@ void AAdventurePlayerCharacter::PossessedBy(AController* NewController)
 
 void AAdventurePlayerCharacter::InitPlayerCharacterData()
 {
-	if (!CharacterStartUpData)
+	if (!CharacterStartUpData || !CharacterTag.IsValid())
 	{
-		DebugHelper::Print(FString::Printf(TEXT("You need to assign startup data to %s"), *GetName()), FColor::Red);
+		DebugHelper::Print(FString::Printf(TEXT("You need to assign startup data or Character Tag to %s"), *GetName()), FColor::Red);
 		return;
-	}
-	if (!CharacterTag.IsValid())
-	{
-		DebugHelper::Print(FString::Printf(TEXT("You need to assign Character Tag to %s"), *GetName()), FColor::Yellow);
 	}
 	
 	UAdventureAbilitySystemComponent* AdventureAbilitySystemComponent = Cast<UAdventureAbilitySystemComponent>(AbilitySystemComponent);
@@ -253,57 +249,6 @@ void AAdventurePlayerCharacter::OnHitReactTagChanged(const FGameplayTag Callback
 	
 }
 
-bool AAdventurePlayerCharacter::ApplyStaminaCostEffect(const TSubclassOf<UGameplayEffect>& InEffect)
-{
-	check(InEffect);
-
-	float StaminaCost = 0.f;
-	for (const FGameplayModifierInfo& Modifier : InEffect->GetDefaultObject<UGameplayEffect>()->Modifiers)
-	{
-		if (Modifier.Attribute == UAdventureAttributeSet::GetIncomingStaminaCostAttribute())
-		{
-			Modifier.ModifierMagnitude.GetStaticMagnitudeIfPossible(1.f, StaminaCost);
-		}
-	}
-
-	if (StaminaCost == 0.f) return true;
-
-	const UAdventureAttributeSet* AdventureAttributeSet = Cast<UAdventureAttributeSet>(AttributeSet);
-	check(AdventureAttributeSet);
-
-	if (AdventureAttributeSet->GetCurrentStamina() < StaminaCost)
-	{
-		return false;
-	}
-
-	FGameplayEffectContextHandle ContextHandle = AbilitySystemComponent->MakeEffectContext();
-	ContextHandle.AddSourceObject(this);
-
-	if (InEffect->GetDefaultObject<UGameplayEffect>()->DurationPolicy == EGameplayEffectDurationType::Instant)
-	{
-		AbilitySystemComponent->ApplyGameplayEffectToSelf(InEffect->GetDefaultObject<UGameplayEffect>(), 1.f, ContextHandle);
-	}
-	else
-	{
-		StaminaCostEffectHandle = AbilitySystemComponent->ApplyGameplayEffectToSelf(InEffect->GetDefaultObject<UGameplayEffect>(), 1.f, ContextHandle);
-	}
-
-	UAdventureFunctionLibrary::AddGameplayTagToActorIfNone(this, AdventureGameplayTags::Block_Player_StaminaRegen);
-	
-	return true;
-	
-}
-
-void AAdventurePlayerCharacter::RemoveStaminaCostEffect()
-{
-	if (!bIsSprint)
-	{
-		AbilitySystemComponent->RemoveActiveGameplayEffect(StaminaCostEffectHandle);
-		UAdventureFunctionLibrary::RemoveGameplayTagToActorIfFound(this, AdventureGameplayTags::Block_Player_StaminaRegen);
-	}
-	
-}
-
 
 void AAdventurePlayerCharacter::ApplyEquipmentEffect(const FGameplayTag& EquipmentTag)
 {
@@ -357,6 +302,40 @@ void AAdventurePlayerCharacter::RemoveEquipmentEffect(const bool bIsSwordEffect)
 	{
 		AbilitySystemComponent->RemoveActiveGameplayEffect(ShieldActiveGameplayEffectHandle);
 	}
+}
+
+void AAdventurePlayerCharacter::ChangeCharacterPartyIndex(const int32 IndexToChange)
+{
+	CurrentCharacterIndex = IndexToChange;
+}
+
+FGameplayTag AAdventurePlayerCharacter::GetOwningCharacterTag()
+{
+	return CharacterTag;
+}
+
+void AAdventurePlayerCharacter::AddMoney(int32 MoneyToAdd)
+{
+	if (AAdventurePlayerState* AdventurePlayerState = Cast<AAdventurePlayerState>(GetPlayerState()))
+	{
+		AdventurePlayerState->GetPickupItemInventory()->Money += MoneyToAdd;
+	}
+}
+
+void AAdventurePlayerCharacter::LevelUp(const int32 LevelUpAmount)
+{
+	// Gameplay Effect로 레벨업
+	UAdventureAbilitySystemComponent* AdventureAbilitySystemComponent = Cast<UAdventureAbilitySystemComponent>(AbilitySystemComponent);
+	CharacterStartUpData->LevelUp(AdventureAbilitySystemComponent, LevelUpAmount);
+
+	// 캐릭터 매니저에서 정보 업데이트
+	AAdventurePlayerState* AdventurePlayerState = Cast<AAdventurePlayerState>(GetPlayerState());
+	check(AdventurePlayerState);
+	
+	FPartyCharacterInfo* CurrentCharacterInfo = AdventurePlayerState->GetControllableCharacterManager()->FindCharacterInfoInOwningCharacters(CharacterTag);
+	check(CurrentCharacterInfo);
+	
+	CurrentCharacterInfo->CharacterLevel = GetCharacterLevel();
 }
 
 
@@ -628,15 +607,6 @@ void AAdventurePlayerCharacter::ForceCharacterChange(const int32 IndexToChange)
 	}
 }
 
-void AAdventurePlayerCharacter::ChangeCharacterPartyIndex(const int32 IndexToChange)
-{
-	CurrentCharacterIndex = IndexToChange;
-}
-
-FGameplayTag AAdventurePlayerCharacter::GetOwningCharacterTag()
-{
-	return CharacterTag;
-}
 
 
 void AAdventurePlayerCharacter::Input_Interaction()
@@ -668,3 +638,55 @@ void AAdventurePlayerCharacter::Input_Interaction()
 }
 
 #pragma endregion 
+
+
+bool AAdventurePlayerCharacter::ApplyStaminaCostEffect(const TSubclassOf<UGameplayEffect>& InEffect)
+{
+	check(InEffect);
+
+	float StaminaCost = 0.f;
+	for (const FGameplayModifierInfo& Modifier : InEffect->GetDefaultObject<UGameplayEffect>()->Modifiers)
+	{
+		if (Modifier.Attribute == UAdventureAttributeSet::GetIncomingStaminaCostAttribute())
+		{
+			Modifier.ModifierMagnitude.GetStaticMagnitudeIfPossible(1.f, StaminaCost);
+		}
+	}
+
+	if (StaminaCost == 0.f) return true;
+
+	const UAdventureAttributeSet* AdventureAttributeSet = Cast<UAdventureAttributeSet>(AttributeSet);
+	check(AdventureAttributeSet);
+
+	if (AdventureAttributeSet->GetCurrentStamina() < StaminaCost)
+	{
+		return false;
+	}
+
+	FGameplayEffectContextHandle ContextHandle = AbilitySystemComponent->MakeEffectContext();
+	ContextHandle.AddSourceObject(this);
+
+	if (InEffect->GetDefaultObject<UGameplayEffect>()->DurationPolicy == EGameplayEffectDurationType::Instant)
+	{
+		AbilitySystemComponent->ApplyGameplayEffectToSelf(InEffect->GetDefaultObject<UGameplayEffect>(), 1.f, ContextHandle);
+	}
+	else
+	{
+		StaminaCostEffectHandle = AbilitySystemComponent->ApplyGameplayEffectToSelf(InEffect->GetDefaultObject<UGameplayEffect>(), 1.f, ContextHandle);
+	}
+
+	UAdventureFunctionLibrary::AddGameplayTagToActorIfNone(this, AdventureGameplayTags::Block_Player_StaminaRegen);
+	
+	return true;
+	
+}
+
+void AAdventurePlayerCharacter::RemoveStaminaCostEffect()
+{
+	if (!bIsSprint)
+	{
+		AbilitySystemComponent->RemoveActiveGameplayEffect(StaminaCostEffectHandle);
+		UAdventureFunctionLibrary::RemoveGameplayTagToActorIfFound(this, AdventureGameplayTags::Block_Player_StaminaRegen);
+	}
+	
+}

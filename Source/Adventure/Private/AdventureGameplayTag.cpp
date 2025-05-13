@@ -84,6 +84,7 @@ namespace AdventureGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(Attribute_Player_CharacterLevel, "Attribute.Player.CharacterLevel")
 	UE_DEFINE_GAMEPLAY_TAG(Attribute_Player_XP, "Attribute.Player.XP")
 	UE_DEFINE_GAMEPLAY_TAG(Attribute_Player_Recovery, "Attribute.Player.Recovery")
+	UE_DEFINE_GAMEPLAY_TAG(Attribute_Player_LevelUp, "Attribute.Player.LevelUp")
 	
 	
 	/** Damage Type Tag **/
@@ -121,6 +122,7 @@ namespace AdventureGameplayTags
 	/** Class Tag **/
 	UE_DEFINE_GAMEPLAY_TAG(CharacterClass_Player_Warrior, "CharacterClass.Player.Warrior")
 	UE_DEFINE_GAMEPLAY_TAG(CharacterClass_Player_Knight, "CharacterClass.Player.Knight")
+	UE_DEFINE_GAMEPLAY_TAG(CharacterClass_Player_Monk, "CharacterClass.Player.Monk")
 
 	/** Item Tag **/
 	UE_DEFINE_GAMEPLAY_TAG(Item_Sword, "Item.Sword")

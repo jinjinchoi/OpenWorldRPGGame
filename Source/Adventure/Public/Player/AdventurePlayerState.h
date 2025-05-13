@@ -41,6 +41,8 @@ protected:
 
 	UPROPERTY()
 	TObjectPtr<UAdventureInventory> PickupItemInventory;
+	
+	
 
 private:
 	bool bIsDefaultPartySet = false;

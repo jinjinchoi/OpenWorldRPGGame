@@ -66,6 +66,9 @@ public:
 
 	UFUNCTION(BlueprintPure)
 	FAbilityInfoForWidget FindAbilityInfoByTag(const FGameplayTag& InCharacterTag) const;
+	
+	UFUNCTION(BlueprintPure)
+	int32 GetMoney() const;
 
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Widget Data")

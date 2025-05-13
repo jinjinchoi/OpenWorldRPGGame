@@ -54,6 +54,14 @@ void AAdventureBaseCharacter::OnCharacterDied_Implementation()
 	
 }
 
+int32 AAdventureBaseCharacter::GetCharacterLevel() const
+{
+	const UAdventureAttributeSet* AdventureAttributeSet = Cast<UAdventureAttributeSet>(AttributeSet);
+	check(AdventureAttributeSet);
+
+	return AdventureAttributeSet->GetCharacterLevel();
+}
+
 void AAdventureBaseCharacter::RegisterSpawnedWeapon(AAdventureWeaponBase* InWeaponToRegister)
 {
 	check(InWeaponToRegister);

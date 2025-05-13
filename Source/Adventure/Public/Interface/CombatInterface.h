@@ -31,4 +31,7 @@ public:
 	
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void OnCharacterDied();
+
+	virtual int32 GetCharacterLevel() const = 0; 
+	
 };

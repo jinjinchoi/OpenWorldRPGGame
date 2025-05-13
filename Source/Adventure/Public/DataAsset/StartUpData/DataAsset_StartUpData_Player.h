@@ -17,6 +17,7 @@ class ADVENTURE_API UDataAsset_StartUpData_Player : public UDataAsset_StartUpDat
 
 public:
 	void ApplySetByCallerEffectByCharacterInfo(UAdventureAbilitySystemComponent* InASC, const FPartyCharacterInfo& InCharacterInfo) const;
+	void LevelUp(UAdventureAbilitySystemComponent* InASC, const int32 LevelUpAmount) const;
 
 protected:
 	UPROPERTY(EditDefaultsOnly, Category="Loaded")

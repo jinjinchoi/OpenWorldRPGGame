@@ -87,6 +87,7 @@ namespace AdventureGameplayTags
 	ADVENTURE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Attribute_Player_CharacterLevel);
 	ADVENTURE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Attribute_Player_XP);
 	ADVENTURE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Attribute_Player_Recovery);
+	ADVENTURE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Attribute_Player_LevelUp);
 	
 	
 	/** Damage Type Tag **/
@@ -124,6 +125,7 @@ namespace AdventureGameplayTags
 	/** Class Tag **/
 	ADVENTURE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(CharacterClass_Player_Warrior);
 	ADVENTURE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(CharacterClass_Player_Knight);
+	ADVENTURE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(CharacterClass_Player_Monk);
 
 	/** Item Tag **/
 	ADVENTURE_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Item_Sword);

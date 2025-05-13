@@ -41,7 +41,9 @@ void AAdventureMultiHitProjectile::ApplyDamageEffectToOverlappedActors()
 {
 	if (OverlappingActors.IsEmpty()) return;
 
-	for (AActor* TargetActor : OverlappingActors)
+	TArray<AActor*> LocalCopy = OverlappingActors;
+
+	for (AActor* TargetActor : LocalCopy)
 	{
 		if (!IsValid(TargetActor)) continue;
 		

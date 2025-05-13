@@ -30,6 +30,7 @@ public:
 	virtual void ToggleWeaponCollision_Implementation(const bool bIsEnable, const EAdventureWeaponType AdventureWeaponType = EAdventureWeaponType::Weapon) override;
 	virtual bool IsDead_Implementation() const override;
 	virtual void OnCharacterDied_Implementation() override;
+	virtual int32 GetCharacterLevel() const override;
 	/* End ICombat Interface */
 	
 	UFUNCTION(BlueprintCallable)

@@ -30,6 +30,8 @@ public:
 	FPartyCharacterInfo* FindCharacterInfoByPartyIndex(const int32 InCharacterIndex);
 	void GetCharacterClassByTag(const FGameplayTag& InClassTag, const TFunction<void(TSubclassOf<ACharacter>)>& Callback);
 
+
+	void BroadcastPartyCharacterInfo();
 	FOnPartyCharacterChanged OnPartyCharacterChangedDelegate;
 
 protected:
@@ -47,7 +49,6 @@ protected:
 
 
 private:
-	void BroadcastPartyCharacterInfo();
 	FPartyCharacterInfo GetPartyMemberIfInParty(const int32 PartyIndex);
 	void RemovePartyMember(FPartyCharacterInfo& CharacterInfoToRemove);
 

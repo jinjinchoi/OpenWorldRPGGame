@@ -5,6 +5,7 @@
 
 #include "Character/AdventurePlayerCharacter.h"
 #include "Controller/AdventurePlayerController.h"
+#include "Player/AdventureInventory.h"
 #include "Player/AdventurePlayerState.h"
 
 void UAdventureWidgetControllerBase::SetWidgetControllerParams(const FWidgetControllerParams& WCParams)
@@ -66,4 +67,13 @@ FAbilityInfoForWidget UAdventureWidgetControllerBase::FindAbilityInfoByTag(const
 	if (!CharacterAbilityInformation) return FAbilityInfoForWidget();
 
 	return CharacterAbilityInformation->FindAbilityInfoByCharacterTag(InCharacterTag);
+}
+
+int32 UAdventureWidgetControllerBase::GetMoney() const
+{
+	check(PlayerState);
+
+	AAdventurePlayerState* AdventurePlayerState = CastChecked<AAdventurePlayerState>(PlayerState);
+	return AdventurePlayerState->GetPickupItemInventory()->Money;
+	
 }

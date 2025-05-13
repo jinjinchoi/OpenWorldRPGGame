@@ -9,6 +9,7 @@
 #include "DebugHelper.h"
 #include "Controller/AdventurePlayerController.h"
 #include "GameFramework/Character.h"
+#include "Interface/CombatInterface.h"
 #include "Interface/EnemyInterface.h"
 #include "Interface/PlayerInterface.h"
 #include "Kismet/GameplayStatics.h"
@@ -118,9 +119,9 @@ void UAdventureAttributeSet::HandleIncomingDamage(const FEffectProperties& Props
 	
 	if (NewHealth <= 0) // Death Logic
 	{
+		HandleRewardSystem(Props);
 		UAdventureFunctionLibrary::AddGameplayTagToActorIfNone(Props.TargetCharacter, AdventureGameplayTags::Status_Dead);
 		
-		// TODO : 소울(보상) 시스템 추가해야함.
 	}
 	else // Hit Logic
 	{
@@ -190,5 +191,20 @@ void UAdventureAttributeSet::HandleInComingStaminaCost(const FEffectProperties& 
 		}
 	}
 	
+	
+}
+
+void UAdventureAttributeSet::HandleRewardSystem(const FEffectProperties& Props)
+{
+	const ICombatInterface* CombatInterface = Cast<ICombatInterface>(Props.TargetCharacter);
+	IPlayerInterface* PlayerInterface = Cast<IPlayerInterface>(Props.SourceCharacter);
+
+	if (!CombatInterface || !PlayerInterface) return;
+	
+	const int32 HostileActorLevel = CombatInterface->GetCharacterLevel();
+	check(HostileActorLevel > 0);
+	const int32 RewardMoney = FMath::RandRange(50, 200) * HostileActorLevel;
+
+	PlayerInterface->AddMoney(RewardMoney);
 	
 }
