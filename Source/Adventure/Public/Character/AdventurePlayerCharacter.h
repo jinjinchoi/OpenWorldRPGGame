@@ -43,7 +43,7 @@ public:
 	virtual void ForceCharacterChange(const int32 IndexToChange) override;
 	virtual void ChangeCharacterPartyIndex(const int32 IndexToChange) override;
 	virtual FGameplayTag GetOwningCharacterTag() override;
-	virtual void AddMoney(int32 MoneyToAdd) override;
+	virtual void AddMoney(const int32 MoneyToAdd) override;
 	virtual void LevelUp(const int32 LevelUpAmount = 1) override;
 	/* End Player Interface */
 

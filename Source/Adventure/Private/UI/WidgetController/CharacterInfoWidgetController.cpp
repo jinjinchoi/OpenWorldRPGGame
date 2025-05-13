@@ -108,6 +108,37 @@ bool UCharacterInfoWidgetController::RemoveFromPartyMemberByClassTag(const FGame
 	
 }
 
+bool UCharacterInfoWidgetController::LevelUp(const FGameplayTag& CharacterTagToLevelUp)
+{
+	// temporary code
+	if (GetMoney() < 200)
+	{
+		return false;
+	}
+	AddMoney(-200);
+	///////
+	
+	if (GetCurrentCharacterTag().MatchesTagExact(CharacterTagToLevelUp))
+	{
+		IPlayerInterface* PlayerCharacterInterface = CastChecked<IPlayerInterface>(PlayerController->GetPawn());
+		PlayerCharacterInterface->LevelUp();
+	}
+	else
+	{
+		FPartyCharacterInfo CharacterInfoToLevelUp = GetOwningCharacterInfoByClassTag(CharacterTagToLevelUp);
+
+		if (!CharacterInfoToLevelUp.IsValid())
+		{
+			return false;
+		}
+
+		CharacterInfoToLevelUp.CharacterLevel += 1;
+		GetAdventurePlayerState()->GetControllableCharacterManager()->AddOrUpdateOwningCharactersInfo(CharacterInfoToLevelUp);
+	}
+	
+	return true;
+}
+
 FPartyCharacterInfo UCharacterInfoWidgetController::GetOwningCharacterInfoByClassTag(const FGameplayTag& ClassTag)
 {
 	return *GetAdventurePlayerState()->GetControllableCharacterManager()->FindCharacterInfoInOwningCharacters(ClassTag);

@@ -35,6 +35,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	bool RemoveFromPartyMemberByClassTag(const FGameplayTag& CharacterTagToRemove);
+
+	UFUNCTION(BlueprintCallable)
+	bool LevelUp(const FGameplayTag& CharacterTagToLevelUp);
 	
 	UPROPERTY(BlueprintAssignable)
 	FOnGetOwningCharacterInfoDelegate GetOwningCharacterInfoDelegate;

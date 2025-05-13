@@ -39,14 +39,18 @@ public:
 	UPROPERTY(BlueprintReadOnly)
 	FAllItem AllItems;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	int32 Money = 0;
-
 protected:
 	UPROPERTY(EditDefaultsOnly)
 	TObjectPtr<UDataAsset_ItemInfo> PickupItemInfo;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	int32 Money = 0;
+
 private:
 	void StackItemIntoInventory(const FItemSlot& NewItem);
-	
+
+
+public:
+	FORCEINLINE int32 GetMoney() const { return Money; }
+	FORCEINLINE void AddMoney(const int32 NewMoney) { Money += NewMoney; }
 };

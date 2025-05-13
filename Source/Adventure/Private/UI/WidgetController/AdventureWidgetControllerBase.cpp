@@ -74,6 +74,14 @@ int32 UAdventureWidgetControllerBase::GetMoney() const
 	check(PlayerState);
 
 	AAdventurePlayerState* AdventurePlayerState = CastChecked<AAdventurePlayerState>(PlayerState);
-	return AdventurePlayerState->GetPickupItemInventory()->Money;
+	return AdventurePlayerState->GetPickupItemInventory()->GetMoney();
 	
+}
+
+void UAdventureWidgetControllerBase::AddMoney(const int32 MoneyToAdd) const
+{
+	check(PlayerState);
+
+	AAdventurePlayerState* AdventurePlayerState = CastChecked<AAdventurePlayerState>(PlayerState);
+	AdventurePlayerState->GetPickupItemInventory()->AddMoney(MoneyToAdd);
 }

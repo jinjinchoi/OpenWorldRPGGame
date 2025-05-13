@@ -70,6 +70,8 @@ public:
 	UFUNCTION(BlueprintPure)
 	int32 GetMoney() const;
 
+	void AddMoney(const int32 MoneyToAdd) const;
+
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Widget Data")
 	TObjectPtr<UDataAsset_AbilityInfo> CharacterAbilityInformation;

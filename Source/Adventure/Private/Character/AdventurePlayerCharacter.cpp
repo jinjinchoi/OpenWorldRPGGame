@@ -119,6 +119,7 @@ void AAdventurePlayerCharacter::OnCharacterDied_Implementation()
 
 	bool Unnecessary = false;
 	AdventureMovementComponent->ToggleClimbing(false, Unnecessary);
+	AdventureMovementComponent->ToggleClimbing(false, Unnecessary);
 }
 
 
@@ -314,11 +315,11 @@ FGameplayTag AAdventurePlayerCharacter::GetOwningCharacterTag()
 	return CharacterTag;
 }
 
-void AAdventurePlayerCharacter::AddMoney(int32 MoneyToAdd)
+void AAdventurePlayerCharacter::AddMoney(const int32 MoneyToAdd)
 {
 	if (AAdventurePlayerState* AdventurePlayerState = Cast<AAdventurePlayerState>(GetPlayerState()))
 	{
-		AdventurePlayerState->GetPickupItemInventory()->Money += MoneyToAdd;
+		AdventurePlayerState->GetPickupItemInventory()->AddMoney(MoneyToAdd);
 	}
 }
 
@@ -326,6 +327,11 @@ void AAdventurePlayerCharacter::LevelUp(const int32 LevelUpAmount)
 {
 	// Gameplay Effect로 레벨업
 	UAdventureAbilitySystemComponent* AdventureAbilitySystemComponent = Cast<UAdventureAbilitySystemComponent>(AbilitySystemComponent);
+
+	const int32 LevelToIncrease = GetCharacterLevel() + LevelUpAmount;
+
+	CharacterStartUpData->GrantCharacterLevelEffect(AdventureAbilitySystemComponent, LevelToIncrease);
+	CharacterStartUpData->GrantStartUpGameplayEffect(AdventureAbilitySystemComponent);
 	CharacterStartUpData->LevelUp(AdventureAbilitySystemComponent, LevelUpAmount);
 
 	// 캐릭터 매니저에서 정보 업데이트
