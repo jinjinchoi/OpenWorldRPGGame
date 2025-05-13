@@ -33,8 +33,8 @@ void UDataAsset_StartUpData_Player::LevelUp(UAdventureAbilitySystemComponent* In
 	ContextHandle.AddSourceObject(InASC->GetAvatarActor());
 
 	const FGameplayEffectSpecHandle SpecHandle = InASC->MakeOutgoingSpec(SetByCallerGameplayEffect, 1.f, ContextHandle);
-	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, AdventureGameplayTags::Attribute_Player_CurrentHealth, INT_MAX);
-	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, AdventureGameplayTags::Attribute_Player_CurrentStamina, INT_MAX);
+	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, AdventureGameplayTags::Attribute_Player_CurrentHealth, FLT_MAX);
+	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, AdventureGameplayTags::Attribute_Player_CurrentStamina, FLT_MAX);
 
 	InASC->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get());
 	

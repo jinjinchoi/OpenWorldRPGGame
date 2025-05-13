@@ -93,6 +93,8 @@ private:
 	UPROPERTY()
 	TArray<AActor*> OverlappedActors;
 
+public:
+	FORCEINLINE void SetEnemyLevel (const int32 InLevel) { EnemyLevel = InLevel; }
 	
 	
 };

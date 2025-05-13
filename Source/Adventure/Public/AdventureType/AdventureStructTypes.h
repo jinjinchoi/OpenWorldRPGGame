@@ -95,13 +95,13 @@ struct FPartyCharacterInfo
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	FScalableFloat CriticalMagnitude;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly)
 	float CurrentHealth = FLT_MAX;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	FScalableFloat MaxHealth;
 
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(VisibleDefaultsOnly)
 	float CurrentStamina = FLT_MAX;
 
 	UPROPERTY(EditDefaultsOnly)
