@@ -146,14 +146,30 @@ protected:
 #pragma endregion
 
 #pragma region Input
-
-	/* 카메라 스크롤 속도 */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Input, meta=(ClampMin="0.0"))
-	float CameraZoomSpeed = 300;
-
+	
 	virtual void Input_Jump() override;
 	virtual void Input_Look(const FInputActionValue& InputActionValue) override;
+
+	/* 카메라 스크롤 변수 */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Input, meta=(ClampMin="0.0"))
+	float CameraZoomSpeed = 80.f;
+
+	UPROPERTY(EditAnywhere, Category="Camera Zoom")
+	float ZoomInterpSpeed = 7.5f;
+
+	UPROPERTY(EditAnywhere, Category="Camera Zoom")
+	float MinZoom = 150.f;
+
+	UPROPERTY(EditAnywhere, Category="Camera Zoom")
+	float MaxZoom = 600.f;
+	
+	FTimerHandle ZoomInterpTimerHandle;
+	float TargetArmLength = 300.f;
+	bool bIsZooming = false;
+	
 	virtual void Input_CameraScroll(const FInputActionValue& InputActionValue) override;
+	void StartZoomInterp();
+	void ZoomInterpTick();
 	
 	virtual void Input_Move(const FInputActionValue& InputActionValue) override;
 	virtual void Input_StopMove() override;

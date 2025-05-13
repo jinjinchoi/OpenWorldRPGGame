@@ -133,6 +133,8 @@ bool UCharacterInfoWidgetController::LevelUp(const FGameplayTag& CharacterTagToL
 		}
 
 		CharacterInfoToLevelUp.CharacterLevel += 1;
+		CharacterInfoToLevelUp.CurrentHealth = FLT_MAX;
+		CharacterInfoToLevelUp.CurrentStamina = FLT_MAX;
 		GetAdventurePlayerState()->GetControllableCharacterManager()->AddOrUpdateOwningCharactersInfo(CharacterInfoToLevelUp);
 	}
 	

@@ -367,9 +367,33 @@ void AAdventurePlayerCharacter::Input_CameraScroll(const FInputActionValue& Inpu
 	const float ScrollValue = InputActionValue.Get<float>() * -CameraZoomSpeed;
 	
 	float NewTargetArmLength =  CameraBoom->TargetArmLength + ScrollValue;
-	NewTargetArmLength = FMath::Clamp(NewTargetArmLength, 150.f, 800.f);
-	
-	CameraBoom->TargetArmLength = FMath::FInterpTo(CameraBoom->TargetArmLength, NewTargetArmLength, GetWorld()->GetDeltaSeconds(), 10.0f);
+	TargetArmLength = FMath::Clamp(NewTargetArmLength, MinZoom, MaxZoom);
+
+	if (!bIsZooming)
+	{
+		StartZoomInterp();
+	}
+}
+
+void AAdventurePlayerCharacter::StartZoomInterp()
+{
+	bIsZooming = true;
+	GetWorld()->GetTimerManager().SetTimer(ZoomInterpTimerHandle, this, &AAdventurePlayerCharacter::ZoomInterpTick, 0.016f, true);
+}
+
+void AAdventurePlayerCharacter::ZoomInterpTick()
+{
+	const float CurrentLength = CameraBoom->TargetArmLength;
+	const float NewLength = FMath::FInterpTo(CurrentLength, TargetArmLength, GetWorld()->GetDeltaSeconds(), ZoomInterpSpeed);
+
+	CameraBoom->TargetArmLength = NewLength;
+
+	if (FMath::IsNearlyEqual(NewLength, TargetArmLength, 0.5f))
+	{
+		CameraBoom->TargetArmLength = TargetArmLength;
+		GetWorld()->GetTimerManager().ClearTimer(ZoomInterpTimerHandle);
+		bIsZooming = false;
+	}
 }
 
 void AAdventurePlayerCharacter::Input_Move(const FInputActionValue& InputActionValue)
