@@ -16,6 +16,7 @@
 #include "DataAsset/StartUpData/DataAsset_StartUpData_Enemy.h"
 #include "Engine/AssetManager.h"
 #include "GameFramework/CharacterMovementComponent.h" 
+#include "Item/Pickups/AdventureInventoryItem.h"
 #include "UI/Widget/AdventureUserWidget.h"
 
 AAdventureEnemyCharacter::AAdventureEnemyCharacter(const FObjectInitializer& ObjectInitializer)
@@ -58,6 +59,32 @@ void AAdventureEnemyCharacter::OnCharacterDied_Implementation()
 		AIController->UnPossess();
 	}
 }
+
+void AAdventureEnemyCharacter::SpawnItem()
+{
+	if (!DropItemClass || DropItemTags.IsEmpty()) return;
+
+	float RandomChance = FMath::FRandRange(1.f, 100.f);
+	RandomChance *= EnemyLevel;
+	
+	if (RandomChance < ItemDropChance) return;
+
+	const int32 RandomIndex = FMath::RandRange(0, DropItemTags.Num() - 1);
+	const FGameplayTag SelectedItemTag = DropItemTags[RandomIndex];
+
+	FTransform SpawnTransform;
+	SpawnTransform.SetLocation(GetActorLocation());
+
+	AAdventureInventoryItem* SpawnedItem = GetWorld()->SpawnActorDeferred<AAdventureInventoryItem>(
+		DropItemClass,
+		SpawnTransform
+	);
+
+	SpawnedItem->ItemTag = SelectedItemTag;
+	SpawnedItem->FinishSpawning(SpawnTransform);
+	
+}
+
 
 void AAdventureEnemyCharacter::PossessedBy(AController* NewController)
 {
@@ -208,3 +235,4 @@ void AAdventureEnemyCharacter::InitEnemyStartUpData() const
 	);
 	
 }
+

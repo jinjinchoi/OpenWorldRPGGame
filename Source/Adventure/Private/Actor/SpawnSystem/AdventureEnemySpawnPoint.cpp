@@ -26,9 +26,7 @@ void AAdventureEnemySpawnPoint::SpawnActor(TFunction<void()> OnSpawnComplete)
 			{
 				AAdventureEnemyCharacter* SpawnedEnemy = WeakThis->GetWorld()->SpawnActorDeferred<AAdventureEnemyCharacter>(LoadedActor, SpawnTransform);
 				SpawnedEnemy->SetEnemyLevel(WeakThis->EnemyLevel);
-
 				SpawnedEnemy->FinishSpawning(SpawnTransform);
-				
 			}
 
 			if (OnSpawnComplete) OnSpawnComplete();

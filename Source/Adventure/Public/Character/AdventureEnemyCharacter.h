@@ -8,6 +8,7 @@
 #include "UI/WidgetController/OverlayWidgetController.h"
 #include "AdventureEnemyCharacter.generated.h"
 
+class AAdventureInventoryItem;
 class UDataAsset_StartUpData_Enemy;
 class UBoxComponent;
 class AAdventureAIController;
@@ -47,6 +48,9 @@ protected:
 	
 	void BindGameplayTagChanged();
 
+	UFUNCTION(BlueprintCallable)
+	void SpawnItem();
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CharacterData")
 	TSoftObjectPtr<UDataAsset_StartUpData_Enemy> CharacterStartUpData;
 
@@ -79,6 +83,16 @@ protected:
 
 	UPROPERTY(BlueprintAssignable)
 	FOnAttributeChangeDelegate OnMaxHealthChangeDelegate;
+
+	UPROPERTY(EditDefaultsOnly, Category="Drop Item")
+	TSubclassOf<AAdventureInventoryItem> DropItemClass;
+
+	UPROPERTY(EditDefaultsOnly, Category="Drop Item")
+	TArray<FGameplayTag> DropItemTags;
+
+	UPROPERTY(EditDefaultsOnly, Category="Drop Item")
+	float ItemDropChance = 50.f;
+	
 
 	/* AI */
 	UPROPERTY()

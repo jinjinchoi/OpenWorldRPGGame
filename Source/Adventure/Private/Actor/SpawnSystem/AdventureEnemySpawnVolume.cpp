@@ -3,6 +3,7 @@
 
 #include "Actor/SpawnSystem/AdventureEnemySpawnVolume.h"
 
+#include "DebugHelper.h"
 #include "Actor/SpawnSystem/AdventureEnemySpawnPoint.h"
 #include "Components/SphereComponent.h"
 #include "Interface/PlayerInterface.h"
@@ -37,18 +38,18 @@ void AAdventureEnemySpawnVolume::OnSphereBeginOverlap(UPrimitiveComponent* Overl
 	if (!OtherActor->Implements<UPlayerInterface>()) return;
 	
 	int32 NumSpawnPoints = SpawnPoints.Num();
-	int32 NumCompleted = 0;
+	TSharedRef<int32> NumCompleted = MakeShared<int32>(0);
 
 	for (AAdventureEnemySpawnPoint* Point : SpawnPoints)
 	{
-		Point->SpawnActor([this, &NumCompleted, NumSpawnPoints]()
+		Point->SpawnActor([this, NumCompleted, NumSpawnPoints]()
 		{
-			++NumCompleted;
-			if (NumCompleted >= NumSpawnPoints)
+			(*NumCompleted)++;
+			
+			if (*NumCompleted >= NumSpawnPoints)
 			{
-				this->Destroy();
+				this->SetLifeSpan(0.1f);
 			}
 		});
 	}
 }
-
