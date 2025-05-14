@@ -25,7 +25,8 @@ public class Adventure : ModuleRules
 			"GameplayTasks",
 			"AnimGraphRuntime",
 			"Niagara",
-			"MoviePlayer"
+			"MoviePlayer",
+			"NavigationSystem"
 		});
 
 		// Uncomment if you are using Slate UI

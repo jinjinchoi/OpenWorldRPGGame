@@ -65,7 +65,7 @@ void AAdventureEnemyCharacter::SpawnItem()
 	if (!DropItemClass || DropItemTags.IsEmpty()) return;
 
 	float RandomChance = FMath::FRandRange(1.f, 100.f);
-	RandomChance *= EnemyLevel;
+	RandomChance *= EnemyLevel + 10.f;
 	
 	if (RandomChance < ItemDropChance) return;
 
