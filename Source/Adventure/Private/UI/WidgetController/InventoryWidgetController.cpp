@@ -210,15 +210,21 @@ void UInventoryWidgetController::ApplyEatableItem(const FGameplayTag& ItemTag, c
 	
 	if (CharacterTagToApply.MatchesTagExact(GetCurrentCharacterTag()))
 	{
+		/* 현재 컨트롤 중인 캐릭터 */
 		const AAdventurePlayerCharacter* PlayerCharacter = Cast<AAdventurePlayerCharacter>(PlayerController->GetPawn());
 		check(PlayerCharacter);
 		PlayerCharacter->ApplyRecoveryEffect(EatableItemIParams.RecoveryAmount);
 	}
 	else
 	{
-		// TODO : 플레이 중이 아닌 캐릭터도 효과 적용해야함.
+		/* Not Controlled  */
+		AAdventurePlayerState* AdventurePlayerState = CastChecked<AAdventurePlayerState>(PlayerState);
+		UControllableCharacterManager* CharacterManager = AdventurePlayerState->GetControllableCharacterManager();
+		check(CharacterManager);
+		FPartyCharacterInfo* FoundInfo = CharacterManager->FindCharacterInfoInOwningCharacters(CharacterTagToApply);
+		check(FoundInfo);
+		FoundInfo->CurrentHealth += EatableItemIParams.RecoveryAmount;
 	}
-
 	
 }
 

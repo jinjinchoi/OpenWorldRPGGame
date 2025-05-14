@@ -2,6 +2,8 @@
 
 
 #include "Actor/AdventureMultiHitProjectile.h"
+
+#include "DebugHelper.h"
 #include "Interface/CombatInterface.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -22,9 +24,12 @@ void AAdventureMultiHitProjectile::OnSphereBeginOverlap(UPrimitiveComponent* Ove
 		OverlappingActors.AddUnique(OtherActor);
 		return;
 	}
+
+
 	
 	ECollisionChannel CollisionChannel = OtherActor->GetRootComponent()->GetCollisionObjectType();
-	if (CollisionChannel == ECC_WorldStatic)
+	
+	if (CollisionChannel == ECC_WorldStatic || CollisionChannel == ECC_WorldDynamic)
 	{
 		OnHit();
 		Destroy();

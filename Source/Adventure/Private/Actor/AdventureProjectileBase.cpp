@@ -57,6 +57,7 @@ void AAdventureProjectileBase::OnSphereEndOverlap(UPrimitiveComponent* Overlappe
 {
 }
 
+
 void AAdventureProjectileBase::OnHit() const
 {
 	UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation(), GetActorRotation());
