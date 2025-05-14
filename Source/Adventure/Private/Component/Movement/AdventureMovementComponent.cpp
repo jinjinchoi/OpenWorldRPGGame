@@ -416,7 +416,7 @@ bool UAdventureMovementComponent::CanStartValuting(FVector& OutValutStartPositio
 	const FVector UpVector = UpdatedComponent->GetUpVector();
 	const FVector DownVector = -UpdatedComponent->GetUpVector();
 
-	const FVector FrontStart = ComponentLocation + UpVector * 100.f + ComponentForward * 50.f;
+	const FVector FrontStart = ComponentLocation + UpVector * 50.f + ComponentForward * 50.f;
 	const FVector FrontEnd = FrontStart + DownVector * 100.f;
 
 	const FVector BackStart = FrontStart + ComponentForward * 50.f;
