@@ -7,7 +7,6 @@
 #include "AdventureFunctionLibrary.h"
 #include "AdventureGameplayTag.h"
 #include "DebugHelper.h"
-#include "Camera/CameraComponent.h"
 #include "AbilitySystem/AdventureAbilitySystemComponent.h"
 #include "AbilitySystem/AdventureAttributeSet.h"
 #include "Component/Input/AdventureInputComponent.h"
@@ -16,7 +15,6 @@
 #include "DataAsset/Item/DataAsset_ItemInfo.h"
 #include "DataAsset/StartUpData/DataAsset_StartUpData_Player.h"
 #include "GameFramework/CharacterMovementComponent.h"
-#include "GameFramework/SpringArmComponent.h"
 #include "GameManager/ControllableCharacterManager.h"
 #include "Item/Pickups/AdventureInventoryItem.h"
 #include "Player/AdventureInventory.h"
@@ -30,16 +28,6 @@ AAdventurePlayerCharacter::AAdventurePlayerCharacter(const FObjectInitializer& O
 	bUseControllerRotationYaw = false;
 	bUseControllerRotationRoll = false;
 	
-	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
-	CameraBoom->SetupAttachment(GetRootComponent());
-	CameraBoom->TargetArmLength = 500.f;
-	CameraBoom->SocketOffset = FVector(0.f, 0.f, 60.f);
-	CameraBoom->bUsePawnControlRotation = true;
-
-	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
-	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
-	FollowCamera->bUsePawnControlRotation = false;
-
 	AdventureMovementComponent = Cast<UAdventureMovementComponent>(GetCharacterMovement());
 
 	GetCharacterMovement()->bOrientRotationToMovement = true;
@@ -59,6 +47,7 @@ void AAdventurePlayerCharacter::BeginPlay()
 		AdventureMovementComponent->OnEnterClimbStateDelegate.BindUObject(this, &AAdventurePlayerCharacter::OnPlayerEnterClimbState);
 		AdventureMovementComponent->OnExitClimbStateDelegate.BindUObject(this, &AAdventurePlayerCharacter::OnPlayerExitClimbState);
 	}
+	
 	
 }
 
@@ -127,6 +116,21 @@ void AAdventurePlayerCharacter::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
 
+	// 카메라 액터 설정
+	AAdventurePlayerController* PlayerController = CastChecked<AAdventurePlayerController>(NewController);
+	if (PlayerController->bIsCameraSet)
+	{
+		PlayerController->OnCharacterPossessed(this);
+	}
+	else
+	{
+		PlayerController->OnPlayerCameraDelegate.BindLambda([PlayerController, this]()
+		{
+			PlayerController->OnCharacterPossessed(this);
+		});
+	}
+
+	// Attribute And Ability 적용
 	AAdventurePlayerState* AdventurePlayerState = Cast<AAdventurePlayerState>(GetPlayerState());
 	check(AdventurePlayerState);
 
@@ -156,7 +160,7 @@ void AAdventurePlayerCharacter::InitPlayerCharacterData()
 	check(AdventureAbilitySystemComponent);
 
 	AAdventurePlayerState* AdventurePlayerState = Cast<AAdventurePlayerState>(GetPlayerState());
-	const FPartyCharacterInfo CurrentCharacterInfo = *AdventurePlayerState->GetControllableCharacterManager()->FindCharacterInfoInOwningCharacters(CharacterTag);
+	FPartyCharacterInfo CurrentCharacterInfo = *AdventurePlayerState->GetControllableCharacterManager()->FindCharacterInfoInOwningCharacters(CharacterTag);
 	check(CurrentCharacterInfo.IsValid());
 
 	// Attribute 부여
@@ -362,39 +366,6 @@ void AAdventurePlayerCharacter::Input_Look(const FInputActionValue& InputActionV
 	}
 }
 
-void AAdventurePlayerCharacter::Input_CameraScroll(const FInputActionValue& InputActionValue)
-{
-	const float ScrollValue = InputActionValue.Get<float>() * -CameraZoomSpeed;
-	
-	float NewTargetArmLength =  CameraBoom->TargetArmLength + ScrollValue;
-	TargetArmLength = FMath::Clamp(NewTargetArmLength, MinZoom, MaxZoom);
-
-	if (!bIsZooming)
-	{
-		StartZoomInterp();
-	}
-}
-
-void AAdventurePlayerCharacter::StartZoomInterp()
-{
-	bIsZooming = true;
-	GetWorld()->GetTimerManager().SetTimer(ZoomInterpTimerHandle, this, &AAdventurePlayerCharacter::ZoomInterpTick, 0.016f, true);
-}
-
-void AAdventurePlayerCharacter::ZoomInterpTick()
-{
-	const float CurrentLength = CameraBoom->TargetArmLength;
-	const float NewLength = FMath::FInterpTo(CurrentLength, TargetArmLength, GetWorld()->GetDeltaSeconds(), ZoomInterpSpeed);
-
-	CameraBoom->TargetArmLength = NewLength;
-
-	if (FMath::IsNearlyEqual(NewLength, TargetArmLength, 0.5f))
-	{
-		CameraBoom->TargetArmLength = TargetArmLength;
-		GetWorld()->GetTimerManager().ClearTimer(ZoomInterpTimerHandle);
-		bIsZooming = false;
-	}
-}
 
 void AAdventurePlayerCharacter::Input_Move(const FInputActionValue& InputActionValue)
 {

@@ -46,7 +46,6 @@ public:
 
 #pragma region Input
 	virtual void Input_Look(const FInputActionValue& InputActionValue) = 0;
-	virtual void Input_CameraScroll(const FInputActionValue& InputActionValue) = 0;
 	
 	virtual void Input_Jump() = 0;
 	virtual void Input_Move(const FInputActionValue& InputActionValue) = 0;

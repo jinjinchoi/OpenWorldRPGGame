@@ -21,20 +21,20 @@ void UInventoryWidgetController::BindCallbacksToDependencies()
 		PlayerCharacter->OnOverlappedItemChangedDelegate.BindWeakLambda(
 			PlayerCharacter, [this](const TArray<TWeakObjectPtr<AAdventureInventoryItem>>& OverlappedItems)
 			{
+				// 픽업 아이템 정보 위젯 초기화
+				OnItemToPickUpChangedDelegate.Broadcast(FItemInfoParams(), 0);
+				
 				if (OverlappedItems.IsEmpty())
 				{
-					OnItemToPickUpChangedDelegate.Broadcast(FItemInfoParams());
 					return;
 				}
-
-				OnItemToPickUpChangedDelegate.Broadcast(FItemInfoParams());
 				
 				for (const TWeakObjectPtr<AAdventureInventoryItem>& WeakItem : OverlappedItems)
 				{
 					if (!WeakItem.IsValid()) continue;
 
 					const FItemInfoParams FoundInfo = ItemInfo->FindItemInfo(WeakItem->ItemTag);
-					OnItemToPickUpChangedDelegate.Broadcast(FoundInfo);
+					OnItemToPickUpChangedDelegate.Broadcast(FoundInfo, WeakItem->Quantity);
 				}
 			}
 		);

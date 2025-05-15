@@ -62,8 +62,6 @@ void UAdventureChangeCharacterAbility::SpawnNewCharacterAndRemoveOldCharacter(co
 	// 현재 사용중인 캐릭터 정보 저장
 	const FPartyCharacterInfo CurrentCharacterInfo = UAdventureFunctionLibrary::MakePartyCharacterInfo(CurrentControlCharacter);
 	CharacterManager->AddOrUpdateOwningCharactersInfo(CurrentCharacterInfo);
-	// TODO :: 파티 정보에도 업데이트 해야하는지 확인할 필요 있음
-
 
 	// Soft Object Load 후 작업 시작
 	CharacterManager->GetCharacterClassByTag(CachedPartyInfo.ClassTag, [this](TSubclassOf<ACharacter> LoadedClass)
@@ -82,19 +80,13 @@ void UAdventureChangeCharacterAbility::SpawnNewCharacterAndRemoveOldCharacter(co
 			// 소환할 캐릭터 인덱스 설정
 			SpawnedCharacter->CurrentCharacterIndex = CachedCharacterIndex;
 			SpawnedCharacter->SetActorRotation(GetAvatarActorFromActorInfo()->GetActorRotation());
-
-			// 기존 캐릭터 카메라 정보 저장
-			const FRotator OldControlRotation = GetAdventurePlayerCharacter()->GetControlRotation();
-			const USpringArmComponent* OldSpringArm = GetAvatarActorFromActorInfo()->FindComponentByClass<USpringArmComponent>();
-			const UCameraComponent* OldCamera = GetAvatarActorFromActorInfo()->FindComponentByClass<UCameraComponent>();
-
-			// 바뀔 캐릭터 카메라 정보 저장
-			USpringArmComponent* NewSpringArm = SpawnedCharacter->FindComponentByClass<USpringArmComponent>();
-			UCameraComponent* NewCamera = SpawnedCharacter->FindComponentByClass<UCameraComponent>();
-
+			
 			// 기존 캐릭터 속도와 Movement Mode 저장
 			const FVector OldVelocity = GetAdventurePlayerCharacter()->GetVelocity();
 			const FVector OldInputVector = GetAdventurePlayerCharacter()->GetCharacterMovement()->GetLastInputVector();
+
+			// 기존 캐릭터 컨트롤러 회전 값 저장
+			const FRotator OldControlRotation = GetAdventurePlayerCharacter()->GetControlRotation();
 			
 			// 소환 후 Possess
 			SpawnedCharacter->FinishSpawning(SpawnTransform);
@@ -109,24 +101,10 @@ void UAdventureChangeCharacterAbility::SpawnNewCharacterAndRemoveOldCharacter(co
 				SpawnedCharacter->StartSprint();
 			}
 
-			// 카메라 세팅
+			// 컨트롤러 세팅
 			if (AController* NewController = SpawnedCharacter->GetController())
 			{
 				NewController->SetControlRotation(OldControlRotation);
-			}
-
-			if (OldSpringArm && NewSpringArm)
-			{
-				NewSpringArm->TargetArmLength = OldSpringArm->TargetArmLength;
-				// NewSpringArm->SetRelativeRotation(OldSpringArm->GetRelativeRotation());
-				// NewSpringArm->SetRelativeLocation(OldSpringArm->GetRelativeLocation());
-				NewSpringArm->SetWorldLocation(OldSpringArm->GetComponentLocation());
-				NewSpringArm->SetWorldRotation(OldSpringArm->GetComponentRotation());
-			}
-
-			if (OldCamera && NewCamera)
-			{
-				NewCamera->FieldOfView = OldCamera->FieldOfView;
 			}
 			
 			if (GetAvatarActorFromActorInfo())

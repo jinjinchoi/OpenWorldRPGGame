@@ -62,20 +62,8 @@ public:
 	FGameplayTag EquippedSwordTag;
 	FGameplayTag EquippedShieldTag;
 	
-	UPROPERTY(EditDefaultsOnly)
-	TSubclassOf<UGameplayEffect> RecoveryEffect;
-
-	UPROPERTY(EditDefaultsOnly, Category="Gameplay Effect")
-	TSubclassOf<UGameplayEffect> SwordGameplayEffect;
-	FActiveGameplayEffectHandle SwordActiveGameplayEffectHandle;
-
-	UPROPERTY(EditDefaultsOnly, Category="Gameplay Effect")
-	TSubclassOf<UGameplayEffect> ShieldGameplayEffect;
-	FActiveGameplayEffectHandle ShieldActiveGameplayEffectHandle;
-	
 	FOnMovementModechanged OnMovementModeChangedDelegate;
 	FOnOverlappedItemChanged OnOverlappedItemChangedDelegate;
-	
 
 protected:
 	virtual void BeginPlay() override;
@@ -101,6 +89,17 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, Category="Gameplay Effect")
 	TSubclassOf<UGameplayEffect> RunAndClimbCostEffectClass;
+	
+	UPROPERTY(EditDefaultsOnly, Category="Gameplay Effect")
+	TSubclassOf<UGameplayEffect> RecoveryEffect;
+
+	UPROPERTY(EditDefaultsOnly, Category="Gameplay Effect")
+	TSubclassOf<UGameplayEffect> SwordGameplayEffect;
+	FActiveGameplayEffectHandle SwordActiveGameplayEffectHandle;
+
+	UPROPERTY(EditDefaultsOnly, Category="Gameplay Effect")
+	TSubclassOf<UGameplayEffect> ShieldGameplayEffect;
+	FActiveGameplayEffectHandle ShieldActiveGameplayEffectHandle;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CharacterData")
 	TObjectPtr<UDataAsset_StartUpData_Player> CharacterStartUpData;
@@ -134,12 +133,6 @@ protected:
 		
 #pragma region Components
 	
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera")
-	TObjectPtr<UCameraComponent> FollowCamera;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera")
-	TObjectPtr<USpringArmComponent> CameraBoom;
-
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Movement")
 	TObjectPtr<UAdventureMovementComponent> AdventureMovementComponent;
 	
@@ -149,27 +142,6 @@ protected:
 	
 	virtual void Input_Jump() override;
 	virtual void Input_Look(const FInputActionValue& InputActionValue) override;
-
-	/* 카메라 스크롤 변수 */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Input, meta=(ClampMin="0.0"))
-	float CameraZoomSpeed = 80.f;
-
-	UPROPERTY(EditAnywhere, Category="Camera Zoom")
-	float ZoomInterpSpeed = 7.5f;
-
-	UPROPERTY(EditAnywhere, Category="Camera Zoom")
-	float MinZoom = 150.f;
-
-	UPROPERTY(EditAnywhere, Category="Camera Zoom")
-	float MaxZoom = 600.f;
-	
-	FTimerHandle ZoomInterpTimerHandle;
-	float TargetArmLength = 300.f;
-	bool bIsZooming = false;
-	
-	virtual void Input_CameraScroll(const FInputActionValue& InputActionValue) override;
-	void StartZoomInterp();
-	void ZoomInterpTick();
 	
 	virtual void Input_Move(const FInputActionValue& InputActionValue) override;
 	virtual void Input_StopMove() override;

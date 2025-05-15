@@ -5,11 +5,11 @@
 #include "AdventureGameplayTag.h"
 #include "DebugHelper.h"
 #include "EnhancedInputSubsystems.h"
+#include "Actor/Camera/AdventurePlayerCamera.h"
 #include "Character/AdventurePlayerCharacter.h"
 #include "Component/Input/AdventureInputComponent.h"
 #include "GameFramework/Character.h"
 #include "DataAsset/Input/DataAsset_InputConfig.h"
-#include "GameManager/ControllableCharacterManager.h"
 #include "UI/Widget/DamageTextComponent.h"
 #include "Interface/PlayerInterface.h"
 
@@ -49,6 +49,17 @@ void AAdventurePlayerController::BeginPlay()
 	if (UEnhancedInputLocalPlayerSubsystem* SubSystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer()))
 	{
 		SubSystem->AddMappingContext(InputConfigDataAsset->DefaultMappingContext, 0);
+	}
+
+	if (PlayerCameraClass)
+	{
+		PlayerCamera = GetWorld()->SpawnActor<AAdventurePlayerCamera>(PlayerCameraClass);
+		PlayerCamera->SetOwner(this);
+		PlayerCamera->SetPlayerController(this);
+		bAutoManageActiveCameraTarget = false;
+		SetViewTargetWithBlend(PlayerCamera);
+		bIsCameraSet = true;
+		OnPlayerCameraDelegate.ExecuteIfBound();
 	}
 	
 }
@@ -98,20 +109,32 @@ void AAdventurePlayerController::SetupInputComponent()
 	
 }
 
+void AAdventurePlayerController::OnCharacterPossessed(APawn* NewCharacter)
+{
+	if (PlayerCamera && NewCharacter)
+	{
+		PlayerCamera->SetFollowTarget(NewCharacter->GetRootComponent());
+	}
+}
+
 void AAdventurePlayerController::Input_Look(const FInputActionValue& InputActionValue)
 {
 	if (IPlayerInterface* PlayerCharacterInterface = Cast<IPlayerInterface>(GetPawn()))
 	{
 		PlayerCharacterInterface->Input_Look(InputActionValue);
 	}
+	
 }
 
 void AAdventurePlayerController::Input_CameraScroll(const FInputActionValue& InputActionValue)
 {
-	if (IPlayerInterface* PlayerCharacterInterface = Cast<IPlayerInterface>(GetPawn()))
+	
+	if (PlayerCamera)
 	{
-		PlayerCharacterInterface->Input_CameraScroll(InputActionValue);
+		const float ScrollValue = InputActionValue.Get<float>();
+		PlayerCamera->CameraScroll(ScrollValue);
 	}
+	
 }
 
 void AAdventurePlayerController::Input_Jump()
@@ -129,6 +152,7 @@ void AAdventurePlayerController::Input_Run(const FInputActionValue& InputActionV
 	{
 		PlayerCharacterInterface->Input_Move(InputActionValue);
 	}
+	
 }
 
 void AAdventurePlayerController::Input_StopMove()

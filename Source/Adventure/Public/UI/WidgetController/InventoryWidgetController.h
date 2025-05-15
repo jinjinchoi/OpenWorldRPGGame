@@ -9,7 +9,7 @@
 #include "InventoryWidgetController.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnSlotButtonClicked, FItemSlot, ItemInSlot, int32, SlotIndex);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnItemToPickUpChanged, FItemInfoParams, OverlappedItemInfo);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnItemToPickUpChanged, FItemInfoParams, OverlappedItemInfo, int32, NumOfItem);
 
 
 class UDataAsset_ItemInfo;

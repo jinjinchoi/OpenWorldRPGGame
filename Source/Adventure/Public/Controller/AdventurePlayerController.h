@@ -7,6 +7,9 @@
 #include "GenericTeamAgentInterface.h"
 #include "AdventurePlayerController.generated.h"
 
+DECLARE_DELEGATE(FOnPlayerCameraSet);
+
+class AAdventurePlayerCamera;
 class UControllableCharacterManager;
 class UAdventureAbilitySystemComponent;
 class UInputMappingContext;
@@ -29,28 +32,40 @@ public:
 	void AddClimbMappingContext() const;
 	void RemoveClimbMappingContext() const;
 
+	void OnCharacterPossessed(APawn* NewCharacter);
+	
 	/* Begin IGenericTeamAgentInterface Interface.*/
 	virtual FGenericTeamId GetGenericTeamId() const override;
 	/* End IGenericTeamAgentInterface Interface. */
+
+	FOnPlayerCameraSet OnPlayerCameraDelegate;
+	bool bIsCameraSet = false;
+
 
 protected:
 	virtual void BeginPlay() override;
 	virtual void SetupInputComponent() override;
 	
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Input)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Input")
 	TObjectPtr<UDataAsset_InputConfig> InputConfigDataAsset;
+
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<UDamageTextComponent> DamageTextClass;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="UI")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="UI")
 	TSubclassOf<UUserWidget> MenuWidgetClass;
 	
 	UPROPERTY()
 	TObjectPtr<UUserWidget> MenuWidget;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Camera")
+	TSubclassOf<AAdventurePlayerCamera> PlayerCameraClass;
 
+	UPROPERTY()
+	TObjectPtr<AAdventurePlayerCamera> PlayerCamera;
 
 private:
-	UPROPERTY(EditDefaultsOnly)
-	TSubclassOf<UDamageTextComponent> DamageTextClass;
-
+	
 	FGenericTeamId HeroTeamId;
 
 #pragma region Input Binding Functions
