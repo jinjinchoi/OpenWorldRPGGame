@@ -4,7 +4,6 @@
 #include "GameInstance/AdventureGameInstance.h"
 
 #include "MoviePlayer.h"
-#include "Blueprint/UserWidget.h"
 
 void UAdventureGameInstance::Init()
 {
@@ -27,5 +26,8 @@ void UAdventureGameInstance::OnPreLoadMap(const FString& MapName)
 
 void UAdventureGameInstance::OnDestinationWorldLoaded(UWorld* LoadedWorld)
 {
-	GetMoviePlayer()->StopMovie();
+	if (GetMoviePlayer())
+	{
+		GetMoviePlayer()->StopMovie();
+	}
 }

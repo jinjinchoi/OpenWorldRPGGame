@@ -159,10 +159,13 @@ bool UAdventureMovementComponent::TraceClimbableSurfaces()
 FHitResult UAdventureMovementComponent::TraceFromEyeHeight(const float TraceDistance, const float TraceStartOffset)
 {
 	const FVector ComponentLocation = UpdatedComponent->GetComponentLocation();
-	const FVector EyeHeightOffset = UpdatedComponent->GetUpVector() * (CharacterOwner->BaseEyeHeight + TraceStartOffset);
+	const FVector ForwardVector = UpdatedComponent->GetComponentRotation().Vector().GetSafeNormal();
+	const FVector UpVector = FVector::UpVector; // 월드 기준
+	
+	const FVector EyeHeightOffset = UpVector * (CharacterOwner->BaseEyeHeight + TraceStartOffset);
 
 	const FVector Start = ComponentLocation + EyeHeightOffset;
-	const FVector End = Start + UpdatedComponent->GetForwardVector() * TraceDistance;
+	const FVector End = Start + ForwardVector * TraceDistance;
 
 	return DoLineTraceSingleByObject(Start, End);
 	
@@ -343,20 +346,23 @@ void UAdventureMovementComponent::SnapMovementToClimbableSurfaces(float DeltaTim
 bool UAdventureMovementComponent::CheckHasReachedLedge()
 {
 	FHitResult LedgeHitResult = TraceFromEyeHeight(100.f, 25.f);
+	
 	if (!LedgeHitResult.bBlockingHit)
 	{
 		const FVector WalkableSurfaceTraceStart = LedgeHitResult.TraceEnd;
 		const FVector DownVector = -UpdatedComponent->GetUpVector();
 		const FVector WalkableSurfaceTraceEnd = WalkableSurfaceTraceStart + DownVector * 100.f;
-
+	
 		FHitResult WalkableSurfaceHitResult = DoLineTraceSingleByObject(WalkableSurfaceTraceStart, WalkableSurfaceTraceEnd);
 		if (WalkableSurfaceHitResult.bBlockingHit && GetUnRotatedClimbVelocity().Z > 10.f)
 		{
+			SetMotionWarpTarget(FName("ClimbUpTarget"), WalkableSurfaceHitResult.ImpactPoint);
 			return true;
 		}
 	}
-
+	
 	return false;
+	
 }
 
 void UAdventureMovementComponent::TryStartMounting()

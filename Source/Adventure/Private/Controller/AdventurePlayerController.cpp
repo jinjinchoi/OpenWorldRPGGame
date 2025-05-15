@@ -51,16 +51,15 @@ void AAdventurePlayerController::BeginPlay()
 		SubSystem->AddMappingContext(InputConfigDataAsset->DefaultMappingContext, 0);
 	}
 
-	if (PlayerCameraClass)
-	{
-		PlayerCamera = GetWorld()->SpawnActor<AAdventurePlayerCamera>(PlayerCameraClass);
-		PlayerCamera->SetOwner(this);
-		PlayerCamera->SetPlayerController(this);
-		bAutoManageActiveCameraTarget = false;
-		SetViewTargetWithBlend(PlayerCamera);
-		bIsCameraSet = true;
-		OnPlayerCameraDelegate.ExecuteIfBound();
-	}
+	// 카메라 설정
+	check(AdventurePlayerCameraClass)
+	PlayerCamera = GetWorld()->SpawnActor<AAdventurePlayerCamera>(AdventurePlayerCameraClass);
+	PlayerCamera->SetOwner(this);
+	PlayerCamera->SetPlayerController(this);
+	bAutoManageActiveCameraTarget = false;
+	SetViewTargetWithBlend(PlayerCamera);
+	bIsCameraSet = true;
+	OnPlayerCameraDelegate.ExecuteIfBound();
 	
 }
 

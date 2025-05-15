@@ -58,8 +58,8 @@ protected:
 	UPROPERTY()
 	TObjectPtr<UUserWidget> MenuWidget;
 	
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Camera")
-	TSubclassOf<AAdventurePlayerCamera> PlayerCameraClass;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="UI")
+	TSubclassOf<AAdventurePlayerCamera> AdventurePlayerCameraClass;
 
 	UPROPERTY()
 	TObjectPtr<AAdventurePlayerCamera> PlayerCamera;
