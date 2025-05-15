@@ -87,13 +87,12 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category="Drop Item")
 	TSubclassOf<AAdventureInventoryItem> DropItemClass;
 
-	UPROPERTY(EditDefaultsOnly, Category="Drop Item")
+	UPROPERTY(EditDefaultsOnly, Category="Drop Item", meta=(Categories = "Item"))
 	TArray<FGameplayTag> DropItemTags;
 
 	UPROPERTY(EditDefaultsOnly, Category="Drop Item")
 	float ItemDropChance = 50.f;
 	
-
 	/* AI */
 	UPROPERTY()
 	TObjectPtr<AAdventureAIController> AdventureAIController;

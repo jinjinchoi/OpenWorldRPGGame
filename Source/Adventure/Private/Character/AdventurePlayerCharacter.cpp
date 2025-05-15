@@ -42,12 +42,15 @@ void AAdventurePlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
+	Tags.Add("Player");
+	
 	if (AdventureMovementComponent)
 	{
 		AdventureMovementComponent->OnEnterClimbStateDelegate.BindUObject(this, &AAdventurePlayerCharacter::OnPlayerEnterClimbState);
 		AdventureMovementComponent->OnExitClimbStateDelegate.BindUObject(this, &AAdventurePlayerCharacter::OnPlayerExitClimbState);
 	}
-	
+
+
 	
 }
 

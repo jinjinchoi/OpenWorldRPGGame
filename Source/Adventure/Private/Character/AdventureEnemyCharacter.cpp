@@ -105,6 +105,8 @@ void AAdventureEnemyCharacter::PossessedBy(AController* NewController)
 void AAdventureEnemyCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+
+	Tags.Add("Enemy");
 	
 	if (UAdventureUserWidget* AdventureUserWidget = Cast<UAdventureUserWidget>(EnemyHealthBar->GetUserWidgetObject()))
 	{
