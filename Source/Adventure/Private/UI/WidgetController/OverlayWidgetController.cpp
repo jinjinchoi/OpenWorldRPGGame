@@ -70,6 +70,12 @@ void UOverlayWidgetController::BindCallbacksToDependencies()
 	{
 		OnPartyCharacterChangedDelegate.Broadcast(ClassTag, PartyIndex);
 	});
+
+	PlayerController->GetPawn<AAdventurePlayerCharacter>()->OnCharacterLevelUpDelegate.BindLambda([this]()
+	{
+		BroadCastInitialValue();
+	});
+	
 	
 }
 

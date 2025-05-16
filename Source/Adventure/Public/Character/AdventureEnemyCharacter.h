@@ -109,5 +109,4 @@ private:
 public:
 	FORCEINLINE void SetEnemyLevel (const int32 InLevel) { EnemyLevel = InLevel; }
 	
-	
 };

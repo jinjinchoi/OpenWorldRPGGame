@@ -50,8 +50,6 @@ void AAdventurePlayerCharacter::BeginPlay()
 		AdventureMovementComponent->OnExitClimbStateDelegate.BindUObject(this, &AAdventurePlayerCharacter::OnPlayerExitClimbState);
 	}
 
-
-	
 }
 
 
@@ -349,6 +347,9 @@ void AAdventurePlayerCharacter::LevelUp(const int32 LevelUpAmount)
 	check(CurrentCharacterInfo);
 	
 	CurrentCharacterInfo->CharacterLevel = GetCharacterLevel();
+
+	OnCharacterLevelUpDelegate.ExecuteIfBound();
+	
 }
 
 

@@ -15,6 +15,7 @@ class UDataAsset_ItemInfo;
 class AAdventureInventoryItem;
 DECLARE_DELEGATE_OneParam(FOnMovementModechanged, const ECharacterMovementType /* Movement Type */);
 DECLARE_DELEGATE_OneParam(FOnOverlappedItemChanged, TArray<TWeakObjectPtr<AAdventureInventoryItem>> /* Overlap Item Array */);
+DECLARE_DELEGATE(FOnCharacterLevelUp);
 
 class UGameplayEffect;
 class UAdventureMovementComponent;
@@ -64,6 +65,7 @@ public:
 	
 	FOnMovementModechanged OnMovementModeChangedDelegate;
 	FOnOverlappedItemChanged OnOverlappedItemChangedDelegate;
+	FOnCharacterLevelUp OnCharacterLevelUpDelegate;
 
 protected:
 	virtual void BeginPlay() override;

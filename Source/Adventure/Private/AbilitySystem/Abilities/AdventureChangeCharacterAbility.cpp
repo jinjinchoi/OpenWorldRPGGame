@@ -80,13 +80,14 @@ void UAdventureChangeCharacterAbility::SpawnNewCharacterAndRemoveOldCharacter(co
 			// 소환할 캐릭터 인덱스 설정
 			SpawnedCharacter->CurrentCharacterIndex = CachedCharacterIndex;
 			SpawnedCharacter->SetActorRotation(GetAvatarActorFromActorInfo()->GetActorRotation());
+
+			// 기존 캐릭터 컨트롤러 회전 값 저장
+			const FRotator OldControlRotation = GetAdventurePlayerCharacter()->GetControlRotation();
 			
 			// 기존 캐릭터 속도와 Movement Mode 저장
 			const FVector OldVelocity = GetAdventurePlayerCharacter()->GetVelocity();
 			const FVector OldInputVector = GetAdventurePlayerCharacter()->GetCharacterMovement()->GetLastInputVector();
-
-			// 기존 캐릭터 컨트롤러 회전 값 저장
-			const FRotator OldControlRotation = GetAdventurePlayerCharacter()->GetControlRotation();
+			const UCharacterMovementComponent* OldMoveComponent = GetAdventurePlayerCharacter()->GetCharacterMovement();
 			
 			// 소환 후 Possess
 			SpawnedCharacter->FinishSpawning(SpawnTransform);
@@ -95,7 +96,10 @@ void UAdventureChangeCharacterAbility::SpawnNewCharacterAndRemoveOldCharacter(co
 			// 속도 세팅
 			SpawnedCharacter->GetCharacterMovement()->Velocity = OldVelocity;
 			SpawnedCharacter->GetCharacterMovement()->AddInputVector(OldInputVector, true);
-			SpawnedCharacter->GetCharacterMovement()->SetMovementMode(GetAdventurePlayerCharacter()->GetCharacterMovement()->MovementMode);
+
+			// Movement Mode 적용
+			SpawnedCharacter->GetCharacterMovement()->SetMovementMode(OldMoveComponent->MovementMode, OldMoveComponent->CustomMovementMode);
+			
 			if (GetAdventurePlayerCharacter()->IsSprinting())
 			{
 				SpawnedCharacter->StartSprint();

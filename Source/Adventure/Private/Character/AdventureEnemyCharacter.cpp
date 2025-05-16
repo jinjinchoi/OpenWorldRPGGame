@@ -64,10 +64,12 @@ void AAdventureEnemyCharacter::SpawnItem()
 {
 	if (!DropItemClass || DropItemTags.IsEmpty()) return;
 
-	float RandomChance = FMath::FRandRange(1.f, 100.f);
-	RandomChance *= EnemyLevel + 10.f;
+	const float RandomChance = FMath::FRandRange(1.f, 100.f);
+	const float LevelModifier = FMath::Sqrt(static_cast<float>(EnemyLevel));
+
+	const float FinalChance = RandomChance + LevelModifier * 5.f;
 	
-	if (RandomChance < ItemDropChance) return;
+	if (FinalChance < ItemDropChance) return;
 
 	const int32 RandomIndex = FMath::RandRange(0, DropItemTags.Num() - 1);
 	const FGameplayTag SelectedItemTag = DropItemTags[RandomIndex];
