@@ -12,6 +12,8 @@ class UDataAsset_AbilityInfo;
 class UAttributeSet;
 class UAbilitySystemComponent;
 
+DECLARE_DELEGATE(FOnCharacterLevelUp);
+
 USTRUCT(BlueprintType)
 struct FWidgetControllerParams
 {
@@ -90,6 +92,8 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly, Category="WidgetController")
 	FGameplayTag CurrentCharacterTag;
+
+	FOnCharacterLevelUp OnCharacterLevelUpDelegate;
 
 	
 };

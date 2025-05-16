@@ -120,11 +120,14 @@ bool UCharacterInfoWidgetController::LevelUp(const FGameplayTag& CharacterTagToL
 	
 	if (GetCurrentCharacterTag().MatchesTagExact(CharacterTagToLevelUp))
 	{
+		// Controlled Character
 		IPlayerInterface* PlayerCharacterInterface = CastChecked<IPlayerInterface>(PlayerController->GetPawn());
 		PlayerCharacterInterface->LevelUp();
+		OnCharacterLevelUpDelegate.ExecuteIfBound();
 	}
-	else
+	else 
 	{
+		// Not Controlled Character
 		FPartyCharacterInfo CharacterInfoToLevelUp = GetOwningCharacterInfoByClassTag(CharacterTagToLevelUp);
 
 		if (!CharacterInfoToLevelUp.IsValid())

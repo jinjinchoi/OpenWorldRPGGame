@@ -34,6 +34,7 @@ void UOverlayWidgetController::BindCallbacksToDependencies()
 	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AdventureAttributeSet->GetMaxHealthAttribute()).Clear();
 	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AdventureAttributeSet->GetCurrentStaminaAttribute()).Clear();
 	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AdventureAttributeSet->GetMaxStaminaAttribute()).Clear();
+	OnCharacterLevelUpDelegate.Unbind();
 
 	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AdventureAttributeSet->GetCurrentHealthAttribute()).
 	AddLambda([this](const FOnAttributeChangeData& Data)
@@ -71,11 +72,11 @@ void UOverlayWidgetController::BindCallbacksToDependencies()
 		OnPartyCharacterChangedDelegate.Broadcast(ClassTag, PartyIndex);
 	});
 
-	PlayerController->GetPawn<AAdventurePlayerCharacter>()->OnCharacterLevelUpDelegate.BindLambda([this]()
+	OnCharacterLevelUpDelegate.BindLambda([this]()
 	{
 		BroadCastInitialValue();
 	});
 	
-	
+
 }
 
