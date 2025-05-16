@@ -310,7 +310,9 @@ UCharacterInfoWidgetController* UAdventureFunctionLibrary::GetCharacterInfoWidge
 	{
 		if (AAdventureInGameHUD* AdventureInGameHUD = Cast<AAdventureInGameHUD>(PlayerController->GetHUD()))
 		{
-			return AdventureInGameHUD->GetCharacterInfoWidgetController(PlayerController->GetPlayerState<APlayerState>(), PlayerController);
+			const FGameplayTag CharacterTag = PlayerController->GetPawn<AAdventurePlayerCharacter>()->GetCharacterClassTag();
+			
+			return AdventureInGameHUD->GetCharacterInfoWidgetController(PlayerController->GetPlayerState<APlayerState>(), PlayerController, CharacterTag);
 		}
 	}
 
@@ -323,7 +325,9 @@ UInventoryWidgetController* UAdventureFunctionLibrary::GetInventoryWidgetControl
 	{
 		if (AAdventureInGameHUD* AdventureInGameHUD = Cast<AAdventureInGameHUD>(PlayerController->GetHUD()))
 		{
-			return AdventureInGameHUD->GetInventoryWidgetController(PlayerController->GetPlayerState<APlayerState>(), PlayerController);
+			const FGameplayTag CharacterTag = PlayerController->GetPawn<AAdventurePlayerCharacter>()->GetCharacterClassTag();
+			
+			return AdventureInGameHUD->GetInventoryWidgetController(PlayerController->GetPlayerState<APlayerState>(), PlayerController, CharacterTag);
 		}
 	}
 

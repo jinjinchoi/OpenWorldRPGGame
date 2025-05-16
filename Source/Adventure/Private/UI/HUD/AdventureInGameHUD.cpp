@@ -39,7 +39,7 @@ UOverlayWidgetController* AAdventureInGameHUD::GetOverlayWidgetController(const 
 	return OverlayWidgetController;
 }
 
-UCharacterInfoWidgetController* AAdventureInGameHUD::GetCharacterInfoWidgetController(APlayerState* InPlayerState, APlayerController* InPlayerController)
+UCharacterInfoWidgetController* AAdventureInGameHUD::GetCharacterInfoWidgetController(APlayerState* InPlayerState, APlayerController* InPlayerController, const FGameplayTag& CharacterTag)
 {
 	check(InPlayerState && CharacterInfoWidgetControllerClass);
 
@@ -48,14 +48,16 @@ UCharacterInfoWidgetController* AAdventureInGameHUD::GetCharacterInfoWidgetContr
 		CharacterInfoWidgetController = NewObject<UCharacterInfoWidgetController>(this, CharacterInfoWidgetControllerClass);
 		CharacterInfoWidgetController->SetPlayerState(InPlayerState);
 		CharacterInfoWidgetController->SetPlayerController(InPlayerController);
+		
 		CharacterInfoWidgetController->BindCallbacksToDependencies();
 	}
-
+	CharacterInfoWidgetController->SetCurrentCharacterTag(CharacterTag);
+	
 	return CharacterInfoWidgetController;
 	
 }
 
-UInventoryWidgetController* AAdventureInGameHUD::GetInventoryWidgetController(APlayerState* InPlayerState, APlayerController* InPlayerController)
+UInventoryWidgetController* AAdventureInGameHUD::GetInventoryWidgetController(APlayerState* InPlayerState, APlayerController* InPlayerController, const FGameplayTag& CharacterTag)
 {
 	check(InPlayerState && InventoryWidgetControllerClass);
 
@@ -65,6 +67,7 @@ UInventoryWidgetController* AAdventureInGameHUD::GetInventoryWidgetController(AP
 		InventoryWidgetController->SetPlayerState(InPlayerState);
 		InventoryWidgetController->SetPlayerController(InPlayerController);
 	}
+	InventoryWidgetController->SetCurrentCharacterTag(CharacterTag);
 	InventoryWidgetController->BindCallbacksToDependencies();
 
 	return InventoryWidgetController;
