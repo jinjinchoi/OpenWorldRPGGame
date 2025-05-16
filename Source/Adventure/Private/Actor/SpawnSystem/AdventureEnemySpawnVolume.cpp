@@ -36,6 +36,8 @@ void AAdventureEnemySpawnVolume::BeginPlay()
 void AAdventureEnemySpawnVolume::OnSphereBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	if (!OtherActor->Implements<UPlayerInterface>()) return;
+
+	SphereCollision->OnComponentBeginOverlap.RemoveDynamic(this, &ThisClass::OnSphereBeginOverlap);
 	
 	int32 NumSpawnPoints = SpawnPoints.Num();
 	TSharedRef<int32> NumCompleted = MakeShared<int32>(0);

@@ -66,17 +66,10 @@ void UOverlayWidgetController::BindCallbacksToDependencies()
 		MovementChangeDelegate.Broadcast(MoveType);
 	});
 
-	Cast<AAdventurePlayerState>(PlayerState)->GetControllableCharacterManager()->OnPartyCharacterChangedDelegate.
-	BindLambda([this](const FGameplayTag& ClassTag , int32 PartyIndex)
-	{
-		OnPartyCharacterChangedDelegate.Broadcast(ClassTag, PartyIndex);
-	});
-
 	OnCharacterLevelUpDelegate.BindLambda([this]()
 	{
 		BroadCastInitialValue();
 	});
 	
-
 }
 

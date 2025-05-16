@@ -7,7 +7,6 @@
 #include "DataAsset/CharacterData/DataAsset_AbilityInfo.h"
 #include "AdventureWidgetControllerBase.generated.h"
 
-
 class UDataAsset_AbilityInfo;
 class UAttributeSet;
 class UAbilitySystemComponent;

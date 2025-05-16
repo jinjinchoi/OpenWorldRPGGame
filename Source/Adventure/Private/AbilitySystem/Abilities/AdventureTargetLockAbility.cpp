@@ -55,6 +55,12 @@ void UAdventureTargetLockAbility::OnTargetLockTick(float DeltaTime)
 
 	if (bShouldOverrideRotation)
 	{
+		if (!IsValid(ClosestActorToMouse))
+		{
+			CancelTargetLockAbility();
+			return;
+		}
+		
 		FRotator LookAtRot = UKismetMathLibrary::FindLookAtRotation(
 			GetAvatarActorFromActorInfo()->GetActorLocation(),
 			ClosestActorToMouse->GetActorLocation()

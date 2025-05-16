@@ -43,6 +43,6 @@ public:
 
 private:
 	bool bIsFirstSet = true;
-
+	FDelegateHandle LevelUpHandle;
 	
 };

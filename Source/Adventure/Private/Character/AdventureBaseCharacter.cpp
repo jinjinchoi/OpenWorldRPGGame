@@ -73,7 +73,7 @@ void AAdventureBaseCharacter::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
 
-	if (AbilitySystemComponent)
+	if (IsValid(AbilitySystemComponent) && !IsActorBeingDestroyed())
 	{
 		AbilitySystemComponent->InitAbilityActorInfo(this, this);
 	}

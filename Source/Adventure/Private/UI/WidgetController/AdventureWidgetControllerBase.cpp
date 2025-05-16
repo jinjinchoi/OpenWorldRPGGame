@@ -35,14 +35,11 @@ void UAdventureWidgetControllerBase::SetCurrentCharacterTag(const FGameplayTag& 
 FGameplayTag UAdventureWidgetControllerBase::GetCurrentCharacterTag()
 {
 	check(PlayerController);
-
-	if (!CurrentCharacterTag.IsValid())
-	{
-		const AAdventurePlayerCharacter* AdventurePlayerCharacter = Cast<AAdventurePlayerCharacter>(PlayerController->GetPawn());
-		check(AdventurePlayerCharacter);
-		CurrentCharacterTag = AdventurePlayerCharacter->GetCharacterClassTag();
-	}
-
+	
+	const AAdventurePlayerCharacter* AdventurePlayerCharacter = Cast<AAdventurePlayerCharacter>(PlayerController->GetPawn());
+	check(AdventurePlayerCharacter);
+	CurrentCharacterTag = AdventurePlayerCharacter->GetCharacterClassTag();
+	
 	return CurrentCharacterTag;
 }
 

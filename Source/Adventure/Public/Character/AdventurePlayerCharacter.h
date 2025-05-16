@@ -5,7 +5,6 @@
 #include "CoreMinimal.h"
 #include "ActiveGameplayEffectHandle.h"
 #include "GameplayTagContainer.h"
-#include "AdventureType/AdventureStructTypes.h"
 #include "Character/AdventureBaseCharacter.h"
 #include "Interface/PlayerInterface.h"
 #include "AdventurePlayerCharacter.generated.h"
@@ -64,7 +63,7 @@ public:
 	
 	FOnMovementModechanged OnMovementModeChangedDelegate;
 	FOnOverlappedItemChanged OnOverlappedItemChangedDelegate;
-
+	
 protected:
 	virtual void BeginPlay() override;
 	virtual void PossessedBy(AController* NewController) override;
