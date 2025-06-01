@@ -130,6 +130,7 @@
   캐릭터 매니저 클래스에서 인덱스를 통해 변경할 캐릭터 정보를 불러오고 현재 조종하고 있던 캐릭터의 정보를 저장합니다. 변경할 캐릭터의 클래스 태그를 통해 `CharacterClassInfoMap`에서 캐릭터 클래스를 **비동기 로드**합니다.
   비동기 방식의 로드를 통하여 게임 실행 중 끊김 없이 캐릭터 변경이 자연스럽게 이루어지도록 구현하였습니다.
 <br>
+
 - **PlayerCamera Actor**
   > GitHub Link:
   > - [PlayerCamera.h](https://github.com/jinjinchoi/OpenWorldRPGGame/blob/main/Source/Adventure/Public/Actor/Camera/AdventurePlayerCamera.h)
