@@ -38,7 +38,8 @@
 
   - **캐릭터 스위칭**  
     `Gameplay Ability` 시스템을 활용하여 파티 인덱스에 매칭된 키보드 버튼을 눌러 캐릭터를 실시간 전환할 수 있습니다.
-  - **개별 능력치**
+
+  - **개별 능력치**  
     `Data Asset`과 `Data Table`을 통하여 캐릭터마다 **고유한 Attribute와 Ability를 부여**하였습니다.
 
   - **인벤토리 시스템**  
@@ -47,7 +48,7 @@
   - **Climbing 시스템**  
     `Line Trace`를 이용하여 장애물을 판단하고, 해당 높이에 맞는 행동을 실행합니다.
 
-  - **MVC 패턴**
+  - **MVC 패턴**  
     `Model-View-Controller Pattern`을 사용하여 **Model**(데이터)과 **View**(위젯)가 바로 연결되는 것이 아니라 **Controller**를 통해 정보를 주고받습니다.
 ---
 ## 3. 핵심 기능 및 구현 내용
@@ -240,7 +241,9 @@
 ---
 
 ### 3.3 클라이밍 시스템
+
 ![클라이밍 시스템 이미지](GuideImg/climb.png)
+
  - **Custom Movement Component**
     > GitHub Link:
     > - [MovementComponent.h](https://github.com/jinjinchoi/OpenWorldRPGGame/blob/main/Source/Adventure/Public/Component/Movement/AdventureMovementComponent.h)
@@ -295,14 +298,14 @@ void UAdventureMovementComponent::SnapMovementToClimbableSurfaces(float DeltaTim
 `CurrentClimbableSurfaceLocation`과 같은 변수는 또 다른 함수에서 트레이스를 통해 구하였고 이렇게 구한 표면들과 캐릭터의 위치를 계산하여 캐릭터가 벽에 붙어 있게 합니다. 해당 함수는 Character Movement Component Class에 있는 `PhysCustom()` 함수를 오버라이드하여 계속해서 실행시키고 있습니다.
 PhysCustom() 함수에서는 벽에 붙이는 작업 외에도 표면을 계속 트레이스하고 바닥이나 꼭대기에 올랐는지도 확인하여 클라이밍 상태를 유지해야 하는지 아닌지를 판단합니다.
 
-- Stamina System
+- **Stamina System**  
 클라이밍이나 전력질주 상태에 진입하면 Gameplay Effect를 적용하여 스태미나를 지속적으로 소모하게 하였고, Attribute Set 클래스에서 스태미나를 전부 소진한 것을 확인하면 캐릭터 클래스에 있는 함수를 호출하여 클라이밍/전력질주 상태를 해제합니다.
 
 ---
 
 ### 3.4 전투 시스템
-- **Apply Damage**
-대미지를 적용하는 로직을 간단하게 설명하면 다음과 같습니다. `Target 획득 -> Damage Effect Parms 생성-> Gameplay Effect 적용.`
+- **Apply Damage**  
+대미지를 적용하는 로직을 간단하게 설명하면 다음과 같습니다. `Target 획득 -> Damage Effect Parms 생성-> Gameplay Effect 적용.`  
 이제 근접 공격을 예시로 자세히 알아보겠습니다.
 
   ![ANS](GuideImg/ANS_ToggleCollision.png)
