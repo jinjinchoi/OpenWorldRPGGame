@@ -82,7 +82,6 @@
   ```
 
   위의 코드는 캐릭터 매니저 클래스의 일부분으로 캐릭터들의 정보는 `PartyCharacterInfo` 구조체에 저장되어 있으며 에디터에서 쉽게 설정이 가능합니다. 또한 캐릭터 클래스는 **약한 참조**를 하여 사용하지 않는 캐릭터가 **불필요하게 메모리를 차지하는 것을 방지**하였습니다.
-<br>
 
 - **ChangeCharacterAbility**
   > GitHub Link:
@@ -129,7 +128,6 @@
   기본 로직은 다음과 같습니다.
   캐릭터 매니저 클래스에서 인덱스를 통해 변경할 캐릭터 정보를 불러오고 현재 조종하고 있던 캐릭터의 정보를 저장합니다. 변경할 캐릭터의 클래스 태그를 통해 `CharacterClassInfoMap`에서 캐릭터 클래스를 **비동기 로드**합니다.
   비동기 방식의 로드를 통하여 게임 실행 중 끊김 없이 캐릭터 변경이 자연스럽게 이루어지도록 구현하였습니다.
-<br>
 
 - **PlayerCamera Actor**
   > GitHub Link:
@@ -137,7 +135,6 @@
   > - [PlayerCamera.cpp](https://github.com/jinjinchoi/OpenWorldRPGGame/blob/main/Source/Adventure/Private/Actor/Camera/AdventurePlayerCamera.cpp)
 
   캐릭터를 변경할 때 Camera Lag을 사용하면 카메라가 부자연스럽게 튀는 현상이 나타났습니다. 이를 방지하기 위해 캐릭터에 카메라를 설정하는 것이 아닌 카메라를 가지고 있는 액터를 따로 만들었고 Player Controller에서 이 액터에 View Target을 주어 카메라가 튀는 현상을 방지하였습니다.
-  <br>
 
 - **StartupData Asset**
 ![능력을 설정하는 데이터 에셋](GuideImg/StartupDataAsset.png)
@@ -219,8 +216,7 @@
   `ItemTag`를 통해 DataAsset에서 아이템의 정보를 가져오며  `EquippedCharacterTag` 통해 현재 장착 중인 캐릭터를 구분합니다. 이를 통해 **중복 아이템 착용을 방지**하고 **UI에 장착 중인 캐릭터를 표시**해 줍니다.
   - 이미지 예시
   <img src="GuideImg/equip.png" width="250"/>
-  <br>
-  
+
 - **Item**
   > GitHub Link:
   > - [Item.h](https://github.com/jinjinchoi/OpenWorldRPGGame/blob/main/Source/Adventure/Public/Item/Pickups/AdventureInventoryItem.h)
@@ -342,7 +338,6 @@ PhysCustom() 함수에서는 벽에 붙이는 작업 외에도 표면을 계속 
 
   이 구조체를 [`MakeDamageEffectParams`(Code Link)](https://github.com/jinjinchoi/OpenWorldRPGGame/blob/main/Source/Adventure/Private/AbilitySystem/Abilities/AdventureDamageGameplayAbility.cpp#L10) 함수에서 생성합니다. 이후 [`ApplyDamageEffect`(Code Link)](https://github.com/jinjinchoi/OpenWorldRPGGame/blob/main/Source/Adventure/Private/AdventureFunctionLibrary.cpp#L186)함수에서 Gameplay Effect를 적용합니다.
   이와 같은 작업을 통해 공격 Ability를 만들 때 **타겟만 구하면** 쉽게 **데미지를 적용**할 수 있어 손쉽게 새로운 Ability를 구현할 수 있게 되었습니다.
-<br>
 
 - **Damage Calculation**
   > GitHub Link:
@@ -350,13 +345,11 @@ PhysCustom() 함수에서는 벽에 붙이는 작업 외에도 표면을 계속 
   > - [ExecCalc_Damage.cpp](https://github.com/jinjinchoi/OpenWorldRPGGame/blob/main/Source/Adventure/Private/AbilitySystem/ExecCalc/ExecCalc_Damage.cpp)
 
   대미지는 커스텀 Calculation 클래스에서 계산됩니다. 해당 클래스에서는 Attribute를 캡처하여 공격력이나 방어력, 치명타 확률 등을 계산하여 최종 대미지를 설정합니다.
-<br>
 
 - **Enemy AI**
 에너미의 AI는 Behavior Tree를 통해 구현하였습니다. 에너미는 적(플레이어)을 시야(AISenseConfig_Sight) 또는 대미지 피해(AISenseConfig_Damage)로 감지합니다. Behavior Tree에서 타겟이 생성되면 적에게 다가가 공격을 하며 이때 단순히 계속 적을 쫓아가는 것이 아니라 EQS를 통해 공격 후 적절한 플레이어 주변을 돌아다니는 행동을 진행합니다.
 
   ![EQS](GuideImg/EQS_TestPawn.png)
-<br>
 
 - **Enemy Spawn**
 
@@ -376,4 +369,4 @@ PhysCustom() 함수에서는 벽에 붙이는 작업 외에도 표면을 계속 
 - 차후 프로젝트 진행시 Object Pool을 활용하여 캐릭터를 제거하는 것이 아니라 Pool에 저장해 놓았다가 정말 필요하지 않은 시점이 오면 제외하는 방식으로 구현하려고 합니다.
 - 이러한 아쉬운 점도 있었지만 이번 프로젝트는 스스로 구현하는 것을 중점으로 삼았으며 덕분에 자신감과 언리얼 엔진에 대한 지식을 얻을 수 있었습니다.
 
-**<p align="center"> 감사합니다.</p>**
+**<p align="center"> 감사합니다.</p>**g
