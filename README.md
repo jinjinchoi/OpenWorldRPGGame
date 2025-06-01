@@ -266,7 +266,7 @@ bool UAdventureMovementComponent::CanStartClimbing()
 	
 }
 ```
-클라이밍 기능은 단순히 벽을 타는 데서 끝이 아니라 벽의 높이를 평가하여 그에 맞는 액션을 취하게 됩니다. 또한 Movement Mode의 변경을 확인하여 UI에 아이콘을 바꿔 표시하고 이러한 기능을 통해 플레이어에게 더 나은 경험을 선사합니다.
+클라이밍 기능은 단순히 벽을 타는 데서 끝이 아니라 벽의 높이를 평가하여 그에 맞는 액션을 취하게 됩니다. 또한 Movement Mode의 변경을 확인하여 UI에 아이콘을 바꿔 표시하고 이러한 기능을 통해 플레이어에게 더 나은 경험을 선사합니다.  
 이어서 아래의 코드는 캐릭터를 벽에 붙게 하는 함수입니다.
 ```c++
 void UAdventureMovementComponent::SnapMovementToClimbableSurfaces(float DeltaTime)
@@ -347,7 +347,7 @@ PhysCustom() 함수에서는 벽에 붙이는 작업 외에도 표면을 계속 
   대미지는 커스텀 Calculation 클래스에서 계산됩니다. 해당 클래스에서는 Attribute를 캡처하여 공격력이나 방어력, 치명타 확률 등을 계산하여 최종 대미지를 설정합니다.
 
 - **Enemy AI**
-에너미의 AI는 Behavior Tree를 통해 구현하였습니다. 에너미는 적(플레이어)을 시야(AISenseConfig_Sight) 또는 대미지 피해(AISenseConfig_Damage)로 감지합니다. Behavior Tree에서 타겟이 생성되면 적에게 다가가 공격을 하며 이때 단순히 계속 적을 쫓아가는 것이 아니라 EQS를 통해 공격 후 적절한 플레이어 주변을 돌아다니는 행동을 진행합니다.
+  에너미의 AI는 Behavior Tree를 통해 구현하였습니다. 에너미는 적(플레이어)을 시야(AISenseConfig_Sight) 또는 대미지 피해(AISenseConfig_Damage)로 감지합니다. Behavior Tree에서 타겟이 생성되면 적에게 다가가 공격을 하며 이때 단순히 계속 적을 쫓아가는 것이 아니라 EQS를 통해 공격 후 적절한 플레이어 주변을 돌아다니는 행동을 진행합니다.
 
   ![EQS](GuideImg/EQS_TestPawn.png)
 
@@ -369,4 +369,4 @@ PhysCustom() 함수에서는 벽에 붙이는 작업 외에도 표면을 계속 
 - 차후 프로젝트 진행시 Object Pool을 활용하여 캐릭터를 제거하는 것이 아니라 Pool에 저장해 놓았다가 정말 필요하지 않은 시점이 오면 제외하는 방식으로 구현하려고 합니다.
 - 이러한 아쉬운 점도 있었지만 이번 프로젝트는 스스로 구현하는 것을 중점으로 삼았으며 덕분에 자신감과 언리얼 엔진에 대한 지식을 얻을 수 있었습니다.
 
-**<p align="center"> 감사합니다.</p>**g
+**<p align="center"> 감사합니다.</p>**
