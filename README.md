@@ -83,8 +83,9 @@
 
   위의 코드는 캐릭터 매니저 클래스의 일부분으로 캐릭터들의 정보는 `PartyCharacterInfo` 구조체에 저장되어 있으며 에디터에서 쉽게 설정이 가능합니다. 또한 캐릭터 클래스는 **약한 참조**를 하여 사용하지 않는 캐릭터가 **불필요하게 메모리를 차지하는 것을 방지**하였습니다.
 <br>
+
 - **ChangeCharacterAbility**
-  > GitHub Link
+  > GitHub Link:
   > - [ChangeCharacterAbility.h](https://github.com/jinjinchoi/OpenWorldRPGGame/blob/main/Source/Adventure/Public/AbilitySystem/Abilities/AdventureChangeCharacterAbility.h)
   > - [CharacterAbility.cpp](https://github.com/jinjinchoi/OpenWorldRPGGame/blob/main/Source/Adventure/Private/AbilitySystem/Abilities/AdventureChangeCharacterAbility.cpp)
 
@@ -130,7 +131,7 @@
   비동기 방식의 로드를 통하여 게임 실행 중 끊김 없이 캐릭터 변경이 자연스럽게 이루어지도록 구현하였습니다.
 <br>
 - **PlayerCamera Actor**
-  > GitHub Link
+  > GitHub Link:
   > - [PlayerCamera.h](https://github.com/jinjinchoi/OpenWorldRPGGame/blob/main/Source/Adventure/Public/Actor/Camera/AdventurePlayerCamera.h)
   > - [PlayerCamera.cpp](https://github.com/jinjinchoi/OpenWorldRPGGame/blob/main/Source/Adventure/Private/Actor/Camera/AdventurePlayerCamera.cpp)
 
@@ -148,7 +149,7 @@
 ![인벤토리 이미지](GuideImg/item.png)
 
 - **Inventory**
-  > GitHub Link
+  > GitHub Link:
   > - [Inventory.h](https://github.com/jinjinchoi/OpenWorldRPGGame/blob/main/Source/Adventure/Public/Player/AdventureInventory.h)
   > - [Inventory.cpp](https://github.com/jinjinchoi/OpenWorldRPGGame/blob/main/Source/Adventure/Private/Player/AdventureInventory.cpp)
 
@@ -219,7 +220,7 @@
   <img src="GuideImg/equip.png" width="250"/>
   <br>
 - **Item**
-  > GitHub Link
+  > GitHub Link:
   > - [Item.h](https://github.com/jinjinchoi/OpenWorldRPGGame/blob/main/Source/Adventure/Public/Item/Pickups/AdventureInventoryItem.h)
   > - [Item.cpp](https://github.com/jinjinchoi/OpenWorldRPGGame/blob/main/Source/Adventure/Private/Item/Pickups/AdventureInventoryItem.cpp)
 
@@ -243,7 +244,7 @@
 ### 3.3 클라이밍 시스템
 ![클라이밍 시스템 이미지](GuideImg/climb.png)
  - **Custom Movement Component**
-    > GitHub Link
+    > GitHub Link:
     > - [MovementComponent.h](https://github.com/jinjinchoi/OpenWorldRPGGame/blob/main/Source/Adventure/Public/Component/Movement/AdventureMovementComponent.h)
     > - [MovementComponent.cpp](https://github.com/jinjinchoi/OpenWorldRPGGame/blob/main/Source/Adventure/Private/Component/Movement/AdventureMovementComponent.cpp)
     
@@ -290,7 +291,7 @@ void UAdventureMovementComponent::SnapMovementToClimbableSurfaces(float DeltaTim
 
 }
 ```
-> GitHub Link
+> GitHub Link:
 > - [PhysCustom 함수의 내부에서 실행하고 있는 PhysClimb 함수](https://github.com/jinjinchoi/OpenWorldRPGGame/blob/main/Source/Adventure/Private/Component/Movement/AdventureMovementComponent.cpp#L205)
 
 `CurrentClimbableSurfaceLocation`과 같은 변수는 또 다른 함수에서 트레이스를 통해 구하였고 이렇게 구한 표면들과 캐릭터의 위치를 계산하여 캐릭터가 벽에 붙어 있게 합니다. 해당 함수는 Character Movement Component Class에 있는 `PhysCustom()` 함수를 오버라이드하여 계속해서 실행시키고 있습니다.
@@ -314,7 +315,7 @@ PhysCustom() 함수에서는 벽에 붙이는 작업 외에도 표면을 계속 
   ![ApplyDamageLogic](GuideImg/applydamage.png)
 
   Damage Effect Param 구조체는 타겟이나 Gameplay Effect, 데미지 배율, Hit Direction 등을 저장하며 자세한 구조는 아래와 같습니다.
-  > GitHub Link
+  > GitHub Link:
   > - [FDamageEffectParams 전체 구조](https://github.com/jinjinchoi/OpenWorldRPGGame/blob/main/Source/Adventure/Public/AdventureType/AdventureStructTypes.h#L18)
   ```c++
   USTRUCT(BlueprintType)
@@ -341,7 +342,7 @@ PhysCustom() 함수에서는 벽에 붙이는 작업 외에도 표면을 계속 
   이와 같은 작업을 통해 공격 Ability를 만들 때 **타겟만 구하면** 쉽게 **데미지를 적용**할 수 있어 손쉽게 새로운 Ability를 구현할 수 있게 되었습니다.
 <br>
 - **Damage Calculation**
-  > GitHub Link
+  > GitHub Link:
   > - [ExecCalc_Damage.h](https://github.com/jinjinchoi/OpenWorldRPGGame/blob/main/Source/Adventure/Public/AbilitySystem/ExecCalc/ExecCalc_Damage.h)
   > - [ExecCalc_Damage.cpp](https://github.com/jinjinchoi/OpenWorldRPGGame/blob/main/Source/Adventure/Private/AbilitySystem/ExecCalc/ExecCalc_Damage.cpp)
 
@@ -354,7 +355,7 @@ PhysCustom() 함수에서는 벽에 붙이는 작업 외에도 표면을 계속 
   <br>
 - **Enemy Spawn**
 
-  > GitHub Link
+  > GitHub Link:
   > - [SpawnVolume.h](https://github.com/jinjinchoi/OpenWorldRPGGame/blob/main/Source/Adventure/Public/Actor/SpawnSystem/AdventureEnemySpawnVolume.h)
   > - [SpawnVolume.cpp](https://github.com/jinjinchoi/OpenWorldRPGGame/blob/main/Source/Adventure/Private/Actor/SpawnSystem/AdventureEnemySpawnVolume.cpp)
   > - [SpawnPoint.h](https://github.com/jinjinchoi/OpenWorldRPGGame/blob/main/Source/Adventure/Public/Actor/SpawnSystem/AdventureEnemySpawnPoint.h)
