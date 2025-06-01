@@ -220,6 +220,7 @@
   - 이미지 예시
   <img src="GuideImg/equip.png" width="250"/>
   <br>
+  
 - **Item**
   > GitHub Link:
   > - [Item.h](https://github.com/jinjinchoi/OpenWorldRPGGame/blob/main/Source/Adventure/Public/Item/Pickups/AdventureInventoryItem.h)
@@ -342,6 +343,7 @@ PhysCustom() 함수에서는 벽에 붙이는 작업 외에도 표면을 계속 
   이 구조체를 [`MakeDamageEffectParams`(Code Link)](https://github.com/jinjinchoi/OpenWorldRPGGame/blob/main/Source/Adventure/Private/AbilitySystem/Abilities/AdventureDamageGameplayAbility.cpp#L10) 함수에서 생성합니다. 이후 [`ApplyDamageEffect`(Code Link)](https://github.com/jinjinchoi/OpenWorldRPGGame/blob/main/Source/Adventure/Private/AdventureFunctionLibrary.cpp#L186)함수에서 Gameplay Effect를 적용합니다.
   이와 같은 작업을 통해 공격 Ability를 만들 때 **타겟만 구하면** 쉽게 **데미지를 적용**할 수 있어 손쉽게 새로운 Ability를 구현할 수 있게 되었습니다.
 <br>
+
 - **Damage Calculation**
   > GitHub Link:
   > - [ExecCalc_Damage.h](https://github.com/jinjinchoi/OpenWorldRPGGame/blob/main/Source/Adventure/Public/AbilitySystem/ExecCalc/ExecCalc_Damage.h)
@@ -349,11 +351,13 @@ PhysCustom() 함수에서는 벽에 붙이는 작업 외에도 표면을 계속 
 
   대미지는 커스텀 Calculation 클래스에서 계산됩니다. 해당 클래스에서는 Attribute를 캡처하여 공격력이나 방어력, 치명타 확률 등을 계산하여 최종 대미지를 설정합니다.
 <br>
+
 - **Enemy AI**
 에너미의 AI는 Behavior Tree를 통해 구현하였습니다. 에너미는 적(플레이어)을 시야(AISenseConfig_Sight) 또는 대미지 피해(AISenseConfig_Damage)로 감지합니다. Behavior Tree에서 타겟이 생성되면 적에게 다가가 공격을 하며 이때 단순히 계속 적을 쫓아가는 것이 아니라 EQS를 통해 공격 후 적절한 플레이어 주변을 돌아다니는 행동을 진행합니다.
 
   ![EQS](GuideImg/EQS_TestPawn.png)
-  <br>
+<br>
+
 - **Enemy Spawn**
 
   > GitHub Link:
