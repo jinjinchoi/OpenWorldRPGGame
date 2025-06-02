@@ -215,7 +215,7 @@
   };
   ```
   `ItemTag`를 통해 DataAsset에서 아이템의 정보를 가져오며  `EquippedCharacterTag` 통해 현재 장착 중인 캐릭터를 구분합니다. 이를 통해 **중복 아이템 착용을 방지**하고 **UI에 장착 중인 캐릭터를 표시**해 줍니다.
-  - 이미지 예시
+  - 이미지 예시  
   <img src="GuideImg/equip.png" width="250"/>
 
 - **Item**
@@ -348,6 +348,12 @@ PhysCustom() 함수에서는 벽에 붙이는 작업 외에도 표면을 계속 
   > - [ExecCalc_Damage.cpp](https://github.com/jinjinchoi/OpenWorldRPGGame/blob/main/Source/Adventure/Private/AbilitySystem/ExecCalc/ExecCalc_Damage.cpp)
 
   대미지는 커스텀 Calculation 클래스에서 계산됩니다. 해당 클래스에서는 Attribute를 캡처하여 공격력이나 방어력, 치명타 확률 등을 계산하여 최종 대미지를 설정합니다.
+
+- **Level Up**  
+  
+  ![캐릭터 정보창](GuideImg/CharacterInfo.png)
+
+  적 처치 시 재화를 획득할 수 있고, 이 재화를 모아 레벨 업을 할 수 있습니다. 레벨 업을 하면 GamepalyEffect가 다시 적용되며 이 Effect는 레벨에 비례해서 더 높은 값이 적용이 됩니다.
 
 - **Enemy AI**
   
